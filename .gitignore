@@ -1,3 +1,8 @@
+# API Keys should be stored in spotify_infosuite/credentials.json
+# This JSON file should be formatted like this:
+# credentials = { "musikki": { "appid": "<id>", "appkey": "<key>" } }
+spotify_infosuite/credentials.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
