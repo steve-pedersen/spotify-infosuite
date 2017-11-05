@@ -1,0 +1,165 @@
+{
+  "summary": {
+    "page": 1,
+    "limit": 10,
+    "total_pages": 1,
+    "result_count": 2,
+    "errors": []
+  },
+  "results": [
+    {
+      "mkid": 100003544,
+      "foreign_ids": [
+        {
+          "id": "d700b3f5-45af-4d02-95ed-57d301bda93e",
+          "service": "musicbrainz"
+        }
+      ],
+      "type": "group",
+      "alias_references": [
+        {
+          "name": "Mogwa",
+          "type": null
+        }
+      ],
+      "name": "Mogwai",
+      "image": "https://graph.facebook.com/116796165021821/picture?width=600",
+      "default_image": {
+        "source": "facebook",
+        "thumbnails": [
+          {
+            "url": "https://graph.facebook.com/116796165021821/picture?width=600",
+            "height": 720,
+            "width": 720,
+            "size_tag": null
+          }
+        ],
+        "is_default": true
+      },
+      "location": {
+        "start": {
+          "street": null,
+          "city": "Glasgow",
+          "state": "Scotland",
+          "zip_code": null,
+          "country": {
+            "name": "United Kingdom",
+            "code": "GB"
+          },
+          "geolocation": {
+            "lat": null,
+            "lng": null
+          },
+          "description": null
+        },
+        "current": {
+          "street": null,
+          "city": null,
+          "state": null,
+          "zip_code": null,
+          "country": {
+            "name": "United Kingdom",
+            "code": "GB"
+          },
+          "geolocation": {
+            "lat": null,
+            "lng": null
+          },
+          "description": null
+        },
+        "end": null
+      },
+      "dates": {
+        "start": {
+          "year": 1995,
+          "month": null,
+          "day": null,
+          "timestamp": null
+        },
+        "end": null
+      },
+      "current_labels": [
+        {
+          "mkid": 100005170,
+          "name": "Rock Action Records",
+          "country": {
+            "name": "United Kingdom",
+            "code": "GB"
+          }
+        }
+      ],
+      "genres": [
+        {
+          "mkid": 100002201,
+          "name": "Rock"
+        },
+        {
+          "mkid": 100002354,
+          "name": "Post-Rock"
+        }
+      ]
+    },
+    {
+      "mkid": 100926118,
+      "foreign_ids": [
+        {
+          "id": "cee3f961-4197-483b-a3ad-73242a97eb4a",
+          "service": "musicbrainz"
+        }
+      ],
+      "type": "person",
+      "alias_references": [],
+      "name": "Mogwai",
+      "image": "http://images.musikki.com/artists/mbid/cee3f961-4197-483b-a3ad-73242a97eb4a",
+      "default_image": {
+        "source": "musikki",
+        "thumbnails": [
+          {
+            "url": "http://images.musikki.com/artists/mbid/cee3f961-4197-483b-a3ad-73242a97eb4a?w=200",
+            "height": null,
+            "width": 200,
+            "size_tag": "small"
+          },
+          {
+            "url": "http://images.musikki.com/artists/mbid/cee3f961-4197-483b-a3ad-73242a97eb4a?w=400",
+            "height": null,
+            "width": 400,
+            "size_tag": "medium"
+          },
+          {
+            "url": "http://images.musikki.com/artists/mbid/cee3f961-4197-483b-a3ad-73242a97eb4a?w=600",
+            "height": null,
+            "width": 600,
+            "size_tag": "large"
+          }
+        ],
+        "is_default": false
+      },
+      "location": {
+        "start": null,
+        "current": {
+          "street": null,
+          "city": null,
+          "state": null,
+          "zip_code": null,
+          "country": {
+            "name": "Germany",
+            "code": "DE"
+          },
+          "geolocation": {
+            "lat": null,
+            "lng": null
+          },
+          "description": null
+        },
+        "end": null
+      },
+      "dates": {
+        "start": null,
+        "end": null
+      },
+      "current_labels": [],
+      "genres": []
+    }
+  ]
+}
