@@ -1,10 +1,9 @@
 from __future__ import absolute_import, unicode_literals
 import sys
 import subprocess
-from pytify.pytifylib import Pytifylib
 
 
-class Playback(Pytifylib):
+class Playback():
 	def __init__(self):
 		"""
 			Check if there is a Spotify process running and if not,
