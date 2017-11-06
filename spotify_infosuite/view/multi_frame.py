@@ -20,6 +20,10 @@ class MultiFrameWindow(QWidget):
 
 
     def add_frame_bio(self, frame):
-        frame.move(frame.x, frame.y)
+        # frame.move(frame.x, frame.y)
+        self.frames.append(frame)
+        frame.show()
+
+    def add_frame(self, frame):
         self.frames.append(frame)
         frame.show()
