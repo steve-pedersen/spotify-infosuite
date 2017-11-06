@@ -1,5 +1,6 @@
 from model.frame import Frame
 import playback
+import musikki
 from view.view_multi import ViewMulti
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QAction, QLineEdit
 from PyQt5.QtGui import QPixmap
@@ -23,6 +24,8 @@ class Controller():
 		self.spotify = self.open_spotify()
 		print('Currently listening to: ', self.get_current_playing())
 
+		artist = musikki.search(self.get_current_artist())
+		# full_bio = artist.get_full_bio()
 
 
 	# Spotify Controls
