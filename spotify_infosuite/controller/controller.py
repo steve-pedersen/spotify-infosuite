@@ -1,7 +1,8 @@
-from model.frame import Frame
+import model
+import view
 import playback
 import musikki
-from view.view_multi import ViewMulti
+
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QAction, QLineEdit
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtMultimedia import QSoundEffect
@@ -12,13 +13,13 @@ class Controller():
 
 	def __init__(self):
 
-		self.view_multi = ViewMulti(0, 0, 800, 600, "Spotify Info Suite", "view_multi")
+		self.multi_frame_window = view.MultiFrameWindow(0, 0, 800, 600, "Spotify Info Suite", "multi_frame_window")
 
-		self.bio_frame = Frame(self, self.view_multi, 0, 100, 250, 400, "bio_frame")
+		self.bio_frame = model.Frame(self, self.multi_frame_window, 0, 100, 250, 400, "bio_frame")
 		self.bio_frame.set_display_text("mogwai was born in blah blah blah", 10, 10)
 		self.bio_frame.set_display_title("Bio", 5, 5)
-		self.view_multi.add_frame_bio(self.bio_frame)
-		self.view_multi.show()
+		self.multi_frame_window.add_frame_bio(self.bio_frame)
+		self.multi_frame_window.show()
 
 		# init and open Spotify Desktop App
 		self.spotify = self.open_spotify()

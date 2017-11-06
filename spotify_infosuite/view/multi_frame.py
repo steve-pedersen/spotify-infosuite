@@ -3,7 +3,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtMultimedia import QSoundEffect
 from PyQt5.QtCore import *
 
-class ViewMulti(QWidget):
+class MultiFrameWindow(QWidget):
 
     def __init__(self, x, y, w, h, window_title, object_title):
         super().__init__()

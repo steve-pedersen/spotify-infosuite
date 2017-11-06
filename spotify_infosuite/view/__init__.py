@@ -1,0 +1,1 @@
+from view.multi_frame import MultiFrameWindow
