@@ -107,4 +107,4 @@ ENV/
 .mypy_cache/
 
 # idea file
-.idea/
+.idea
