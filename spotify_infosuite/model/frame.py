@@ -16,15 +16,15 @@ class Frame(QLabel):
 		self.object_title = title
 		self.setObjectName((self.object_title))
 		self.char_limit = limit
-		self.display_title_label = None
-		self.display_text_label = None
+		self.display_title_label = QLabel(self)
+		self.display_text_label = QLabel(self)
 		self.controller = controller
 		self.view = view
 		self.setGeometry(self.x, self.y, self.w, self.h)
 		self.frame_components = []
 
 	def set_display_title(self, title, x, y):
-		self.display_title_label = QLabel(self)
+		# self.display_title_label = QLabel(self)
 		self.display_title_label.setText(title)
 		self.display_title_label.move(x, y)
 		self.display_title_label.resize(int(self.w*0.93), 35) # limit width to 93% of frame
@@ -33,12 +33,17 @@ class Frame(QLabel):
 		self.frame_components.append(self.display_title_label)
 
 	def set_display_text(self, text, x, y):
-		self.display_text_label = QLabel(self)
+		# self.display_text_label = QLabel(self)
 		self.display_text_label.setText(text)
 		self.display_text_label.setGeometry(x, y, 240, 395)
 		self.display_text_label.setObjectName('frame_text')
 		self.display_text_label.setWordWrap(True)
 		self.frame_components.append(self.display_text_label)
+
+	def get_display_text_label(self):
+		return self.display_text_label
+	def get_display_title_label(self):
+		return self.display_title_label
 
 	def set_expand_button(self):
 		self.expand_button = QPushButton('Expand', self.view)
