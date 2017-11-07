@@ -14,6 +14,7 @@ class Frame(QLabel):
 		self.w = w
 		self.h = h
 		self.object_title = title
+		self.setObjectName((self.object_title))
 		self.char_limit = limit
 		self.display_title_label = None
 		self.display_text_label = None
@@ -24,12 +25,16 @@ class Frame(QLabel):
 		self.display_title_label = QLabel(self)
 		self.display_title_label.setText(title)
 		self.display_title_label.move(x, y)
+		self.display_title_label.setObjectName('frame_title')
 		# self.display_title_label.resize(w, h)
 
 	def set_display_text(self, text, x, y):
 		self.display_text_label = QLabel(self)
 		self.display_text_label.setText(text)
-		self.display_text_label.move(x, y)
+		#self.display_text_label.move(x, y)
+		self.display_text_label.setGeometry(x, y, 240, 395)
+		self.display_text_label.setObjectName('frame_text')
+		self.display_text_label.setWordWrap(True)
 		# self.display_text_label.resize(w, h)
 
 	def mousePressEvent(self, event):
