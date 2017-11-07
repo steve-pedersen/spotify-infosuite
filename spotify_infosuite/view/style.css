@@ -1,0 +1,96 @@
+/*	Stylesheet for Spotify Infosuite
+	This file is required by multi_frame.py and single_frame.py
+
+
+	THUMB 		= #BFC8CE
+	SEL 		= #2F4A60
+	BACKG 		= #FFFFFF
+	INFO 		= #DAEBED
+	BTNS 		= #D3D3D3
+	BTNS_HOVER 	= #C8C8C8
+	AUDIO_ON 	= #E2EFDA
+	AUDIO_OFF 	= #EFDFDE
+*/
+QWidget#multi_frame_window {
+	background-color: #FFFFFF;
+}
+
+QPushButton#btn {
+	font-weight: bold;
+	background-color: #D3D3D3;
+}
+QPushButton#btn:hover {
+	background-color: #C8C8C8 ;
+}
+
+QPushButton#mute_button {
+	background-color: #E2EFDA;
+	border: 2px solid #2F4A60;
+	border-radius: 5px;
+	padding: 5px;
+	font-weight: bold;
+}
+QPushButton#unmute_button {
+	background-color: yellow;
+	border: 2px solid #2F4A60;
+	border-radius: 5px;
+	padding: 5px;
+	font-weight: bold;
+}
+QPushButton#mute_button:hover {
+	color: red;
+}
+QPushButton#unmute_button:hover {
+	color: green;
+}
+
+QLineEdit#text_box {
+	border: 2px solid #2F4A60;
+	border-radius: 5px;
+	font-weight: bold;
+	padding: 5px;
+}
+
+QLabel#tag {
+	border: 2px solid #2F4A60;
+	border-radius: 5px;
+	font-weight: bold;
+	padding: 5px;
+	background-color: #DAEBED;
+}
+QLabel#thumb_container {
+	border: 3px solid #2F4A60;
+	border-radius: 5px;
+	background-color: #DAEBED;
+}
+QLabel#max_result_label {
+	font-weight: bold;
+	text-decoration: underline;
+}
+QLabel#info_box {
+	border: 2px solid #2F4A60;
+	border-radius: 5px;
+	font-weight: bold;
+	padding: 5px;
+	background-color: #DAEBED;
+}
+QLabel#selected {
+
+}
+QLabel#not_selected {
+
+}
+
+QLabel#bio_frame {
+    background-color: #DAEBED;
+
+}
+
+QLabel#frame_title {
+    background-color: #ffffff;
+}
+
+QLabel#frame_text {
+    background-color: #ffffff;
+    text-align: center;
+}
