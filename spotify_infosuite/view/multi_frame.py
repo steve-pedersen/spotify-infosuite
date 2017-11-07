@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QAction,
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtMultimedia import QSoundEffect
 from PyQt5.QtCore import *
+import os
 
 class MultiFrameWindow(QWidget):
 
@@ -16,7 +17,7 @@ class MultiFrameWindow(QWidget):
         self.setObjectName(self.object_title)
         self.setGeometry(self.x, self.y, self.w, self.h)
         self.frames = []
-        self.loadStyles()
+        self.load_styles()
 
 
     def add_frame_bio(self, frame):
@@ -26,9 +27,10 @@ class MultiFrameWindow(QWidget):
 
 
     # Opens css stylesheet and apply it to Spotify Infosuite elements
-    def loadStyles(self):
+    def load_styles(self):
+        cwd = os.getcwd()  # Get the current working directory (cwd)   
         style = ''
-        with open('./view/style.css') as f:
+        with open(cwd + '/spotify_infosuite/view/style.css') as f:
             for line in f:
                 style += line
                 # print(line)
