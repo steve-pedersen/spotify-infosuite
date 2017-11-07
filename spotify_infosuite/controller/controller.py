@@ -38,8 +38,14 @@ class Controller():
 
 
 	def init_playback_frame(self):
-		self.playback_frame = model.Frame(self, self.multi_frame_window, 0,0, 400,250, 'playback_frame')
-		self.playback_frame.set_display_title(self.get_current_playing(), 10, 10)
+		self.playback_frame = model.Frame(self, self.multi_frame_window, 0,0, 250,100, 'playback_frame')
+		self.playback_frame.set_display_title(self.get_current_playing(), 10, 10)		
+		
+		self.playback_frame.create_playback_buttons()		
+		self.playback_frame.get_playback_prev_button().clicked.connect(self.prev)
+		self.playback_frame.get_playback_play_button().clicked.connect(self.play_pause)
+		self.playback_frame.get_playback_next_button().clicked.connect(self.next)
+
 		self.multi_frame_window.add_frame(self.playback_frame)
 
 

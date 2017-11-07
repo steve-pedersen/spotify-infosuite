@@ -23,74 +23,41 @@ QPushButton#btn:hover {
 	background-color: #C8C8C8 ;
 }
 
-QPushButton#mute_button {
-	background-color: #E2EFDA;
-	border: 2px solid #2F4A60;
-	border-radius: 5px;
-	padding: 5px;
-	font-weight: bold;
-}
-QPushButton#unmute_button {
-	background-color: yellow;
-	border: 2px solid #2F4A60;
-	border-radius: 5px;
-	padding: 5px;
-	font-weight: bold;
-}
-QPushButton#mute_button:hover {
-	color: red;
-}
-QPushButton#unmute_button:hover {
-	color: green;
-}
-
-QLineEdit#text_box {
-	border: 2px solid #2F4A60;
-	border-radius: 5px;
-	font-weight: bold;
-	padding: 5px;
-}
-
-QLabel#tag {
-	border: 2px solid #2F4A60;
-	border-radius: 5px;
-	font-weight: bold;
-	padding: 5px;
+/* Playback Frame */
+QLabel#playback_frame {
+	position: relative;
 	background-color: #DAEBED;
+	border: 2px solid #000;
 }
-QLabel#thumb_container {
-	border: 3px solid #2F4A60;
-	border-radius: 5px;
-	background-color: #DAEBED;
-}
-QLabel#max_result_label {
-	font-weight: bold;
-	text-decoration: underline;
-}
-QLabel#info_box {
-	border: 2px solid #2F4A60;
-	border-radius: 5px;
-	font-weight: bold;
-	padding: 5px;
-	background-color: #DAEBED;
-}
-QLabel#selected {
+QPushButton#playpause_button,
+QPushButton#prev_button,
+QPushButton#next_button {
 
 }
-QLabel#not_selected {
+QPushButton#playpause_button {
+	
+}
+QPushButton#prev_button {
 
 }
+QPushButton#next_button {
+
+}
+
 
 QLabel#bio_frame {
     background-color: #DAEBED;
-
+	border: 2px solid #000;
 }
 
 QLabel#frame_title {
     background-color: #ffffff;
+    text-align: center;
+    padding: 2px;
 }
 
 QLabel#frame_text {
     background-color: #ffffff;
     text-align: center;
+    padding: 2px;
 }

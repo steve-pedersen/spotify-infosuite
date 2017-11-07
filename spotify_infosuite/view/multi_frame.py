@@ -27,6 +27,8 @@ class MultiFrameWindow(QWidget):
 
     def add_frame(self, frame):
         self.frames.append(frame)
+        for component in frame.get_frame_components():
+            component.show()        
         frame.show()
 
 

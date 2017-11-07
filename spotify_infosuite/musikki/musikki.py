@@ -39,7 +39,7 @@ def search(artist, song='', album=''):
 	# replace spaces in the url with the '%20'
 	query = re.sub('\s+', '%20', artist)
 
-    cwd = os.getcwd()  + '/spotify_infosuite/'
+	cwd = os.getcwd() + '/spotify_infosuite/'
 	with open(cwd + 'musikki/credentials.json') as creds:    
 		credentials = json.load(creds)
 
