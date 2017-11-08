@@ -73,6 +73,7 @@ def search(artist, song='', album=''):
 					match_found = True
 					mkid = result['mkid']
 					found_name = result['name']
+					print('Match found on entry ',result_counter+1,' of ',total)
 				result_counter += 1
 			
 			if not match_found:
