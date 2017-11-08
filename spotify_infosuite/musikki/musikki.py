@@ -11,7 +11,7 @@ class Artist:
 		# print(mkid)
 		if mkid == 0:
 			print('no artist found')
-		self.mkid = mkid# '100578790'#mkid
+		self.mkid = mkid
 		self.artist = artist
 		self.appid = appid
 		self.appkey = appkey
@@ -29,36 +29,6 @@ class Artist:
 
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		nam.get(req)
-		print('in get_full_bio()')
-		# response = requests.get(url)
-		# json_resp = response.json()
-
-		# bio = ''
-		# for f in json_resp['full']:
-		# 	paragraph = ''
-		# 	for t in f['text']:
-		# 		paragraph += t
-		# 	bio += paragraph + '\n\n'
-		
-		# return bio
-
-	# def search_handler(self, reply):
-	# 	print('in search_handler')
-	# 	er = reply.error()
-	# 	if er == QtNetwork.QNetworkReply.NoError:
-
-	# 		response = reply.readAll()
-	# 		json_resp = response.json()
-
-	# 		bio = ''
-	# 		for f in json_resp['full']:
-	# 			paragraph = ''
-	# 			for t in f['text']:
-	# 				paragraph += t
-	# 			bio += paragraph + '\n\n'
-			
-	# 		print(bio)
-	# 		self.bio_container.setText(bio)
 			
 
 # method needs to make a search req and then create Artist obj with mkid
@@ -67,11 +37,8 @@ def search(artist, song='', album=''):
 	# replace spaces in the url with the '%20'
 	query = re.sub('\s+', '%20', artist)
 
-	cwd = os.getcwd()
-	if not cwd.find('/spotify_infosuite'):
-		cwd = cwd + '/spotify_infosuite'
-
-	with open(cwd + '/credentials.json') as creds:    
+	infosuite_dir = os.path.abspath('./spotify_infosuite')
+	with open(infosuite_dir + '/credentials.json') as creds:    
 		credentials = json.load(creds)
 
 	appid = credentials['musikki']['appid']
@@ -81,16 +48,41 @@ def search(artist, song='', album=''):
 	url = url + 'q=[artist-name:' + query + ']'
 	url = url + ',[query-type:suggest]'
 	
+	url = url + '&limit=20'
 	url = url + '&appkey=' + appkey
 	url = url + '&appid=' + appid
 
-	response = requests.get(url)
+	# fetch the first page
+	response = requests.get(url + '&page=1')
 	json_resp = response.json()
 	# print(json.dumps(json_resp))
+	
 	mkid = 0
-	if json_resp['summary']['result_count'] > 0:
-		mkid = json_resp['results'][0]['mkid']
+	
+	match_found = False
+	result_counter = 0
+	page_counter = 1
+	total = json_resp['summary']['result_count']
+	total_pages = json_resp['summary']['total_pages']
 
-	artist = Artist(mkid, json_resp['results'][0]['name'], appid, appkey)
-	return artist
-	# print(json.dumps(response.json()))
+	# fetch and traverse results until a match is found
+	if total > 0:
+		while not match_found and total != result_counter:
+			for result in json_resp['results']:
+				if result['name'] == artist:
+					match_found = True
+					mkid = result['mkid']
+					found_name = result['name']
+				result_counter += 1
+			
+			if not match_found:
+				# make another request on the next page
+				page_counter += 1			
+				json_resp = requests.get(url +'&page='+ str(page_counter)).json()
+
+	if match_found:
+		musikki_artist = Artist(mkid, artist, appid, appkey)
+		return musikki_artist
+	else:
+		print('No results found in Musikki database... use a diff API?')
+
