@@ -3,36 +3,43 @@ import view
 import playback
 import musikki
 import json
+import sys
 
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QAction, QLineEdit
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtMultimedia import QSoundEffect
 from PyQt5.QtCore import *
 from PyQt5 import QtNetwork, QtCore
+from PyQt5.QtGui import *
+from PyQt5 import QtGui
 
 
 class Controller():
 
-	def __init__(self):
+	def __init__(self, screen_width, screen_height):
+		print(screen_width, screen_height)
 
-		self.multi_frame_window = view.MultiFrameWindow(0, 0, 800, 600, "Spotify Info Suite", "multi_frame_window")
-		self.bio_frame = model.Frame(self, self.multi_frame_window, 0, 100, 250, 450, "bio_frame")
-		self.text = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. " \
-					"Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus " \
-					"mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa " \
-					"quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, r" \
-					"honcus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. " \
-					"Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend " \
-					"tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, " \
-					"dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet."
-		self.bio_frame.set_display_text(self.text, 5, 25)
-		self.bio_frame.set_display_title("Bio", 5, 5)
-		self.multi_frame_window.add_frame_bio(self.bio_frame)
+		space_w = screen_width / 4
+		space_h = screen_height / 4
+		self.window_w = screen_width - space_w
+		self.window_h = screen_height - space_h
+		self.window_x = space_w / 2
+		self.window_y = space_h / 2
+
+		self.multi_frame_window = view.MultiFrameWindow(
+			self.window_x, 
+			self.window_y, 
+			self.window_w, 
+			self.window_h, 
+			"Spotify Info Suite", 
+			"multi_frame_window"
+		)
 		self.multi_frame_window.show()
 
-		# init and open Spotify Desktop App
+		self.init_bio_frame()
 		self.spotify = self.open_spotify()
 		self.init_playback_frame()
+
 
 		artist = musikki.search(self.get_current_artist())
 
@@ -41,6 +48,37 @@ class Controller():
 	
 		artist.get_full_bio(self.bio_nam, self.bio_frame.get_display_text_label())
 
+
+	def init_bio_frame(self):
+		x = 0
+		y = self.window_h * 0.15
+		w = self.window_w / 4
+		h = self.window_h * 0.85
+		self.bio_frame = model.Frame(
+			self, self.multi_frame_window, x,y, w,h, "bio_frame"
+		)
+
+		# self.bio_frame.set_display_text(self.text, 5, 25)
+		self.bio_frame.set_display_title("Bio", 5, 5)
+		self.multi_frame_window.add_frame_bio(self.bio_frame)
+
+	def init_playback_frame(self):
+		x = 0
+		y = 0
+		w = self.window_w / 4
+		h = self.window_h * 0.15
+		self.playback_frame = model.Frame(self, self.multi_frame_window, x,y, w,h, 'playback_frame')
+		self.playback_frame.set_display_title(self.get_current_playing(), 10, 10)		
+		
+		self.playback_frame.create_playback_buttons()		
+		self.playback_frame.get_playback_prev_button().clicked.connect(self.prev)
+		self.playback_frame.get_playback_play_button().clicked.connect(self.play_pause)
+		self.playback_frame.get_playback_next_button().clicked.connect(self.next)
+
+		self.multi_frame_window.add_frame(self.playback_frame)
+
+
+	# Handlers
 	def search_bio_handler(self, reply):
 		print('in search_handler')
 		er = reply.error()
@@ -62,18 +100,7 @@ class Controller():
 				bio += paragraph + '\n\n'
 			
 			# print(bio)
-			self.bio_frame.set_display_text(bio, 5, 25)
-
-	def init_playback_frame(self):
-		self.playback_frame = model.Frame(self, self.multi_frame_window, 0,0, 250,100, 'playback_frame')
-		self.playback_frame.set_display_title(self.get_current_playing(), 10, 10)		
-		
-		self.playback_frame.create_playback_buttons()		
-		self.playback_frame.get_playback_prev_button().clicked.connect(self.prev)
-		self.playback_frame.get_playback_play_button().clicked.connect(self.play_pause)
-		self.playback_frame.get_playback_next_button().clicked.connect(self.next)
-
-		self.multi_frame_window.add_frame(self.playback_frame)
+			self.bio_frame.set_display_text(bio, 5, 45)
 
 
 	# Spotify Controls
@@ -101,4 +128,3 @@ class Controller():
 
 	def get_current_playing(self):
 		return self.get_current_artist() + ' - ' + self.get_current_song()
-

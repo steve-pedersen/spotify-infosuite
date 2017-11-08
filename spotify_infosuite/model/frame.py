@@ -35,7 +35,7 @@ class Frame(QLabel):
 	def set_display_text(self, text, x, y):
 		# self.display_text_label = QLabel(self)
 		self.display_text_label.setText(text)
-		self.display_text_label.setGeometry(x, y, 240, 395)
+		self.display_text_label.setGeometry(x, y, self.w*0.95, self.h*0.9)
 		self.display_text_label.setObjectName('frame_text')
 		self.display_text_label.setWordWrap(True)
 		self.frame_components.append(self.display_text_label)
@@ -59,10 +59,17 @@ class Frame(QLabel):
 				
 		self.playpause_button.setObjectName('playpause_button')
 		self.prev_button.setObjectName('prev_button')		
-		self.next_button.setObjectName('next_button')			
-		self.prev_button.move(0, 65)	
-		self.playpause_button.move(70, 65)	
-		self.next_button.move(180, 65)
+		self.next_button.setObjectName('next_button')	
+
+		div =  self.w / self.playpause_button.width()
+		# print(self.playpause_button.width(), ' ', self.prev_button.width())
+		prev_x = 40
+		play_x = self.playpause_button.width()
+		next_x = play_x + self.playpause_button.width()
+		# print('prev_x: ', prev_x, '  play_x: ', play_x, '  next_x: ', next_x)
+		self.prev_button.move(prev_x, 65)	
+		self.playpause_button.move(play_x, 65)	
+		self.next_button.move(next_x, 65)
 
 	def get_playback_prev_button(self):
 		return self.prev_button
