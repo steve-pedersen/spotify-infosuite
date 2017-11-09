@@ -135,9 +135,9 @@ class Controller(QThread):
 			for f in json_resp['full'].toArray():
 				f = f.toObject()
 				paragraph = ''
-				for t in f['text'].toArray():
+				for i, t in enumerate(f['text'].toArray()):
 					t = t.toString()
-					paragraph += t.rstrip()
+					paragraph += t.rstrip() if i == 0 else (' ' + t.rstrip())
 				bio += paragraph + '\n\n'
 			
 			# print(bio)
