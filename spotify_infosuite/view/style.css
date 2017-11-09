@@ -104,12 +104,14 @@ QLabel#frame_title {
 QLabel#frame_text{
     position: relative;
     background-color: #0f0f0f;
-	padding-top: 5px;
+	padding-top: 25px;
 	padding-right: 3px;
 	padding-bottom: 5px;
 	padding-left: 3px;
     border-radius: 5%;
-    color: #25D34D;
+    /*color: #25D34D;*/
+    color: #FFFFFF;
+    font-size: 14pt;
 }
 
 

@@ -162,8 +162,10 @@ class Controller(QThread):
 		if self.current_playing != self.get_current_playing():
 			if (self.current_artist == self.get_current_artist() and
 				self.current_song != self.get_current_song()):
+				print('Song change...')
 				self.update_song_info()
 			else:
+				print('Artist and song change...')
 				self.update_everything()	
 
 	# Spotify Controls
