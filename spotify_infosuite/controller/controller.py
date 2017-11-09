@@ -59,7 +59,7 @@ class Controller():
 		)
 
 		# self.bio_frame.set_display_text(self.text, 5, 25)
-		self.bio_frame.set_display_title("Bio", 5, 5)
+		self.bio_frame.set_display_title("Bio", 10, 5)
 		self.multi_frame_window.add_frame_bio(self.bio_frame)
 
 	def init_playback_frame(self):
@@ -100,7 +100,7 @@ class Controller():
 				bio += paragraph + '\n\n'
 			
 			# print(bio)
-			self.bio_frame.set_display_text(bio, 5, 45)
+			self.bio_frame.set_display_text(bio, 10, 45)
 
 
 	# Spotify Controls
