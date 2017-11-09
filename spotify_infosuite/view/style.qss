@@ -1,5 +1,0 @@
-QLabel#frame_text {
-    background-color: #ffffff;
-	border: 10px solid #000000;
-
-}
