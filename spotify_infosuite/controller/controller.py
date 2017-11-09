@@ -4,6 +4,7 @@ import playback
 import musikki
 import json
 import sys
+import threading
 
 from threading import Thread
 from time import sleep
@@ -17,9 +18,12 @@ from PyQt5.QtGui import *
 from PyQt5 import QtGui
 
 
-class Controller():
+class Controller(QThread):
 
-	def __init__(self, screen_width, screen_height):
+	testsignal = pyqtSignal(str)
+
+	def __init__(self, app, screen_width, screen_height):
+		super(Controller,self).__init__()
 		print(screen_width, screen_height)
 
 		space_w = screen_width / 4
@@ -42,18 +46,31 @@ class Controller():
 		self.init_bio_frame()
 		self.spotify = self.open_spotify()
 		self.current_playing = self.get_current_playing()
+		self.current_artist = self.get_current_artist()
+		self.current_song = self.get_current_song()
 		self.init_playback_frame()
 
 		self.bio_nam = QtNetwork.QNetworkAccessManager()
 		self.bio_nam.finished.connect(self.search_bio_handler)
-	
+
 		artist = musikki.search(self.get_current_artist())
 		artist.get_full_bio(self.bio_nam, self.bio_frame.get_display_text_label())
 
 		# start a synchronization thread
-		self.playback_sync_thread = Thread(target=self.sync_playback, args=(10,))
-		self.playback_sync_thread.start()
+		# self.playback_sync_thread = Thread(target=self.sync_playback, args=(10,))
+		# self.playback_sync_thread.start()
+		# self.main_app = app
+		# self.appinit()
 
+		# self.my_listener = Listener()
+		# self.my_sender = Sender()
+		# self.my_listener.connect_slots(self.my_sender, self, self.say_hello)
+		# self.my_listener.start()
+		# self.my_sender.start()
+
+
+	# def say_hello(self):
+	# 	print('holy crap it worked')
 
 	def init_bio_frame(self):
 		x = 0
@@ -92,13 +109,15 @@ class Controller():
 		self.update_song_info()
 
 	def update_artist_info(self):
+		self.current_playing = self.get_current_playing()
+		self.playback_frame.set_display_title(self.current_playing, 10, 10)		
 		# bio
 		artist = musikki.search(self.get_current_artist())
 		artist.get_full_bio(self.bio_nam, self.bio_frame.get_display_text_label())
 
 	def update_song_info(self):
-		# do stuff
-		print()
+		self.current_playing = self.get_current_playing()
+		self.playback_frame.set_display_title(self.current_playing, 10, 10)
 
 	# Handlers
 	def search_bio_handler(self, reply):
@@ -150,9 +169,21 @@ class Controller():
 
 	def next(self):
 		self.spotify.next()
+		if self.current_playing != self.get_current_playing():
+			if (self.current_artist == self.get_current_artist() and
+				self.current_song != self.get_current_song()):
+				self.update_song_info()
+			else:
+				self.update_everything()
 
 	def prev(self):
 		self.spotify.prev()
+		if self.current_playing != self.get_current_playing():
+			if (self.current_artist == self.get_current_artist() and
+				self.current_song != self.get_current_song()):
+				self.update_song_info()
+			else:
+				self.update_everything()
 
 	def pause(self):
 		self.spotify.pause()
@@ -165,3 +196,34 @@ class Controller():
 
 	def get_current_playing(self):
 		return self.get_current_artist() + ' - ' + self.get_current_song()
+
+# class Listener(QtCore.QThread):
+
+# 	def __init__(self):
+# 		super(Listener,self).__init__()
+
+# 	def run(self):
+# 		print('listener: started')
+# 		while True:
+# 			sleep(2)
+
+
+# 	def connect_slots(self, sender, main_app, handler):
+# 		sender.testsignal.connect(self.say_hello)
+# 		main_app.testsignal.connect(handler)
+
+# 	def say_hello(self):
+# 		print('listener: received signal')
+
+# class Sender(QtCore.QThread):
+# 	testsignal = pyqtSignal(str)
+# 	def __init__(self):
+# 		super(Sender,self).__init__()
+
+# 	def run(self):
+# 		for i in range(5):
+# 			print('sender: sending signal')
+# 			self.testsignal.emit('testsignal')
+# 			sleep(2)
+# 		print('sender: finished')
+
