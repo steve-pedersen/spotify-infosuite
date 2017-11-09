@@ -4,5 +4,7 @@ from PyQt5.QtWidgets import QApplication
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
-	controller = Controller()
-	sys.exit(app.exec_())    
+	screen_resolution = app.desktop().screenGeometry()
+	width, height = screen_resolution.width(), screen_resolution.height()	
+	controller = Controller(app, width, height)
+	sys.exit(app.exec_())
