@@ -158,6 +158,13 @@ class Controller(QThread):
 				# self.playback_sync_thread.start()				
 			sleep(0.5)
 
+	def update_playback_display(self):
+		if self.current_playing != self.get_current_playing():
+			if (self.current_artist == self.get_current_artist() and
+				self.current_song != self.get_current_song()):
+				self.update_song_info()
+			else:
+				self.update_everything()	
 
 	# Spotify Controls
 	def open_spotify(self):
@@ -166,24 +173,15 @@ class Controller(QThread):
 
 	def play_pause(self):
 		self.spotify.play_pause()
+		self.update_playback_display()		
 
 	def next(self):
 		self.spotify.next()
-		if self.current_playing != self.get_current_playing():
-			if (self.current_artist == self.get_current_artist() and
-				self.current_song != self.get_current_song()):
-				self.update_song_info()
-			else:
-				self.update_everything()
+		self.update_playback_display()
 
 	def prev(self):
 		self.spotify.prev()
-		if self.current_playing != self.get_current_playing():
-			if (self.current_artist == self.get_current_artist() and
-				self.current_song != self.get_current_song()):
-				self.update_song_info()
-			else:
-				self.update_everything()
+		self.update_playback_display()	
 
 	def pause(self):
 		self.spotify.pause()
