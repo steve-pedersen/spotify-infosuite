@@ -38,6 +38,7 @@ class Frame(QLabel):
 		self.display_text_label.setGeometry(x, y, self.w*0.93, self.h*0.9)
 		self.display_text_label.setObjectName('frame_text')
 		self.display_text_label.setWordWrap(True)
+		self.display_text_label.setStyleSheet('')
 		self.frame_components.append(self.display_text_label)
 
 	def get_display_text_label(self):

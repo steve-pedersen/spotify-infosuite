@@ -12,21 +12,61 @@
 	AUDIO_OFF 	= #EFDFDE
 */
 QWidget#multi_frame_window {
-	background-color: #FFFFFF;
+	background-color: #0f0f0f;
 }
 
-QPushButton#btn {
+QPushButton#prev_button {
 	font-weight: bold;
-	background-color: #D3D3D3;
+	background-color: #0f0f0f;
+    color: white;
+    border: 1px solid #25D34D;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
 }
-QPushButton#btn:hover {
-	background-color: #C8C8C8 ;
+QPushButton#prev_button:hover {
+	background-color: #25D34D ;
+    color: #0f0f0f;
+}
+
+QPushButton#next_button {
+	font-weight: bold;
+	background-color: #0f0f0f;
+    color: white;
+    border: 1px solid #25D34D;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+QPushButton#next_button:hover {
+	background-color: #25D34D ;
+    color: #0f0f0f;
+}
+
+QPushButton#playpause_button {
+	font-weight: bold;
+	background-color: #0f0f0f;
+    color: white;
+    border: 1px solid #25D34D;
+    border-radius: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+QPushButton#playpause_button:hover {
+	background-color: #25D34D ;
+    color: #0f0f0f;
 }
 
 /* Playback Frame */
 QLabel#playback_frame {
 	position: relative;
-	background-color: #DAEBED;
+	background-color: #1D1D1D;
 	border: 2px solid #000;
 }
 QPushButton#playpause_button,
@@ -46,18 +86,37 @@ QPushButton#next_button {
 
 
 QLabel#bio_frame {
-    background-color: #DAEBED;
+    background-color: #1D1D1D;
 	border: 2px solid #000;
 }
 
 QLabel#frame_title {
-    background-color: #ffffff;
+    position: relative;
+    background-color: #0f0f0f;
     text-align: center;
     padding: 2px;
+    border-radius: 5%;
+    color: #25D34D;
+    font-weight: bold;
+    /*text-decoration: underline;*/
 }
 
-QLabel#frame_text {
-    background-color: #ffffff;
-    text-align: center;
-    padding: 2px;
+QLabel#frame_text{
+    position: relative;
+    background-color: #0f0f0f;
+	padding-top: 5px;
+	padding-right: 3px;
+	padding-bottom: 5px;
+	padding-left: 3px;
+    border-radius: 5%;
+    color: #25D34D;
 }
+
+
+/*("""*/
+        /*.QWidget {*/
+            /*border: 20px solid black;*/
+            /*border-radius: 10px;*/
+            /*background-color: rgb(255, 255, 255);*/
+            /*}*/
+        /*""")*/

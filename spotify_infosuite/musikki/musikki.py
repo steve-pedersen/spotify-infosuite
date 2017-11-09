@@ -37,8 +37,8 @@ def search(artist, song='', album=''):
 	# replace spaces in the url with the '%20'
 	query = re.sub('\s+', '%20', artist)
 
-	infosuite_dir = os.path.abspath('./spotify_infosuite')
-	with open(infosuite_dir + '/credentials.json') as creds:    
+	musikki_dir = os.path.abspath('./spotify_infosuite/musikki')
+	with open(musikki_dir + '/credentials.json') as creds:    
 		credentials = json.load(creds)
 
 	appid = credentials['musikki']['appid']

@@ -42,3 +42,4 @@ class MultiFrameWindow(QWidget):
                 style += line
                 # print(line)
         self.setStyleSheet(style)
+
