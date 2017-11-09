@@ -53,6 +53,8 @@ class Controller(QThread):
 		self.bio_nam = QtNetwork.QNetworkAccessManager()
 		self.bio_nam.finished.connect(self.search_bio_handler)
 
+		artist = musikki.search(self.get_current_artist())
+
 		if artist is not None:
 			artist.get_full_bio(self.bio_nam, self.bio_frame.get_display_text_label())
 		else:
