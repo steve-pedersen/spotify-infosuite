@@ -34,7 +34,7 @@ class MultiFrameWindow(QWidget):
 
     # Opens css stylesheet and apply it to Spotify Infosuite elements
     def load_styles(self):
-        view_dir = os.path.abspath('./spotify_infosuite/view')
+        view_dir = os.path.abspath('./view')
 
         style = ''
         with open(view_dir + '/style.css') as f:
@@ -42,3 +42,4 @@ class MultiFrameWindow(QWidget):
                 style += line
                 # print(line)
         self.setStyleSheet(style)
+

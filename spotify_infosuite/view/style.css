@@ -56,8 +56,18 @@ QLabel#frame_title {
     padding: 2px;
 }
 
-QLabel#frame_text {
+QLabel#frame_text{
     background-color: #ffffff;
-    text-align: center;
-    padding: 2px;
+
+	padding-top: 5px;
+
 }
+
+
+/*("""*/
+        /*.QWidget {*/
+            /*border: 20px solid black;*/
+            /*border-radius: 10px;*/
+            /*background-color: rgb(255, 255, 255);*/
+            /*}*/
+        /*""")*/

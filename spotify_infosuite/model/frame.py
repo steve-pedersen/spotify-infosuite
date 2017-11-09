@@ -35,10 +35,11 @@ class Frame(QLabel):
 	def set_display_text(self, text, x, y):
 		# self.display_text_label = QLabel(self)
 		self.display_text_label.setText(text)
-		self.display_text_label.setGeometry(x, y, self.w*0.95, self.h*0.9)
+		self.display_text_label.setGeometry(x, y, self.w*0.93, self.h*0.9)
 		self.display_text_label.setObjectName('frame_text')
 		self.display_text_label.setWordWrap(True)
 		self.frame_components.append(self.display_text_label)
+		self.display_text_label.setStyleSheet('')
 
 	def get_display_text_label(self):
 		return self.display_text_label
