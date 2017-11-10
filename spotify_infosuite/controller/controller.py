@@ -53,7 +53,7 @@ class Controller(QWidget):
 
 		artist = musikki.search(self.get_current_artist())
 
-		if artist is not None:
+		if artist.is_found:
 			artist.get_full_bio(self.bio_nam, self.bio_frame.get_display_text_label())
 		else:
 			self.bio_frame.set_display_text('No results for current artist.', 10, 45)
