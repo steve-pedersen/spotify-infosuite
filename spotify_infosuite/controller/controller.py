@@ -18,12 +18,10 @@ from PyQt5.QtGui import *
 from PyQt5 import QtGui
 
 
-class Controller(QThread):
-
-	testsignal = pyqtSignal(str)
+class Controller(QWidget):
 
 	def __init__(self, app, screen_width, screen_height):
-		super(Controller,self).__init__()
+		super().__init__()
 		print(screen_width, screen_height)
 
 		space_w = screen_width / 4
@@ -60,21 +58,21 @@ class Controller(QThread):
 		else:
 			self.bio_frame.set_display_text('No results for current artist.', 10, 45)
 
-		# start a synchronization thread
-		# self.playback_sync_thread = Thread(target=self.sync_playback, args=(10,))
-		# self.playback_sync_thread.start()
-		# self.main_app = app
-		# self.appinit()
+		# spawn a playback listener to keep InfoSuite in sync with Spotify
+		self.listener = Listener(self.current_playing, self.spotify)
+		self.listener.song_change.connect(self.update_playback_display)
+		self.listener.run()		
+		# try:
+		# 	self.listener = Listener(self.current_playing, self.spotify)
+		# 	self.listener.song_change.connect(self.update_playback_display)
+		# 	self.listener.run()
+		# except (KeyboardInterrupt, SystemExit):
+		# 	cleanup_stop_thread()
+		# 	sys.exit()	
 
-		# self.my_listener = Listener()
-		# self.my_sender = Sender()
-		# self.my_listener.connect_slots(self.my_sender, self, self.say_hello)
-		# self.my_listener.start()
-		# self.my_sender.start()
 
-
-	# def say_hello(self):
-	# 	print('holy crap it worked')
+	def playback_change(self):
+		self.update_playback_display()
 
 	def init_bio_frame(self):
 		x = 0
@@ -149,18 +147,7 @@ class Controller(QThread):
 
 	# Continuously pings Spotify app to see if the song has changed
 	# Will update all frames if a song changes.
-	# TODO: Determine more granular levels of updating, e.g. if a song changes
-	#	but the artist stays the same, update song chart info but not Artist Bio
-	def sync_playback(self, arg):
-		while True:
-			if self.current_playing != self.get_current_playing():
-				# update entire window
-				# self.playback_sync_thread.join()
-				self.update_everything()
-				# resume synchronization thread
-				# self.playback_sync_thread = Thread(target=self.sync_playback, args=(10,))
-				# self.playback_sync_thread.start()				
-			sleep(0.5)
+
 
 	def update_playback_display(self):
 		if self.current_playing != self.get_current_playing():
@@ -193,41 +180,34 @@ class Controller(QThread):
 		self.spotify.pause()
 
 	def get_current_artist(self):
-		return self.spotify.get_current_artist()
+		return self.spotify.get_current_artist().rstrip()
 
 	def get_current_song(self):
-		return self.spotify.get_current_song()
+		return self.spotify.get_current_song().rstrip()
 
 	def get_current_playing(self):
 		return self.get_current_artist() + ' - ' + self.get_current_song()
 
-# class Listener(QtCore.QThread):
+class Listener(QThread):
 
-# 	def __init__(self):
-# 		super(Listener,self).__init__()
+	song_change = pyqtSignal()
 
-# 	def run(self):
-# 		print('listener: started')
-# 		while True:
-# 			sleep(2)
+	def __init__(self, stored_song, spotify):
+		super().__init__()
+		self.stored_song = stored_song.rstrip()
+		self.spotify = spotify
 
+		# start a synchronization thread that will close when app does
+		self.playback_sync_thread = Thread(target=self.sync_playback)
+		self.playback_sync_thread.setDaemon(True) 
 
-# 	def connect_slots(self, sender, main_app, handler):
-# 		sender.testsignal.connect(self.say_hello)
-# 		main_app.testsignal.connect(handler)
-
-# 	def say_hello(self):
-# 		print('listener: received signal')
-
-# class Sender(QtCore.QThread):
-# 	testsignal = pyqtSignal(str)
-# 	def __init__(self):
-# 		super(Sender,self).__init__()
-
-# 	def run(self):
-# 		for i in range(5):
-# 			print('sender: sending signal')
-# 			self.testsignal.emit('testsignal')
-# 			sleep(2)
-# 		print('sender: finished')
+	def run(self):
+		self.playback_sync_thread.start() 	
+		
+	def sync_playback(self):
+		print('listener: started')
+		while True:
+			if self.stored_song != self.spotify.get_current_playing().rstrip():
+				self.song_change.emit()
+			sleep(1)
 
