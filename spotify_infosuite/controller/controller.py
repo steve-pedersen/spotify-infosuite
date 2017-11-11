@@ -144,10 +144,8 @@ class Controller(QWidget):
 			
 			# print(bio)
 			self.bio_frame.set_display_text(bio, 10, 45)
-
-	# Continuously pings Spotify app to see if the song has changed
-	# Will update all frames if a song changes.
-
+		else:
+			self.bio_frame.set_display_text('No artist bio found.', 10, 45)
 
 	def update_playback_display(self):
 		if self.current_playing != self.get_current_playing():
