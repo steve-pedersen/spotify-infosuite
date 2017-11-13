@@ -68,7 +68,7 @@ class Playback():
 		instruction = ('on getCurrentTrack()\n'
 			' tell application "Spotify"\n'
 			'  set currentTitle to name of current track as string\n'
-			'  currentTitle\n'
+			'  return currentTitle\n'
 			' end tell\n'
 			'end getCurrentTrack\n'
 			'getCurrentTrack()')
@@ -77,6 +77,20 @@ class Playback():
 			stdout=subprocess.PIPE)
 		out, err = proc.communicate()
 		return out.decode(sys.getfilesystemencoding()).rstrip()
+
+	def get_current_album(self):
+		instruction = ('on getCurrentTrack()\n'
+			' tell application "Spotify"\n'
+			'  set currentAlbum to album of current track as string\n'
+			'  return currentAlbum\n'
+			' end tell\n'
+			'end getCurrentTrack\n'
+			'getCurrentTrack()')
+		proc = subprocess.Popen(
+			['osascript', '-e', instruction],
+			stdout=subprocess.PIPE)
+		out, err = proc.communicate()
+		return out.decode(sys.getfilesystemencoding()).rstrip()		
 
 	def get_current_playing(self):
 		instruction = ('on getCurrentTrack()\n'
