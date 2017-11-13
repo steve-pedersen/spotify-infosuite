@@ -43,6 +43,7 @@ class Controller(QWidget):
 
 		self.init_bio_frame()
 		self.init_playback_frame()
+		self.init_review_frame()
 
 		self.bio_nam = QtNetwork.QNetworkAccessManager()
 		self.bio_nam.finished.connect(self.search_bio_handler)
@@ -53,6 +54,19 @@ class Controller(QWidget):
 			artist.get_full_bio(self.bio_nam, self.bio_frame.get_display_text_label())
 		else:
 			self.bio_frame.set_display_text('No results for current artist.', 10, 45)
+
+	def init_review_frame(self):
+		x = self.window_w * 2 / 3
+		y = self.window_h / 2
+		w = self.window_w / 3
+		h = self.window_h / 2
+		self.review_frame = model.Frame(
+			self, self.multi_frame_window, x,y, w,h, 'review_frame'
+		)
+
+		self.review_frame.set_display_title('Reviews', 10, 5)
+		self.multi_frame_window.add_frame(self.review_frame)
+
 
 	def init_bio_frame(self):
 		x = 0
@@ -72,12 +86,7 @@ class Controller(QWidget):
 		self.current_playing = self.get_current_playing()
 		self.current_artist = self.get_current_artist()
 		self.current_song = self.get_current_song()
-		self.current_album = self.get_current_album()
-		
-		# spawn a playback listener to keep InfoSuite in sync with Spotify
-		self.listener = Listener(self.current_playing, self.spotify)
-		self.listener.song_change.connect(self.update_playback_display)
-		self.listener.run()	
+		self.current_album = self.get_current_album()		
 
 		print('Artist:\t', self.current_artist)
 		print('Song:\t', self.current_song)
@@ -96,6 +105,11 @@ class Controller(QWidget):
 		self.playback_frame.get_playback_next_button().clicked.connect(self.next)
 
 		self.multi_frame_window.add_frame(self.playback_frame)
+
+		# spawn a playback listener to keep InfoSuite in sync with Spotify
+		self.listener = Listener(self.current_playing, self.spotify)
+		self.listener.song_change.connect(self.update_playback_display)
+		self.listener.run()	
 
 	def update_everything(self):
 		# playback info
