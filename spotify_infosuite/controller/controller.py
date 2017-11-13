@@ -42,10 +42,6 @@ class Controller(QWidget):
 		self.multi_frame_window.show()
 
 		self.init_bio_frame()
-		self.spotify = self.open_spotify()
-		self.current_playing = self.get_current_playing()
-		self.current_artist = self.get_current_artist()
-		self.current_song = self.get_current_song()
 		self.init_playback_frame()
 
 		self.bio_nam = QtNetwork.QNetworkAccessManager()
@@ -57,22 +53,6 @@ class Controller(QWidget):
 			artist.get_full_bio(self.bio_nam, self.bio_frame.get_display_text_label())
 		else:
 			self.bio_frame.set_display_text('No results for current artist.', 10, 45)
-
-		# spawn a playback listener to keep InfoSuite in sync with Spotify
-		self.listener = Listener(self.current_playing, self.spotify)
-		self.listener.song_change.connect(self.update_playback_display)
-		self.listener.run()		
-		# try:
-		# 	self.listener = Listener(self.current_playing, self.spotify)
-		# 	self.listener.song_change.connect(self.update_playback_display)
-		# 	self.listener.run()
-		# except (KeyboardInterrupt, SystemExit):
-		# 	cleanup_stop_thread()
-		# 	sys.exit()	
-
-
-	def playback_change(self):
-		self.update_playback_display()
 
 	def init_bio_frame(self):
 		x = 0
@@ -88,6 +68,21 @@ class Controller(QWidget):
 		self.multi_frame_window.add_frame_bio(self.bio_frame)
 
 	def init_playback_frame(self):
+		self.spotify = self.open_spotify()
+		self.current_playing = self.get_current_playing()
+		self.current_artist = self.get_current_artist()
+		self.current_song = self.get_current_song()
+		self.current_album = self.get_current_album()
+		
+		# spawn a playback listener to keep InfoSuite in sync with Spotify
+		self.listener = Listener(self.current_playing, self.spotify)
+		self.listener.song_change.connect(self.update_playback_display)
+		self.listener.run()	
+
+		print('Artist:\t', self.current_artist)
+		print('Song:\t', self.current_song)
+		print('Album:\t', self.current_album)
+
 		x = 0
 		y = 0
 		w = self.window_w / 3
@@ -178,10 +173,13 @@ class Controller(QWidget):
 		self.spotify.pause()
 
 	def get_current_artist(self):
-		return self.spotify.get_current_artist().rstrip()
+		return self.spotify.get_current_artist()
 
 	def get_current_song(self):
-		return self.spotify.get_current_song().rstrip()
+		return self.spotify.get_current_song()
+
+	def get_current_album(self):
+		return self.spotify.get_current_album()
 
 	def get_current_playing(self):
 		return self.get_current_artist() + ' - ' + self.get_current_song()
@@ -203,7 +201,7 @@ class Listener(QThread):
 		self.playback_sync_thread.start() 	
 		
 	def sync_playback(self):
-		print('listener: started')
+		# print('listener: started')
 		while True:
 			if self.stored_song != self.spotify.get_current_playing().rstrip():
 				self.song_change.emit()
