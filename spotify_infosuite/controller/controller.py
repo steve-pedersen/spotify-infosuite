@@ -70,10 +70,6 @@ class Controller(QWidget):
 		self.listener.song_change.connect(self.update_playback_display)
 		self.listener.run()
 
-		self.lyrics_listener = Listener(self.current_playing, self.spotify)
-		self.lyrics_listener.song_change.connect(self.update_lyrics)
-		self.lyrics_listener.run()
-
 		# try:
 		# 	self.listener = Listener(self.current_playing, self.spotify)
 		# 	self.listener.song_change.connect(self.update_playback_display)
@@ -144,6 +140,7 @@ class Controller(QWidget):
 	def update_song_info(self):
 		self.current_playing = self.get_current_playing()
 		self.playback_frame.set_display_title(self.current_playing, 10, 10)
+		self.update_lyrics()
 
 	def set_lyrics(self):
 		error = "Error: Could not find lyrics."
