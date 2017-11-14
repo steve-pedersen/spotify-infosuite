@@ -68,7 +68,12 @@ class Controller(QWidget):
 		# spawn a playback listener to keep InfoSuite in sync with Spotify
 		self.listener = Listener(self.current_playing, self.spotify)
 		self.listener.song_change.connect(self.update_playback_display)
-		self.listener.run()		
+		self.listener.run()
+
+		self.lyrics_listener = Listener(self.current_playing, self.spotify)
+		self.lyrics_listener.song_change.connect(self.update_lyrics)
+		self.lyrics_listener.run()
+
 		# try:
 		# 	self.listener = Listener(self.current_playing, self.spotify)
 		# 	self.listener.song_change.connect(self.update_playback_display)
@@ -165,8 +170,6 @@ class Controller(QWidget):
 	def search_bio_handler(self, reply):
 		print('in search_handler')
 		er = reply.error()
-		print("REPLY: ", reply)
-		print("REPLY: ", type(reply))
 
 		if er == QtNetwork.QNetworkReply.NoError:
 			response = reply.readAll()
@@ -189,6 +192,10 @@ class Controller(QWidget):
 		else:
 			self.bio_frame.set_display_text('No artist bio found.', 10, 45)
 
+	def update_lyrics(self):
+		if self.current_playing != self.get_current_playing():
+			self.set_lyrics()
+
 	def update_playback_display(self):
 		if self.current_playing != self.get_current_playing():
 			if (self.current_artist == self.get_current_artist() and
@@ -197,7 +204,7 @@ class Controller(QWidget):
 				self.update_song_info()
 			else:
 				print('Artist and song change...')
-				self.update_everything()	
+				self.update_everything()
 
 	# Spotify Controls
 	def open_spotify(self):
