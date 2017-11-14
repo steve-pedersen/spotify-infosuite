@@ -30,9 +30,6 @@ class Artist:
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		nam.get(req)
 
-	#
-
-
 # method needs to make a search req and then create Artist obj with mkid
 def search(artist, song='', album=''):
 	# replace spaces in the url with the '%20'

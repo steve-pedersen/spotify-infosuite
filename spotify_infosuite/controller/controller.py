@@ -5,9 +5,13 @@ import musikki
 import json
 import sys
 import threading
+import requests
+import urllib
 
 from threading import Thread
 from time import sleep
+
+from bs4 import BeautifulSoup
 
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QAction, QLineEdit
 from PyQt5.QtGui import QPixmap
@@ -42,6 +46,7 @@ class Controller(QWidget):
 		self.multi_frame_window.show()
 
 		self.init_bio_frame()
+		self.init_lyrics_frame()
 		self.spotify = self.open_spotify()
 		self.current_playing = self.get_current_playing()
 		self.current_artist = self.get_current_artist()
@@ -58,6 +63,8 @@ class Controller(QWidget):
 		else:
 			self.bio_frame.set_display_text('No results for current artist.', 10, 45)
 
+		self.set_lyrics()
+
 		# spawn a playback listener to keep InfoSuite in sync with Spotify
 		self.listener = Listener(self.current_playing, self.spotify)
 		self.listener.song_change.connect(self.update_playback_display)
@@ -73,6 +80,18 @@ class Controller(QWidget):
 
 	def playback_change(self):
 		self.update_playback_display()
+
+	def init_lyrics_frame(self):
+		x = self.window_w / 3
+		y = 0
+		w = self.window_w / 3
+		h = self.window_h
+		self.lyrics_frame = model.Frame(
+			self, self.multi_frame_window, x,y, w,h, "lyrics_frame"
+		)
+
+		self.lyrics_frame.set_display_title("Lyrics", 10, 5)
+		self.multi_frame_window.add_frame_lyrics(self.lyrics_frame)
 
 	def init_bio_frame(self):
 		x = 0
@@ -121,10 +140,33 @@ class Controller(QWidget):
 		self.current_playing = self.get_current_playing()
 		self.playback_frame.set_display_title(self.current_playing, 10, 10)
 
+	def set_lyrics(self):
+		error = "Error: Could not find lyrics."
+		proxy = urllib.request.getproxies()
+
+		print("current playing: ", self.current_playing)
+		artist = self.get_current_artist()
+		song = self.get_current_song()
+
+		url = ""
+		try:
+			url = "http://genius.com/%s-%s-lyrics" % (artist.replace(' ', '-'), song.replace(' ', '-'))
+			lyricspage = requests.get(url, proxies=proxy)
+			print(url)
+			soup = BeautifulSoup(lyricspage.text, 'html.parser')
+			lyrics = soup.text.split('Lyrics')[3].split('More on Genius')[0]
+			if artist.lower().replace(" ", "") not in soup.text.lower().replace(" ", ""):
+				lyrics = error
+		except Exception:
+			lyrics = error
+		self.lyrics_frame.set_display_text(lyrics, 10, 45)
+
 	# Handlers
 	def search_bio_handler(self, reply):
 		print('in search_handler')
 		er = reply.error()
+		print("REPLY: ", reply)
+		print("REPLY: ", type(reply))
 
 		if er == QtNetwork.QNetworkReply.NoError:
 			response = reply.readAll()
@@ -141,7 +183,7 @@ class Controller(QWidget):
 					t = t.toString()
 					paragraph += t.rstrip() if i == 0 else (' ' + t.rstrip())
 				bio += paragraph + '\n\n'
-			
+
 			# print(bio)
 			self.bio_frame.set_display_text(bio, 10, 45)
 		else:
@@ -164,15 +206,18 @@ class Controller(QWidget):
 
 	def play_pause(self):
 		self.spotify.play_pause()
-		self.update_playback_display()		
+		self.update_playback_display()
+		self.set_lyrics()
 
 	def next(self):
 		self.spotify.next()
 		self.update_playback_display()
+		self.set_lyrics()
 
 	def prev(self):
 		self.spotify.prev()
-		self.update_playback_display()	
+		self.update_playback_display()
+		self.set_lyrics()
 
 	def pause(self):
 		self.spotify.pause()
