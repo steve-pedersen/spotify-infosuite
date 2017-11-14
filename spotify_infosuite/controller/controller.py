@@ -9,8 +9,6 @@ import threading
 
 from threading import Thread
 from time import sleep
-from twisted.internet import defer
-from twisted.python import failure
 
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QAction, QLineEdit, QHBoxLayout, QVBoxLayout, QGroupBox
 from PyQt5.QtGui import QPixmap
