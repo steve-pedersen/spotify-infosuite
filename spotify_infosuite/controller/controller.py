@@ -10,8 +10,7 @@ import threading
 from threading import Thread
 from time import sleep
 
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QAction, QLineEdit, QHBoxLayout, QVBoxLayout, QGroupBox
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QAction, QLineEdit
 from PyQt5.QtMultimedia import QSoundEffect
 from PyQt5.QtCore import *
 from PyQt5 import QtNetwork, QtCore
