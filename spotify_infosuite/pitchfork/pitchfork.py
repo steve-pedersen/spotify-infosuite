@@ -11,6 +11,7 @@ import json
 import re
 import difflib
 import sys
+import ssl
 from bs4 import BeautifulSoup
 
 
@@ -189,7 +190,8 @@ def search(artist, album):
 	request = Request(url='http://pitchfork.com/search/?query=' + query,
 					  data=None,
 					  headers={'User-Agent': 'michalczaplinski/pitchfork-v0.1'})
-	response = urlopen(request)
+	context = ssl._create_unverified_context()
+	response = urlopen(request, context=context)
 	text = response.read().decode('UTF-8').split('window.App=')[1].split(';</script>')[0]
 
 	# the server responds with json so we load it into a dictionary
@@ -209,7 +211,8 @@ def search(artist, album):
 	request = Request(url=full_url,
 					  data=None,
 					  headers={'User-Agent': 'michalczaplinski/pitchfork-v0.1'})
-	response_text = urlopen(request).read()
+	context = ssl._create_unverified_context()
+	response_text = urlopen(request, context=context).read()
 	soup = BeautifulSoup(response_text, "lxml")
 
 	# check if the review does not review multiple albums

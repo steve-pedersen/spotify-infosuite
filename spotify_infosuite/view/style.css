@@ -97,9 +97,9 @@ QLabel#review_frame {
 QLabel#review {
     background-color: #0f0f0f;
     color: #fff;
-    border: 1px solid #25D34D;
+    /*border: 1px solid #25D34D;*/
     border-radius: 5%;
-    padding: 5px;
+    /*padding: 5px;*/
 }
 
 QLabel#frame_title {

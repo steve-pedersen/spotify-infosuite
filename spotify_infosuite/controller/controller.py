@@ -63,7 +63,7 @@ class Controller(QWidget):
 		y = self.window_h / 2
 		w = self.window_w / 3
 		h = self.window_h / 2
-		title_x = 10
+		title_x = 5
 		title_y = 5
 		self.review_frame = model.Frame(
 			self, self.multi_frame_window, x,y, w,h, 'review_frame'
@@ -71,8 +71,10 @@ class Controller(QWidget):
 		self.review_frame.set_display_title('Reviews', title_x, title_y)
 
 		self.pitchfork_review = QLabel('Pitchfork', self.review_frame)
+		self.pitchfork_review.resize(w-10,h - title_y*10)
 		self.pitchfork_review.move(title_x, title_y*10)
 		self.pitchfork_review.setObjectName('review')
+		self.pitchfork_review.setWordWrap(True)
 		self.get_pitchfork_review()
 
 		self.multi_frame_window.add_frame(self.review_frame)
@@ -80,11 +82,19 @@ class Controller(QWidget):
 	def get_pitchfork_review(self):
 
 		def __get_data():
-			p = pitchfork.search(self.current_artist, self.current_album)
-			# promise.callback('success')
-			# update pitchfork review text??
-			self.pitchfork_review.resize(200,200)
-			self.pitchfork_review.setText('Pitchfork\n\n'+p.editorial()[:100])
+			album = self.current_album.replace('(Deluxe Version)','')
+			album = album.strip('[Remastered]').rstrip()
+			print(album)
+			p = pitchfork.search(self.current_artist, album)
+			# self.pitchfork_review.resize(self.pitchfork_review.width(),200)
+			self.pitchfork_review.setText(
+				'Pitchfork - Rating: '+str(p.score())+' - '+p.album()
+				+' ('+str(p.year())+')'+'\n\n'+p.editorial()[:1140]
+			)
+			# self.review_frame.set_display_text(
+			# 	'Pitchfork - Rating: '+str(p.score())+'/10 - '+p.album()+' ('+str(p.year())+')'+
+			# 	'\n\n\t'+p.editorial(), 5, 40
+			# )
 			
 		my_thread = threading.Thread(target=__get_data)
 		my_thread.start()		
@@ -104,14 +114,7 @@ class Controller(QWidget):
 
 	def init_playback_frame(self):
 		self.spotify = self.open_spotify()
-		self.current_playing = self.get_current_playing()
-		self.current_artist = self.get_current_artist()
-		self.current_song = self.get_current_song()
-		self.current_album = self.get_current_album()		
-
-		print('Artist:\t', self.current_artist)
-		print('Song:\t', self.current_song)
-		print('Album:\t', self.current_album)
+		self.update_current_playing()
 
 		x = 0
 		y = 0
@@ -134,22 +137,35 @@ class Controller(QWidget):
 
 	def update_everything(self):
 		# playback info
-		self.current_playing = self.get_current_playing()
+		self.update_current_playing()
 		self.playback_frame.set_display_title(self.current_playing, 10, 10)
 
 		self.update_artist_info()
 		self.update_song_info()
 
 	def update_artist_info(self):
-		self.current_playing = self.get_current_playing()
+		self.update_current_playing()
 		self.playback_frame.set_display_title(self.current_playing, 10, 10)		
 		# bio
 		artist = musikki.search(self.get_current_artist())
 		artist.get_full_bio(self.bio_nam, self.bio_frame.get_display_text_label())
 
 	def update_song_info(self):
-		self.current_playing = self.get_current_playing()
+		self.update_current_playing()
 		self.playback_frame.set_display_title(self.current_playing, 10, 10)
+
+	def update_album_info(self):
+		self.get_pitchfork_review()
+
+	def update_current_playing(self):
+		self.current_playing = self.get_current_playing()
+		self.current_artist = self.get_current_artist()
+		self.current_song = self.get_current_song()
+		self.current_album = self.get_current_album()		
+
+		print('Artist:\t', self.current_artist)
+		print('Song:\t', self.current_song)
+		print('Album:\t', self.current_album)
 
 	# Handlers
 	def search_bio_handler(self, reply):
@@ -181,11 +197,18 @@ class Controller(QWidget):
 		if self.current_playing != self.get_current_playing():
 			if (self.current_artist == self.get_current_artist() and
 				self.current_song != self.get_current_song()):
+				if self.current_album != self.get_current_album():
+					print('Album change...')
+					self.update_album_info()
 				print('Song change...')
 				self.update_song_info()
 			else:
 				print('Artist and song change...')
-				self.update_everything()	
+				self.update_everything()
+		elif (self.current_artist == self.get_current_artist() and
+			self.current_album != self.get_current_album()):
+			print('need album update')
+			self.update_album_info()
 
 	# Spotify Controls
 	def open_spotify(self):
