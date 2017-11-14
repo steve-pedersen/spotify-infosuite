@@ -8,8 +8,10 @@ import threading
 
 from threading import Thread
 from time import sleep
+from twisted.internet import defer
+from twisted.python import failure
 
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QAction, QLineEdit
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QAction, QLineEdit, QHBoxLayout, QVBoxLayout, QGroupBox
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtMultimedia import QSoundEffect
 from PyQt5.QtCore import *
@@ -60,13 +62,29 @@ class Controller(QWidget):
 		y = self.window_h / 2
 		w = self.window_w / 3
 		h = self.window_h / 2
+		title_x = 10
+		title_y = 5
 		self.review_frame = model.Frame(
 			self, self.multi_frame_window, x,y, w,h, 'review_frame'
 		)
+		self.review_frame.set_display_title('Reviews', title_x, title_y)
 
-		self.review_frame.set_display_title('Reviews', 10, 5)
+		self.pitchfork_review = QLabel('Pitchfork', self.review_frame)
+		self.pitchfork_review.move(title_x, title_y*10)
+		self.pitchfork_review.setObjectName('review')
+		self.get_pitchfork_review()
+
 		self.multi_frame_window.add_frame(self.review_frame)
 
+	def get_pitchfork_review(self):
+
+		def __get_data():
+			p = pitchfork.search(self.current_artist, self.current_album)
+			# promise.callback('success')
+			# update pitchfork review text??
+			
+		my_thread = t.Thread(target=__get_data)
+		my_thread.start()		
 
 	def init_bio_frame(self):
 		x = 0
