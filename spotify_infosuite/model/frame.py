@@ -1,6 +1,7 @@
 
-from PyQt5.QtWidgets import QLabel, QPushButton
+from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QScrollArea
 from PyQt5.QtCore import *
+from PyQt5 import QtGui
 
 class Frame(QLabel):
 
@@ -27,19 +28,25 @@ class Frame(QLabel):
 		# self.display_title_label = QLabel(self)
 		self.display_title_label.setText(title)
 		self.display_title_label.move(x, y)
-		self.display_title_label.resize(int(self.w*0.93), 35) # limit width to 93% of frame
+		self.display_title_label.resize(int(self.w*0.96), 35) # limit width to 93% of frame
 		self.display_title_label.setObjectName('frame_title')
 		self.display_title_label.setWordWrap(True)
 		self.frame_components.append(self.display_title_label)
 
-	def set_display_text(self, text, x, y):
+	def set_display_text(self, text, x=5, y=45):
 		# self.display_text_label = QLabel(self)
 		self.display_text_label.setText(text)
-		self.display_text_label.setGeometry(x, y, self.w*0.93, self.h*0.9)
+		self.display_text_label.setGeometry(x, y, self.w*0.96, self.h*0.93)
 		self.display_text_label.setObjectName('frame_text')
 		self.display_text_label.setWordWrap(True)
 		self.display_text_label.setStyleSheet('')
 		self.frame_components.append(self.display_text_label)
+		scroll = QScrollArea()
+		scroll.setWidget(self.display_text_label)
+		scroll.setWidgetResizable(True)
+		scroll.setFixedHeight(self.h*0.93 - y)
+		layout = QVBoxLayout(self)
+		layout.addWidget(scroll)
 
 	def get_display_text_label(self):
 		return self.display_text_label

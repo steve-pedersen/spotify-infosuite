@@ -66,31 +66,20 @@ class Controller(QWidget):
 			self, self.multi_frame_window, x,y, w,h, 'review_frame'
 		)
 		self.review_frame.set_display_title('Reviews', title_x, title_y)
-
-		self.pitchfork_review = QLabel('Pitchfork', self.review_frame)
-		self.pitchfork_review.resize(w-10,h - title_y*10)
-		self.pitchfork_review.move(title_x, title_y*10)
-		self.pitchfork_review.setObjectName('review')
-		self.pitchfork_review.setWordWrap(True)
-		self.get_pitchfork_review()
-
 		self.multi_frame_window.add_frame(self.review_frame)
+		self.get_pitchfork_review()	
 
 	def get_pitchfork_review(self):
 
 		def __get_data():
 			album = self.current_album.replace('(Deluxe Version)','')
 			album = album.strip('[Remastered]').rstrip()
-			print(album)
+			print('Searching Pitchfork for album: ', album)
 			p = pitchfork.search(self.current_artist, album)
-			# self.pitchfork_review.resize(self.pitchfork_review.width(),200)
-			self.pitchfork_review.setText(
-				'Pitchfork - Rating: '+str(p.score())+' - '+p.album()
-				+' ('+str(p.year())+')'+'\n\n'+p.editorial()[:1140]
-			)
+
 			# self.review_frame.set_display_text(
-			# 	'Pitchfork - Rating: '+str(p.score())+'/10 - '+p.album()+' ('+str(p.year())+')'+
-			# 	'\n\n\t'+p.editorial(), 5, 40
+			# 	'Pitchfork - Rating: '+str(p.score())+' - '+p.album()
+			# 	+' ('+str(p.year())+')'+'\n\n'+p.editorial()[:800]
 			# )
 			
 		my_thread = threading.Thread(target=__get_data)
