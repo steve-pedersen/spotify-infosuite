@@ -19,6 +19,7 @@ class Frame(QLabel):
 		self.char_limit = limit
 		self.display_title_label = QLabel(self)
 		self.display_text_label = QLabel(self)
+		self.layout = QVBoxLayout(self)
 		self.controller = controller
 		self.view = view
 		self.setGeometry(self.x, self.y, self.w, self.h)
@@ -44,9 +45,8 @@ class Frame(QLabel):
 		scroll = QScrollArea()
 		scroll.setWidget(self.display_text_label)
 		scroll.setWidgetResizable(True)
-		scroll.setFixedHeight(self.h*0.93 - y)
-		layout = QVBoxLayout(self)
-		layout.addWidget(scroll)
+		scroll.setFixedHeight(self.h*0.93 - y)		
+		self.layout.addWidget(scroll)
 
 	def get_display_text_label(self):
 		return self.display_text_label

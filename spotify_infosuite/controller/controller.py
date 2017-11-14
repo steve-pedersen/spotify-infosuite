@@ -67,13 +67,17 @@ class Controller(QWidget):
 		)
 		self.review_frame.set_display_title('Reviews', title_x, title_y)
 		self.multi_frame_window.add_frame(self.review_frame)
+
 		self.get_pitchfork_review()	
 
 	def get_pitchfork_review(self):
 
 		def __get_data():
-			album = self.current_album.replace('(Deluxe Version)','')
-			album = album.strip('[Remastered]').rstrip()
+			album = self.current_album.replace('(Deluxe Version)','').rstrip() \
+				.replace('[Remastered]','') \
+				.replace('(Deluxe Edition)','') \
+				.replace('(Remastered Deluxe Edition)','')
+			
 			print('Searching Pitchfork for album: ', album)
 			p = pitchfork.search(self.current_artist, album)
 
@@ -117,7 +121,7 @@ class Controller(QWidget):
 		self.multi_frame_window.add_frame(self.playback_frame)
 
 		# spawn a playback listener to keep InfoSuite in sync with Spotify
-		self.listener = Listener(self.current_playing, self.spotify)
+		self.listener = Listener(self.current_playing, self.current_album, self.spotify)
 		self.listener.song_change.connect(self.update_playback_display)
 		self.listener.run()	
 
@@ -128,6 +132,7 @@ class Controller(QWidget):
 
 		self.update_artist_info()
 		self.update_song_info()
+		self.update_album_info()
 
 	def update_artist_info(self):
 		self.update_current_playing()
@@ -148,7 +153,7 @@ class Controller(QWidget):
 		self.current_artist = self.get_current_artist()
 		self.current_song = self.get_current_song()
 		self.current_album = self.get_current_album()		
-
+		print('\n-----Now Playing-----')
 		print('Artist:\t', self.current_artist)
 		print('Song:\t', self.current_song)
 		print('Album:\t', self.current_album)
@@ -185,16 +190,17 @@ class Controller(QWidget):
 				self.current_song != self.get_current_song()):
 				if self.current_album != self.get_current_album():
 					print('Album change...')
-					self.update_album_info()
-				print('Song change...')
-				self.update_song_info()
+					self.update_everything()
+				else:
+					print('Song change...')
+					self.update_song_info()
 			else:
 				print('Artist and song change...')
 				self.update_everything()
 		elif (self.current_artist == self.get_current_artist() and
 			self.current_album != self.get_current_album()):
 			print('need album update')
-			self.update_album_info()
+			self.update_everything()
 
 	# Spotify Controls
 	def open_spotify(self):
