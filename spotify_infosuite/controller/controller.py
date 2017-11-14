@@ -2,6 +2,7 @@ import model
 import view
 import playback
 import musikki
+import pitchfork
 import json
 import sys
 import threading
@@ -82,8 +83,10 @@ class Controller(QWidget):
 			p = pitchfork.search(self.current_artist, self.current_album)
 			# promise.callback('success')
 			# update pitchfork review text??
+			self.pitchfork_review.resize(200,200)
+			self.pitchfork_review.setText('Pitchfork\n\n'+p.editorial()[:100])
 			
-		my_thread = t.Thread(target=__get_data)
+		my_thread = threading.Thread(target=__get_data)
 		my_thread.start()		
 
 	def init_bio_frame(self):
