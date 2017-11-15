@@ -202,7 +202,7 @@ class Requester(QThread):
 
 			if p.has_review:
 				review = 'Pitchfork - Rating: '+str(p.score())+' - '+p.album() \
-					+' ('+str(p.year())+')'+'\n\n'+p.editorial()[:800]
+					+' ('+str(p.year())+')'+'\n\n'+p.editorial() #[:800]
 			else:
 				review = p.message
 
