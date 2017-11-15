@@ -36,17 +36,21 @@ class Frame(QLabel):
 
 	def set_display_text(self, text, x=5, y=45):
 		# self.display_text_label = QLabel(self)
-		self.display_text_label.setText(text)
-		self.display_text_label.setGeometry(x, y, self.w*0.96, self.h*0.93)
-		self.display_text_label.setObjectName('frame_text')
-		self.display_text_label.setWordWrap(True)
-		self.display_text_label.setStyleSheet('')
-		self.frame_components.append(self.display_text_label)
-		scroll = QScrollArea()
-		scroll.setWidget(self.display_text_label)
-		scroll.setWidgetResizable(True)
-		scroll.setFixedHeight(self.h*0.93 - y)		
-		self.layout.addWidget(scroll)
+		if self.display_text_label.text() == '':
+			self.display_text_label.setText(text)
+			self.display_text_label.setGeometry(x, y, self.w*0.96, self.h*0.93)
+			self.display_text_label.setObjectName('frame_text')
+			self.display_text_label.setWordWrap(True)
+			self.display_text_label.setStyleSheet('')
+			self.frame_components.append(self.display_text_label)
+			scroll = QScrollArea()
+			scroll.setWidget(self.display_text_label)
+			scroll.setWidgetResizable(True)
+			scroll.setFixedHeight(self.h*0.93 - y)		
+			self.layout.addWidget(scroll)
+		else:
+			self.display_text_label.setText(text)
+
 
 	def get_display_text_label(self):
 		return self.display_text_label

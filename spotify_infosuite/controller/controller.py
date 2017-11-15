@@ -45,49 +45,12 @@ class Controller(QWidget):
 		self.init_playback_frame()
 		self.init_review_frame()
 
-		self.bio_nam = QtNetwork.QNetworkAccessManager()
-		self.bio_nam.finished.connect(self.search_bio_handler)
-
 		artist = musikki.search(self.get_current_artist())
 
 		if artist.is_found:
 			artist.get_full_bio(self.bio_nam, self.bio_frame.get_display_text_label())
 		else:
 			self.bio_frame.set_display_text('No results for current artist.', 10, 45)
-
-	def init_review_frame(self):
-		x = self.window_w * 2 / 3
-		y = self.window_h / 2
-		w = self.window_w / 3
-		h = self.window_h / 2
-		title_x = 5
-		title_y = 5
-		self.review_frame = model.Frame(
-			self, self.multi_frame_window, x,y, w,h, 'review_frame'
-		)
-		self.review_frame.set_display_title('Reviews', title_x, title_y)
-		self.multi_frame_window.add_frame(self.review_frame)
-
-		self.get_pitchfork_review()	
-
-	def get_pitchfork_review(self):
-
-		def __get_data():
-			album = self.current_album.replace('(Deluxe Version)','').rstrip() \
-				.replace('[Remastered]','') \
-				.replace('(Deluxe Edition)','') \
-				.replace('(Remastered Deluxe Edition)','')
-			
-			print('Searching Pitchfork for album: ', album)
-			p = pitchfork.search(self.current_artist, album)
-
-			# self.review_frame.set_display_text(
-			# 	'Pitchfork - Rating: '+str(p.score())+' - '+p.album()
-			# 	+' ('+str(p.year())+')'+'\n\n'+p.editorial()[:800]
-			# )
-			
-		my_thread = threading.Thread(target=__get_data)
-		my_thread.start()		
 
 	def init_bio_frame(self):
 		x = 0
@@ -97,10 +60,11 @@ class Controller(QWidget):
 		self.bio_frame = model.Frame(
 			self, self.multi_frame_window, x,y, w,h, "bio_frame"
 		)
-
-		# self.bio_frame.set_display_text(self.text, 5, 25)
 		self.bio_frame.set_display_title("Bio", 10, 5)
 		self.multi_frame_window.add_frame_bio(self.bio_frame)
+
+		self.bio_nam = QtNetwork.QNetworkAccessManager()
+		self.bio_nam.finished.connect(self.search_bio_handler)
 
 	def init_playback_frame(self):
 		self.spotify = self.open_spotify()
@@ -121,31 +85,59 @@ class Controller(QWidget):
 		self.multi_frame_window.add_frame(self.playback_frame)
 
 		# spawn a playback listener to keep InfoSuite in sync with Spotify
-		self.listener = Listener(self.current_playing, self.current_album, self.spotify)
+		self.listener = Listener(self.current_playing, self.spotify)
 		self.listener.song_change.connect(self.update_playback_display)
 		self.listener.run()	
+
+	def init_review_frame(self):
+		x = self.window_w * 2 / 3
+		y = self.window_h / 2
+		w = self.window_w / 3
+		h = self.window_h / 2
+		title_x = 5
+		title_y = 5
+		self.review_frame = model.Frame(
+			self, self.multi_frame_window, x,y, w,h, 'review_frame'
+		)
+		self.review_frame.set_display_title('Reviews', title_x, title_y)
+		self.multi_frame_window.add_frame(self.review_frame)
+
+		self.get_pitchfork_review()
+
+	def get_pitchfork_review(self):
+		requester = Requester()
+		requester.receiver.connect(self.update_review_frame)
+		requester.get_pitchfork_review(self.current_artist, self.current_album)
 
 	def update_everything(self):
 		# playback info
 		self.update_current_playing()
 		self.playback_frame.set_display_title(self.current_playing, 10, 10)
 
-		self.update_artist_info()
-		self.update_song_info()
-		self.update_album_info()
+		self.update_artist_info(False)
+		self.update_song_info(False)
+		self.update_album_info(False)
 
-	def update_artist_info(self):
-		self.update_current_playing()
-		self.playback_frame.set_display_title(self.current_playing, 10, 10)		
-		# bio
+	def update_artist_info(self, update_playback=True):
+		if update_playback:
+			self.update_current_playing()
+			self.playback_frame.set_display_title(self.current_playing, 10, 10)		
+		
+		# new bio needed
 		artist = musikki.search(self.get_current_artist())
 		artist.get_full_bio(self.bio_nam, self.bio_frame.get_display_text_label())
 
-	def update_song_info(self):
-		self.update_current_playing()
-		self.playback_frame.set_display_title(self.current_playing, 10, 10)
+	def update_song_info(self, update_playback=True):
+		if update_playback:
+			self.update_current_playing()
+			self.playback_frame.set_display_title(self.current_playing, 10, 10)		
 
-	def update_album_info(self):
+	def update_album_info(self, update_playback=True):
+		if update_playback:
+			self.update_current_playing()
+			self.playback_frame.set_display_title(self.current_playing, 10, 10)	
+		
+		# new reviews needed
 		self.get_pitchfork_review()
 
 	def update_current_playing(self):
@@ -158,7 +150,7 @@ class Controller(QWidget):
 		print('Song:\t', self.current_song)
 		print('Album:\t', self.current_album)
 
-	# Handlers
+	# bio handler
 	def search_bio_handler(self, reply):
 		print('in search_handler')
 		er = reply.error()
@@ -184,6 +176,7 @@ class Controller(QWidget):
 		else:
 			self.bio_frame.set_display_text('No artist bio found.', 10, 45)
 
+	# playback handler
 	def update_playback_display(self):
 		if self.current_playing != self.get_current_playing():
 			if (self.current_artist == self.get_current_artist() and
@@ -201,6 +194,10 @@ class Controller(QWidget):
 			self.current_album != self.get_current_album()):
 			print('need album update')
 			self.update_everything()
+
+	# reviews handler
+	def update_review_frame(self, review):
+		self.review_frame.set_display_text(review)
 
 	# Spotify Controls
 	def open_spotify(self):
@@ -233,6 +230,35 @@ class Controller(QWidget):
 
 	def get_current_playing(self):
 		return self.get_current_artist() + ' - ' + self.get_current_song()
+
+class Requester(QThread):
+
+	receiver = pyqtSignal(str)
+
+	def __init__(self):
+		super().__init__()
+
+	def get_pitchfork_review(self, artist, album):
+
+		def __get_data(arg1, arg2):
+			artist, album = arg1, arg2
+			album = album.replace('(Deluxe Version)','').rstrip() \
+				.replace('[Remastered]','') \
+				.replace('(Deluxe Edition)','') \
+				.replace('(Remastered Deluxe Edition)','')
+			
+			print('Searching Pitchfork for album: ', album)
+			p = pitchfork.search(artist, album)
+
+			review = 'Pitchfork - Rating: '+str(p.score())+' - '+p.album() \
+				+' ('+str(p.year())+')'+'\n\n'+p.editorial()[:800]
+
+			self.receiver.emit(review)
+			
+		my_thread = threading.Thread(target=__get_data, args=[artist,album])
+		my_thread.setDaemon(True) 
+		my_thread.start()	
+
 
 class Listener(QThread):
 
