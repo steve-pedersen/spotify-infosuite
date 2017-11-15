@@ -105,7 +105,7 @@ class Controller(QWidget):
 		self.get_pitchfork_review()
 
 	def get_pitchfork_review(self):
-		requester = Requester()
+		requester = pitchfork.Requester()
 		requester.receiver.connect(self.update_review_frame)
 		requester.get_pitchfork_review(self.current_artist, self.current_album)
 
@@ -230,34 +230,6 @@ class Controller(QWidget):
 
 	def get_current_playing(self):
 		return self.get_current_artist() + ' - ' + self.get_current_song()
-
-class Requester(QThread):
-
-	receiver = pyqtSignal(str)
-
-	def __init__(self):
-		super().__init__()
-
-	def get_pitchfork_review(self, artist, album):
-
-		def __get_data(arg1, arg2):
-			artist, album = arg1, arg2
-			album = album.replace('(Deluxe Version)','').rstrip() \
-				.replace('[Remastered]','') \
-				.replace('(Deluxe Edition)','') \
-				.replace('(Remastered Deluxe Edition)','')
-			
-			print('Searching Pitchfork for album: ', album)
-			p = pitchfork.search(artist, album)
-
-			review = 'Pitchfork - Rating: '+str(p.score())+' - '+p.album() \
-				+' ('+str(p.year())+')'+'\n\n'+p.editorial()[:800]
-
-			self.receiver.emit(review)
-			
-		my_thread = threading.Thread(target=__get_data, args=[artist,album])
-		my_thread.setDaemon(True) 
-		my_thread.start()	
 
 
 class Listener(QThread):

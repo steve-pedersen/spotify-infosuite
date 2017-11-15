@@ -13,6 +13,9 @@ import difflib
 import sys
 import ssl
 from bs4 import BeautifulSoup
+import threading
+from threading import Thread
+from PyQt5.QtCore import *
 
 
 if sys.version_info >= (3, 0):
@@ -176,6 +179,34 @@ class MultiReview(Review):
 	def to_json(self):
 		d = self._json_safe_dict()
 		return json.dumps(d)
+
+class Requester(QThread):
+
+	receiver = pyqtSignal(str)
+
+	def __init__(self):
+		super().__init__()
+
+	def get_pitchfork_review(self, artist, album):
+
+		def __get_data(arg1, arg2):
+			artist, album = arg1, arg2
+			album = album.replace('(Deluxe Version)','').rstrip() \
+				.replace('[Remastered]','') \
+				.replace('(Deluxe Edition)','') \
+				.replace('(Remastered Deluxe Edition)','')
+			
+			print('Searching Pitchfork for album: ', album)
+			p = search(artist, album)
+
+			review = 'Pitchfork - Rating: '+str(p.score())+' - '+p.album() \
+				+' ('+str(p.year())+')'+'\n\n'+p.editorial()[:800]
+
+			self.receiver.emit(review)
+			
+		my_thread = threading.Thread(target=__get_data, args=[artist,album])
+		my_thread.setDaemon(True) 
+		my_thread.start()	
 
 def search(artist, album):
 	"""
