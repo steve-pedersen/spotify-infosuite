@@ -57,6 +57,7 @@ class Review:
 		self.query = query
 		self.url = url
 		self.soup = soup
+		self.has_review = True
 
 	def score(self):
 		""" Returns the album score. """
@@ -199,14 +200,25 @@ class Requester(QThread):
 			print('Searching Pitchfork for album: ', album)
 			p = search(artist, album)
 
-			review = 'Pitchfork - Rating: '+str(p.score())+' - '+p.album() \
-				+' ('+str(p.year())+')'+'\n\n'+p.editorial()[:800]
+			if p.has_review:
+				review = 'Pitchfork - Rating: '+str(p.score())+' - '+p.album() \
+					+' ('+str(p.year())+')'+'\n\n'+p.editorial()[:800]
+			else:
+				review = p.message
 
 			self.receiver.emit(review)
 			
 		my_thread = threading.Thread(target=__get_data, args=[artist,album])
 		my_thread.setDaemon(True) 
 		my_thread.start()	
+
+class NoReview:
+	def __init__(self, artist, album):
+		self.artist = artist
+		self.album = album
+		self.has_review = False
+		self.message = ('Pitchfork does not have a review for '+artist+' - '+album)
+
 
 def search(artist, album):
 	"""
@@ -232,7 +244,8 @@ def search(artist, album):
 		# get the nested dictionary containing url to the review and album name
 		review_dict = obj['context']['dispatcher']['stores']['SearchStore']['results']['albumreviews']['items'][0]
 	except IndexError:
-		raise IndexError('The search returned no results! Try again with diferent parameters.')
+		return NoReview(artist, album)
+		# raise IndexError('The search returned no results! Try again with diferent parameters.')
 
 	url = review_dict['url']
 	matched_artist = review_dict['artists'][0]['display_name']
