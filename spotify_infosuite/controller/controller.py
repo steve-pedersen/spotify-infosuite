@@ -268,7 +268,7 @@ class Controller(QWidget):
 				f = f.toObject()
 				print('RESULTS: ', f)
 				# print("FFFF: ", f['thumbnails'].toString())
-				print("FFFF: ", f['thumbnails'])
+				print("THUMBS: ", f['thumbnails'])
 
 				# print('RESULTS: ', results)
 				# for i in f['thumbnails'].toArray():
