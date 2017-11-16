@@ -49,6 +49,7 @@ class Controller(QWidget):
 		self.init_bio_frame()
 		self.init_lyrics_frame()
 		self.init_review_frame()
+		self.init_images_frame()
 
 
 	def init_bio_frame(self):
@@ -104,7 +105,7 @@ class Controller(QWidget):
 		)
 
 		self.lyrics_frame.set_display_title("Lyrics", 10, 5)
-		self.multi_frame_window.add_frame_lyrics(self.lyrics_frame)
+		self.multi_frame_window.add_frame(self.lyrics_frame)
 
 		self.set_lyrics()
 
@@ -126,6 +127,28 @@ class Controller(QWidget):
 		self.multi_frame_window.add_frame(self.review_frame)
 
 		self.get_pitchfork_review()
+
+	def init_images_frame(self):
+		x = self.window_w * 2 / 3
+		y = 0
+		w = self.window_w / 3
+		h = self.window_h / 2
+		title_x = 5
+		title_y = 5
+		self.images_frame = model.Frame(
+			self, self.multi_frame_window, x,y, w,h, 'images_frame'
+		)
+		self.images_frame.set_display_title('Images', title_x, title_y)
+		self.multi_frame_window.add_frame(self.images_frame)
+
+		self.images_nam = QtNetwork.QNetworkAccessManager()
+		self.images_nam.finished.connect(self.search_images_handler)
+
+		artist = musikki.search(self.get_current_artist())
+		if artist.is_found:
+			artist.get_full_images(self.images_nam, self.images_frame.get_display_image_labels())
+		else:
+			self.images_frame.set_display_text('No results for current artist.', 10, 45)
 
 	def get_pitchfork_review(self):
 		requester = pitchfork.Requester()
@@ -222,6 +245,51 @@ class Controller(QWidget):
 		else:
 			self.bio_frame.set_display_text('No artist bio found.', 10, 45)
 
+	# images handler
+	def search_images_handler(self, reply):
+		print('in search_images_handler!!!!!!!!!!')
+		er = reply.error()
+
+		if er == QtNetwork.QNetworkReply.NoError:
+			response = reply.readAll()
+			document = QJsonDocument()
+			error = QJsonParseError()
+			document = document.fromJson(response, error)
+			json_resp = document.object()
+
+			# results = json_resp['results'].toArray()
+			# results = results.toObject()
+			#
+			# print(results[0].toArray())
+			# print(results[1])
+
+			bio = ''
+			for f in json_resp['results'].toArray():
+				f = f.toObject()
+				print('RESULTS: ', f)
+				# print("FFFF: ", f['thumbnails'].toString())
+				print("FFFF: ", f['thumbnails'])
+
+				# print('RESULTS: ', results)
+				# for i in f['thumbnails'].toArray():
+				#
+				# 	print("RESULTS 2: ", i)
+
+
+
+
+			# 	paragraph = ''
+			# 	for i, t in enumerate(f['url'].toArray()):
+			# 		t = t.toString()
+			#
+			# 		paragraph += t.rstrip() if i == 0 else (' ' + t.rstrip())
+			# 	bio += paragraph + '\n\n'
+			# print(bio)
+			# self.images_frame.set_display_text(bio, 10, 45)
+		else:
+			print('in else statement')
+
+
 	# playback handler
 	def update_playback_display(self):
 		if self.current_playing != self.get_current_playing():
@@ -296,7 +364,7 @@ class Listener(QThread):
 
 	def run(self):
 		self.playback_sync_thread.start() 	
-		
+
 	def sync_playback(self):
 		# print('listener: started')
 		counter = 1;

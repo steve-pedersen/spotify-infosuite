@@ -19,6 +19,7 @@ class Frame(QLabel):
 		self.char_limit = limit
 		self.display_title_label = QLabel(self)
 		self.display_text_label = QLabel(self)
+		self.display_images_label = QLabel(self)
 		self.layout = QVBoxLayout(self)
 		self.controller = controller
 		self.view = view
@@ -51,11 +52,21 @@ class Frame(QLabel):
 		else:
 			self.display_text_label.setText(text)
 
+	def set_display_images(self, x=5, y=45):
+			self.display_images_label.setGeometry(x, y, self.w*0.96, self.h*0.93)
+			self.display_images_label.setObjectName('frame_images')
+			self.display_images_label.setStyleSheet('')
+			self.frame_components.append(self.display_images_label)
+
+			self.display_images_label.setText('test')
 
 	def get_display_text_label(self):
 		return self.display_text_label
 	def get_display_title_label(self):
 		return self.display_title_label
+
+	def get_display_image_labels(self):
+		return self.display_images_label
 
 	def set_expand_button(self):
 		self.expand_button = QPushButton('Expand', self.view)

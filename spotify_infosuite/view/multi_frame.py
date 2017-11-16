@@ -25,11 +25,6 @@ class MultiFrameWindow(QWidget):
         self.frames.append(frame)
         frame.show()
 
-    def add_frame_lyrics(self, frame):
-        # frame.move(frame.x, frame.y)
-        self.frames.append(frame)
-        frame.show()
-
     def add_frame(self, frame):
         self.frames.append(frame)
         for component in frame.get_frame_components():

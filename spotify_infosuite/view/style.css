@@ -85,7 +85,7 @@ QPushButton#next_button {
 }
 
 
-QLabel#bio_frame, #lyrics_frame {
+QLabel#bio_frame, #lyrics_frame, #images_frame {
     background-color: #1D1D1D;
 	border: 2px solid #000;
 }
@@ -113,7 +113,7 @@ QLabel#frame_title {
     /*text-decoration: underline;*/
 }
 
-QLabel#frame_text {
+QLabel#frame_text, #frame_images {
     position: relative;
     background-color: #0f0f0f;
 	padding-top: 25px;
