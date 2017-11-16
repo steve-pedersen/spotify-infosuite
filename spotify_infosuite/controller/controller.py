@@ -45,28 +45,11 @@ class Controller(QWidget):
 		)
 		self.multi_frame_window.show()
 
+		self.init_playback_frame()
 		self.init_bio_frame()
 		self.init_lyrics_frame()
-		self.init_playback_frame()
 		self.init_review_frame()
 
-		artist = musikki.search(self.get_current_artist())
-
-		if artist.is_found:
-			artist.get_full_bio(self.bio_nam, self.bio_frame.get_display_text_label())
-		else:
-			self.bio_frame.set_display_text('No results for current artist.', 10, 45)
-
-		self.set_lyrics()
-
-		# spawn a playback listener to keep InfoSuite in sync with Spotify
-		self.listener = Listener(self.current_playing, self.spotify)
-		self.listener.song_change.connect(self.update_playback_display)
-		self.listener.run()
-
-		self.lyrics_listener = Listener(self.current_playing, self.spotify)
-		self.lyrics_listener.song_change.connect(self.update_lyrics)
-		self.lyrics_listener.run()
 
 	def init_bio_frame(self):
 		x = 0
@@ -81,6 +64,12 @@ class Controller(QWidget):
 
 		self.bio_nam = QtNetwork.QNetworkAccessManager()
 		self.bio_nam.finished.connect(self.search_bio_handler)
+
+		artist = musikki.search(self.get_current_artist())
+		if artist.is_found:
+			artist.get_full_bio(self.bio_nam, self.bio_frame.get_display_text_label())
+		else:
+			self.bio_frame.set_display_text('No results for current artist.', 10, 45)
 
 	def init_playback_frame(self):
 		self.spotify = self.open_spotify()
@@ -116,6 +105,12 @@ class Controller(QWidget):
 
 		self.lyrics_frame.set_display_title("Lyrics", 10, 5)
 		self.multi_frame_window.add_frame_lyrics(self.lyrics_frame)
+
+		self.set_lyrics()
+
+		# self.lyrics_listener = Listener(self.current_playing, self.spotify)
+		# self.lyrics_listener.song_change.connect(self.update_lyrics)
+		# self.lyrics_listener.run()
 
 	def init_review_frame(self):
 		x = self.window_w * 2 / 3
@@ -158,7 +153,9 @@ class Controller(QWidget):
 	def update_song_info(self, update_playback=True):
 		if update_playback:
 			self.update_current_playing()
-			self.playback_frame.set_display_title(self.current_playing, 10, 10)		
+			self.playback_frame.set_display_title(self.current_playing, 10, 10)	
+
+		self.set_lyrics()	
 
 	def update_album_info(self, update_playback=True):
 		if update_playback:
@@ -172,7 +169,7 @@ class Controller(QWidget):
 		self.current_playing = self.get_current_playing()
 		self.current_artist = self.get_current_artist()
 		self.current_song = self.get_current_song()
-		self.current_album = self.get_current_album()		
+		self.current_album = self.get_current_album()	
 		print('\n-----Now Playing-----')
 		print('Artist:\t', self.current_artist)
 		print('Song:\t', self.current_song)
@@ -224,10 +221,6 @@ class Controller(QWidget):
 			self.bio_frame.set_display_text(bio, 10, 45)
 		else:
 			self.bio_frame.set_display_text('No artist bio found.', 10, 45)
-
-	def update_lyrics(self):
-		if self.current_playing != self.get_current_playing():
-			self.set_lyrics()
 
 	# playback handler
 	def update_playback_display(self):
@@ -306,8 +299,15 @@ class Listener(QThread):
 		
 	def sync_playback(self):
 		# print('listener: started')
+		counter = 1;
 		while True:
 			if self.stored_song != self.spotify.get_current_playing().rstrip():
 				self.song_change.emit()
+				self.stored_song = self.spotify.get_current_playing().rstrip()
+				# self.playback_sync_thread.exit()
+				print(counter)
+				counter += 1
+			else:
+				counter = 1
 			sleep(1)
 
