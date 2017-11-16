@@ -156,9 +156,9 @@ class Controller(QWidget):
 		self.update_current_playing()
 		self.playback_frame.set_display_title(self.current_playing, 10, 10)
 
-		self.update_artist_info(False)
-		self.update_song_info(False)
+		self.update_artist_info(False)		
 		self.update_album_info(False)
+		self.update_song_info(False)
 
 	def update_artist_info(self, update_playback=True):
 		if update_playback:
@@ -310,18 +310,18 @@ class Controller(QWidget):
 
 	def play_pause(self):
 		self.spotify.play_pause()
-		self.update_playback_display()
-		self.set_lyrics()
+		# self.update_playback_display()
+		# self.set_lyrics()
 
 	def next(self):
 		self.spotify.next()
-		self.update_playback_display()
-		self.set_lyrics()
+		# self.update_playback_display()
+		# self.set_lyrics()
 
 	def prev(self):
 		self.spotify.prev()
-		self.update_playback_display()
-		self.set_lyrics()
+		# self.update_playback_display()
+		# self.set_lyrics()
 
 	def pause(self):
 		self.spotify.pause()
