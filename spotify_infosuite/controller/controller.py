@@ -305,7 +305,7 @@ class Controller(QWidget):
 
 	# Spotify Controls
 	def open_spotify(self):
-		spotify = playback.Playback()
+		spotify = playback.Playback() 
 		return spotify
 
 	def play_pause(self):
