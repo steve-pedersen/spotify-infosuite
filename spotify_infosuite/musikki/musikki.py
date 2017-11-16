@@ -21,27 +21,25 @@ class Artist:
 		print('Musikki found artist with name: ', self.artist)
 
 	# will fetch bio text and place it into specified container
-	def get_full_bio(self, nam, container):
-		self.bio_container = container
+	def get_full_bio(self, nam):
 
 		url = 'https://music-api.musikki.com/v1/artists'
 		url = url + '/' + str(self.mkid) + '/bio'
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
-		print(url)
+		# print(url)
 
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		nam.get(req)
 
 	# will fetch images and place it into specified container
-	def get_full_images(self, nam, container):
-		self.images_container = container
+	def get_full_images(self, nam):
 
 		url = 'https://music-api.musikki.com/v1/artists'
 		url = url + '/' + str(self.mkid) + '/images'
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
-		print(url)
+		# print('Musikki is getting images at: ', url)
 
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		nam.get(req)

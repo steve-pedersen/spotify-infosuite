@@ -53,12 +53,30 @@ class Frame(QLabel):
 			self.display_text_label.setText(text)
 
 	def set_display_images(self, x=5, y=45):
-			self.display_images_label.setGeometry(x, y, self.w*0.96, self.h*0.93)
-			self.display_images_label.setObjectName('frame_images')
-			self.display_images_label.setStyleSheet('')
-			self.frame_components.append(self.display_images_label)
+		self.display_images_label.setGeometry(x, y, self.w*0.96, self.h*0.93)
+		self.display_images_label.setObjectName('frame_images')
+		self.display_images_label.setStyleSheet('')
+		self.frame_components.append(self.display_images_label)
 
-			self.display_images_label.setText('test')
+		self.display_images_label.setText('test')
+
+	# TODO: maybe pass in a dict that has the pixmap, width and height of each
+	# 	rather than separate lists
+	def add_artist_images(self, images, widths, heights):
+		x, y = self.w / 8, self.h / 8
+		# w, h = self.w / 4, self.h / 3
+
+		for i, image in enumerate(images):
+			w, h = widths[i], heights[i]
+			# image = image.scaledToWidth(w)
+			
+			self.container = QLabel(self)
+			# self.container.setStyleSheet('border: 1px solid #0f0f0f;')
+			self.container.resize(w, h)			
+			self.container.setPixmap(image)
+			self.container.move(x + x*i, y)
+			self.container.show()
+
 
 	def get_display_text_label(self):
 		return self.display_text_label

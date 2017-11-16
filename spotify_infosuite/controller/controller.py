@@ -11,6 +11,7 @@ import urllib
 
 from threading import Thread
 from time import sleep
+from urllib.request import urlopen
 
 from bs4 import BeautifulSoup
 
@@ -66,9 +67,9 @@ class Controller(QWidget):
 		self.bio_nam = QtNetwork.QNetworkAccessManager()
 		self.bio_nam.finished.connect(self.search_bio_handler)
 
-		artist = musikki.search(self.get_current_artist())
-		if artist.is_found:
-			artist.get_full_bio(self.bio_nam, self.bio_frame.get_display_text_label())
+		self.musikki_artist = musikki.search(self.get_current_artist())
+		if self.musikki_artist.is_found:
+			self.musikki_artist.get_full_bio(self.bio_nam)
 		else:
 			self.bio_frame.set_display_text('No results for current artist.', 10, 45)
 
@@ -109,10 +110,6 @@ class Controller(QWidget):
 
 		self.set_lyrics()
 
-		# self.lyrics_listener = Listener(self.current_playing, self.spotify)
-		# self.lyrics_listener.song_change.connect(self.update_lyrics)
-		# self.lyrics_listener.run()
-
 	def init_review_frame(self):
 		x = self.window_w * 2 / 3
 		y = self.window_h / 2
@@ -144,9 +141,8 @@ class Controller(QWidget):
 		self.images_nam = QtNetwork.QNetworkAccessManager()
 		self.images_nam.finished.connect(self.search_images_handler)
 
-		artist = musikki.search(self.get_current_artist())
-		if artist.is_found:
-			artist.get_full_images(self.images_nam, self.images_frame.get_display_image_labels())
+		if self.musikki_artist.is_found:
+			self.musikki_artist.get_full_images(self.images_nam)
 		else:
 			self.images_frame.set_display_text('No results for current artist.', 10, 45)
 
@@ -221,7 +217,7 @@ class Controller(QWidget):
 
 	# bio handler
 	def search_bio_handler(self, reply):
-		print('in search_handler')
+
 		er = reply.error()
 
 		if er == QtNetwork.QNetworkReply.NoError:
@@ -247,7 +243,7 @@ class Controller(QWidget):
 
 	# images handler
 	def search_images_handler(self, reply):
-		print('in search_images_handler!!!!!!!!!!')
+		
 		er = reply.error()
 
 		if er == QtNetwork.QNetworkReply.NoError:
@@ -257,38 +253,28 @@ class Controller(QWidget):
 			document = document.fromJson(response, error)
 			json_resp = document.object()
 
-			# results = json_resp['results'].toArray()
-			# results = results.toObject()
-			#
-			# print(results[0].toArray())
-			# print(results[1])
+			urls, pixmaps, widths, heights = [], [], [], []
+			for f in json_resp['results'].toArray():				
+				f = f.toObject() 
+				thumb = f['thumbnails'].toArray()[0].toObject()
+				thumb_url = thumb['url'].toString()
+				thumb_width = thumb['width'].toInt()
+				thumb_height = thumb['height'].toInt()
 
-			bio = ''
-			for f in json_resp['results'].toArray():
-				f = f.toObject()
-				print('RESULTS: ', f)
-				# print("FFFF: ", f['thumbnails'].toString())
-				print("THUMBS: ", f['thumbnails'])
+				data = urlopen(thumb_url).read()
+				pixmap = QPixmap()
+				pixmap.loadFromData(data)
 
-				# print('RESULTS: ', results)
-				# for i in f['thumbnails'].toArray():
-				#
-				# 	print("RESULTS 2: ", i)
+				urls.append(thumb_url)
+				pixmaps.append(pixmap)
+				widths.append(thumb_width)
+				heights.append(thumb_height)
 
-
-
-
-			# 	paragraph = ''
-			# 	for i, t in enumerate(f['url'].toArray()):
-			# 		t = t.toString()
-			#
-			# 		paragraph += t.rstrip() if i == 0 else (' ' + t.rstrip())
-			# 	bio += paragraph + '\n\n'
-			# print(bio)
-			# self.images_frame.set_display_text(bio, 10, 45)
 		else:
 			print('in else statement')
 
+		self.images_frame.add_artist_images(pixmaps, widths, heights)
+		# print(pixmaps)
 
 	# playback handler
 	def update_playback_display(self):
