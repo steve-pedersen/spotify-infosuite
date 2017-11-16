@@ -16,6 +16,8 @@ class Artist:
 		self.appkey = appkey
 		self.is_found = is_found
 
+		self.images = []
+
 		print('Musikki found artist with name: ', self.artist)
 
 	# will fetch bio text and place it into specified container
@@ -26,6 +28,20 @@ class Artist:
 		url = url + '/' + str(self.mkid) + '/bio'
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
+		print(url)
+
+		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
+		nam.get(req)
+
+	# will fetch images and place it into specified container
+	def get_full_images(self, nam, container):
+		self.images_container = container
+
+		url = 'https://music-api.musikki.com/v1/artists'
+		url = url + '/' + str(self.mkid) + '/images'
+		url = url + '?appkey=' + self.appkey
+		url = url + '&appid=' + self.appid
+		print(url)
 
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		nam.get(req)
