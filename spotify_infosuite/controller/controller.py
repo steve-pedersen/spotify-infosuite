@@ -48,9 +48,9 @@ class Controller(QWidget):
 
 		self.init_playback_frame()
 		self.init_bio_frame()
-		self.init_lyrics_frame()
 		self.init_review_frame()
 		self.init_images_frame()
+		self.init_lyrics_frame()
 
 
 	def init_bio_frame(self):
