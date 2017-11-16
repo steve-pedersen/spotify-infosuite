@@ -168,6 +168,7 @@ class Controller(QWidget):
 		# new bio needed
 		self.musikki_artist = musikki.search(self.get_current_artist())
 		self.musikki_artist.get_full_bio(self.bio_nam)
+		self.musikki_artist.get_full_images(self.images_nam)
 
 	def update_song_info(self, update_playback=True):
 		if update_playback:
@@ -243,17 +244,17 @@ class Controller(QWidget):
 
 	# images handler
 	def search_images_handler(self, reply):
-		
-		er = reply.error()
+		urls, pixmaps, widths, heights = [], [], [], []
 
+		er = reply.error()
+		
 		if er == QtNetwork.QNetworkReply.NoError:
 			response = reply.readAll()
 			document = QJsonDocument()
 			error = QJsonParseError()
 			document = document.fromJson(response, error)
 			json_resp = document.object()
-
-			urls, pixmaps, widths, heights = [], [], [], []
+			
 			for f in json_resp['results'].toArray():				
 				f = f.toObject() 
 				thumb = f['thumbnails'].toArray()[0].toObject()
@@ -273,7 +274,10 @@ class Controller(QWidget):
 		else:
 			print('in else statement')
 
-		self.images_frame.add_artist_images(pixmaps, widths, heights)
+		if len(pixmaps) > 0:
+			self.images_frame.add_artist_images(pixmaps, widths, heights)
+		else:
+			self.images_frame.set_display_text('No Images Found.')
 		# print(pixmaps)
 
 	# playback handler

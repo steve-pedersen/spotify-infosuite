@@ -63,19 +63,28 @@ class Frame(QLabel):
 	# TODO: maybe pass in a dict that has the pixmap, width and height of each
 	# 	rather than separate lists
 	def add_artist_images(self, images, widths, heights):
-		x, y = self.w / 8, self.h / 8
+		x, y = 10, 45
 		# w, h = self.w / 4, self.h / 3
-
-		for i, image in enumerate(images):
-			w, h = widths[i], heights[i]
-			# image = image.scaledToWidth(w)
+		w, h = self.w - x*2, self.h - y
+		image = images[0].scaledToWidth(w)
+		
+		self.container = QLabel(self)
+		# self.container.setStyleSheet('border: 1px solid #0f0f0f;')
+		self.container.resize(w, h)			
+		self.container.setPixmap(image)
+		self.container.move(x, y)
+		self.container.show()
+		# for i, image in enumerate(images):
+		# 	# w, h = widths[i], heights[i]
+		# 	w, h = self.w, self.h - y
+		# 	image = image.scaledToWidth(w)
 			
-			self.container = QLabel(self)
-			# self.container.setStyleSheet('border: 1px solid #0f0f0f;')
-			self.container.resize(w, h)			
-			self.container.setPixmap(image)
-			self.container.move(x + x*i, y)
-			self.container.show()
+		# 	self.container = QLabel(self)
+		# 	# self.container.setStyleSheet('border: 1px solid #0f0f0f;')
+		# 	self.container.resize(w, h)			
+		# 	self.container.setPixmap(image)
+		# 	self.container.move(x + x*i, y)
+		# 	self.container.show()
 
 
 	def get_display_text_label(self):
