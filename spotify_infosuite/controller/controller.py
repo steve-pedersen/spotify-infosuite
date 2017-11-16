@@ -166,8 +166,8 @@ class Controller(QWidget):
 			self.playback_frame.set_display_title(self.current_playing, 10, 10)		
 		
 		# new bio needed
-		artist = musikki.search(self.get_current_artist())
-		artist.get_full_bio(self.bio_nam, self.bio_frame.get_display_text_label())
+		self.musikki_artist = musikki.search(self.get_current_artist())
+		self.musikki_artist.get_full_bio(self.bio_nam)
 
 	def update_song_info(self, update_playback=True):
 		if update_playback:
