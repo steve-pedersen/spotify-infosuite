@@ -226,15 +226,19 @@ class Controller(QWidget):
 				for q in qbyteurl:
 					url += q
 				self.set_lyrics(url)
+			elif reply.rawHeader(QByteArray(b'Status') != '200 OK'):
+				print('response not a 301 or 200. it is: ', reply.rawHeader(QByteArray(b'Status')))
 			else:
 				# test print statements... shouldn't get here
 				print('got here somehow')
 				print('status: ', reply.rawHeader(QByteArray(b'Status')))
 				qbyteurl = reply.rawHeader(QByteArray(b'Location'))
 				print(qbyteurl)
+		else:
+			self.set_lyrics(url='', lyrics_exist=False)
 
 
-	def set_lyrics(self, lyrics='', url=''):
+	def set_lyrics(self, url='', lyrics_exist=True):
 		error = "Error: Could not find lyrics."
 		proxy = urllib.request.getproxies()
 
@@ -242,18 +246,19 @@ class Controller(QWidget):
 		artist = self.get_current_artist()
 		song = self.get_current_song()
 		
-		try:
-			if url == '':
-				url = "http://genius.com/%s-%s-lyrics" % (artist.replace(' ', '-'), song.replace(' ', '-'))
+		if lyrics_exist:
+			try:
+				if url == '':
+					url = "http://genius.com/%s-%s-lyrics" % (artist.replace(' ', '-'), song.replace(' ', '-'))
 				lyricspage = requests.get(url, proxies=proxy)
-			else:
-				lyricspage = requests.get(url, proxies=proxy)
-			# print(url)
-			soup = BeautifulSoup(lyricspage.text, 'html.parser')
-			lyrics = soup.text.split('Lyrics')[3].split('More on Genius')[0]
-			if artist.lower().replace(" ", "") not in soup.text.lower().replace(" ", ""):
+				# print(url)
+				soup = BeautifulSoup(lyricspage.text, 'html.parser')
+				lyrics = soup.text.split('Lyrics')[3].split('More on Genius')[0]
+				if artist.lower().replace(" ", "") not in soup.text.lower().replace(" ", ""):
+					lyrics = error
+			except Exception:
 				lyrics = error
-		except Exception:
+		else:
 			lyrics = error
 		self.lyrics_frame.set_display_text(lyrics, 10, 45)
 
