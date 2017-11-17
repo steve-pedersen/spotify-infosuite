@@ -283,8 +283,8 @@ class Controller(QWidget):
 					paragraph += t.rstrip() if i == 0 else (' ' + t.rstrip())
 				bio += paragraph + '\n\n'
 
-			# print(bio)
 			self.bio_frame.set_display_text(bio, 10, 45)
+			
 		else:
 			self.bio_frame.set_display_text('No artist bio found.', 10, 45)
 
@@ -317,14 +317,10 @@ class Controller(QWidget):
 				widths.append(thumb_width)
 				heights.append(thumb_height)
 
-		else:
-			print('in else statement')
-
 		if len(pixmaps) > 0:
 			self.images_frame.add_artist_images(pixmaps, widths, heights)
 		else:
 			self.images_frame.set_display_text('No Images Found.')
-		# print(pixmaps)
 
 	# playback handler
 	def update_playback_display(self):
@@ -356,18 +352,12 @@ class Controller(QWidget):
 
 	def play_pause(self):
 		self.spotify.play_pause()
-		# self.update_playback_display()
-		# self.set_lyrics()
 
 	def next(self):
 		self.spotify.next()
-		# self.update_playback_display()
-		# self.set_lyrics()
 
 	def prev(self):
 		self.spotify.prev()
-		# self.update_playback_display()
-		# self.set_lyrics()
 
 	def pause(self):
 		self.spotify.pause()
@@ -402,16 +392,11 @@ class Listener(QThread):
 		self.playback_sync_thread.start() 	
 
 	def sync_playback(self):
-		# print('listener: started')
-		counter = 1;
+
 		while True:
 			if self.stored_song != self.spotify.get_current_playing().rstrip():
 				self.song_change.emit()
 				self.stored_song = self.spotify.get_current_playing().rstrip()
-				# self.playback_sync_thread.exit()
-				print(counter)
-				counter += 1
-			else:
-				counter = 1
+			
 			sleep(1)
 

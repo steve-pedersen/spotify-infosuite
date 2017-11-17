@@ -1,6 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 import sys
 import subprocess
+from time import sleep
 
 
 class Playback():
@@ -22,6 +23,8 @@ class Playback():
 				self._make_osascript_call(
 					'tell application "Spotify" to activate'
 				)
+				# Wait for Spotify to open before letting app continue
+				sleep(3)
 		except Exception:
 			sys.exit('You don\'t have Spotify installed. Please install it.')
 
