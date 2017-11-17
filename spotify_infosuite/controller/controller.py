@@ -8,6 +8,7 @@ import sys
 import threading
 import requests
 import urllib
+import ssl
 
 from threading import Thread
 from time import sleep
@@ -261,8 +262,8 @@ class Controller(QWidget):
 				thumb_url = thumb['url'].toString()
 				thumb_width = thumb['width'].toInt()
 				thumb_height = thumb['height'].toInt()
-
-				data = urlopen(thumb_url).read()
+				context = ssl._create_unverified_context()
+				data = urlopen(thumb_url, context=context).read()
 				pixmap = QPixmap()
 				pixmap.loadFromData(data)
 
