@@ -108,8 +108,11 @@ class Controller(QWidget):
 
 		self.lyrics_frame.set_display_title("Lyrics", 10, 5)
 		self.multi_frame_window.add_frame(self.lyrics_frame)
+		self.lyrics_nam = QtNetwork.QNetworkAccessManager()
+		self.lyrics_nam.finished.connect(self.lyrics_handler)
 
-		self.set_lyrics()
+		# self.set_lyrics()
+		self.get_lyrics()
 
 	def init_review_frame(self):
 		x = self.window_w * 2 / 3
@@ -176,7 +179,8 @@ class Controller(QWidget):
 			self.update_current_playing()
 			self.playback_frame.set_display_title(self.current_playing, 10, 10)	
 
-		self.set_lyrics()	
+		# self.set_lyrics()	
+		self.get_lyrics()	
 
 	def update_album_info(self, update_playback=True):
 		if update_playback:
@@ -196,19 +200,55 @@ class Controller(QWidget):
 		print('Song:\t', self.current_song)
 		print('Album:\t', self.current_album)
 
-	def set_lyrics(self):
+	def get_lyrics(self, url=''):
+		artist, song = self.current_artist, self.current_song
+		if url == '':
+			url = "http://genius.com/%s-%s-lyrics" % (artist.replace(' ', '-'), song.replace(' ', '-'))
+		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
+		self.lyrics_nam.get(req)
+	
+	# lyrics handler
+	def lyrics_handler(self, reply):
+
+		er = reply.error()
+
+		# for h in reply.rawHeaderList():
+		# 	header_key = ''
+		# 	for l in h:
+		# 		header_key += l
+		# 	print(header_key, ': ', reply.rawHeader(QByteArray(h)))
+
+		if er == QtNetwork.QNetworkReply.NoError:
+
+			if reply.rawHeader(QByteArray(b'Status')) == '301 Moved Permanently':
+				qbyteurl = reply.rawHeader(QByteArray(b'Location'))
+				url = ''
+				for q in qbyteurl:
+					url += q
+				self.set_lyrics(url)
+			else:
+				# test print statements... shouldn't get here
+				print('got here somehow')
+				print('status: ', reply.rawHeader(QByteArray(b'Status')))
+				qbyteurl = reply.rawHeader(QByteArray(b'Location'))
+				print(qbyteurl)
+
+
+	def set_lyrics(self, lyrics='', url=''):
 		error = "Error: Could not find lyrics."
 		proxy = urllib.request.getproxies()
 
 		print("current playing: ", self.current_playing)
 		artist = self.get_current_artist()
 		song = self.get_current_song()
-
-		url = ""
+		
 		try:
-			url = "http://genius.com/%s-%s-lyrics" % (artist.replace(' ', '-'), song.replace(' ', '-'))
-			lyricspage = requests.get(url, proxies=proxy)
-			print(url)
+			if url == '':
+				url = "http://genius.com/%s-%s-lyrics" % (artist.replace(' ', '-'), song.replace(' ', '-'))
+				lyricspage = requests.get(url, proxies=proxy)
+			else:
+				lyricspage = requests.get(url, proxies=proxy)
+			# print(url)
 			soup = BeautifulSoup(lyricspage.text, 'html.parser')
 			lyrics = soup.text.split('Lyrics')[3].split('More on Genius')[0]
 			if artist.lower().replace(" ", "") not in soup.text.lower().replace(" ", ""):
