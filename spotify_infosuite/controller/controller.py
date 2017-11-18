@@ -2,7 +2,9 @@ import model
 import view
 import playback
 import musikki
-import pitchfork
+# import reviews #pitchfork
+# from reviews.pitchfork import pitchfork
+from reviews import *
 import json
 import sys
 import threading
