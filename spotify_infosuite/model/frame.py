@@ -47,7 +47,10 @@ class Frame(QLabel):
 			scroll = QScrollArea()
 			scroll.setWidget(self.display_text_label)
 			scroll.setWidgetResizable(True)
-			scroll.setFixedHeight(self.h*0.93 - y)		
+			scroll.setFixedHeight(self.h*0.93 - y)	
+			# scroll.setAlignment()	
+			scroll.resize(scroll.sizeHint())
+			print(scroll.sizeHint())
 			self.layout.addWidget(scroll)
 		else:
 			self.display_text_label.setText(text)
@@ -111,15 +114,27 @@ class Frame(QLabel):
 		self.prev_button.setObjectName('prev_button')		
 		self.next_button.setObjectName('next_button')	
 
-		div =  self.w / self.playpause_button.width()
-		# print(self.playpause_button.width(), ' ', self.prev_button.width())
-		prev_x = 40
-		play_x = self.playpause_button.width()
-		next_x = play_x + self.playpause_button.width()
+		self.prev_button.resize(self.prev_button.sizeHint() * 1.3)	
+		self.playpause_button.resize(self.playpause_button.sizeHint() * 1.3)	
+		self.next_button.resize(self.next_button.sizeHint() * 1.3)	
+
+		prevw = self.prev_button.width()
+		playw = self.playpause_button.width()
+		nextw = self.next_button.width()
+		spacer = self.w / 30 if self.w / 30 < 16 else 15
+		total = prevw + playw + nextw + spacer*2
+		leftover = self.w - total
+		prev_x = leftover / 2
+		play_x = prev_x + spacer + prevw
+		next_x = play_x + spacer + playw
+
+		# print how much space is to the left of Prev btn and to the right of Next btn
+		print('Left: ', prev_x, '\nRight: ', self.w - (next_x + self.next_button.width()))
+		print('spacer: ', spacer)
 		# print('prev_x: ', prev_x, '  play_x: ', play_x, '  next_x: ', next_x)
 		self.prev_button.move(prev_x, 65)	
 		self.playpause_button.move(play_x, 65)	
-		self.next_button.move(next_x, 65)
+		self.next_button.move(next_x, 65)	
 
 	def get_playback_prev_button(self):
 		return self.prev_button
