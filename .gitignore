@@ -2,6 +2,7 @@
 # This JSON file should be formatted like this:
 # { "musikki": { "appid": "<id>", "appkey": "<key>" } }
 spotify_infosuite/musikki/credentials.json
+credentials.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
