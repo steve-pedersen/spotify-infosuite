@@ -119,7 +119,7 @@ class Controller(QWidget):
 		y = self.window_h / 2
 		w = self.window_w / 3
 		h = self.window_h / 2
-		title_x = 5
+		title_x = 10
 		title_y = 5
 		self.review_frame = model.Frame(
 			self, self.multi_frame_window, x,y, w,h, 'review_frame'
@@ -134,7 +134,7 @@ class Controller(QWidget):
 		y = 0
 		w = self.window_w / 3
 		h = self.window_h / 2
-		title_x = 5
+		title_x = 10
 		title_y = 5
 		self.images_frame = model.Frame(
 			self, self.multi_frame_window, x,y, w,h, 'images_frame'

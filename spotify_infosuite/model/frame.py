@@ -2,6 +2,7 @@
 from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QScrollArea
 from PyQt5.QtCore import *
 from PyQt5 import QtGui
+from PyQt5 import QtCore
 
 class Frame(QLabel):
 
@@ -37,9 +38,10 @@ class Frame(QLabel):
 
 	def set_display_text(self, text, x=5, y=45):
 		# self.display_text_label = QLabel(self)
+		min_y = self.display_title_label.height() + 8
 		if self.display_text_label.text() == '':
 			self.display_text_label.setText(text)
-			self.display_text_label.setGeometry(x, y, self.w*0.96, self.h*0.93)
+			self.display_text_label.setGeometry(x, y, self.w, self.h)
 			self.display_text_label.setObjectName('frame_text')
 			self.display_text_label.setWordWrap(True)
 			self.display_text_label.setStyleSheet('')
@@ -47,16 +49,16 @@ class Frame(QLabel):
 			scroll = QScrollArea()
 			scroll.setWidget(self.display_text_label)
 			scroll.setWidgetResizable(True)
-			scroll.setFixedHeight(self.h*0.93 - y)	
-			# scroll.setAlignment()	
-			scroll.resize(scroll.sizeHint())
-			print(scroll.sizeHint())
+			scroll.setFixedHeight(self.h - (y+min_y))	
+			# self.layout.setGeometry(0, min_y, self.w, self.h - min_y)
+			# scroll.setAlignment(Qt.AlignCenter)	
+
 			self.layout.addWidget(scroll)
 		else:
 			self.display_text_label.setText(text)
 
 	def set_display_images(self, x=5, y=45):
-		self.display_images_label.setGeometry(x, y, self.w*0.96, self.h*0.93)
+		self.display_images_label.setGeometry(x, y, self.w, self.h)
 		self.display_images_label.setObjectName('frame_images')
 		self.display_images_label.setStyleSheet('')
 		self.frame_components.append(self.display_images_label)
@@ -66,16 +68,27 @@ class Frame(QLabel):
 	# TODO: maybe pass in a dict that has the pixmap, width and height of each
 	# 	rather than separate lists
 	def add_artist_images(self, images, widths, heights):
+		self.display_text_label.hide()
 		x, y = 10, 45
 		# w, h = self.w / 4, self.h / 3
-		w, h = self.w - x*2, self.h - y
-		image = images[0].scaledToWidth(w)
+		w, h = self.w - x*2, self.h - y - 5
+		if widths[0] > heights[0]:			
+			if w > widths[0]:
+				# print('image is wider than it is tall and less wide than the frame')
+				w = widths[0]
+			image = images[0].scaledToWidth(w)
+		else:
+			if h > heights[0]:
+				# print('image is taller than it is wide and less tall than the frame')
+				h = heights[0]
+			image = images[0].scaledToHeight(h)
 		
 		self.container = QLabel(self)
 		# self.container.setStyleSheet('border: 1px solid #0f0f0f;')
 		self.container.resize(w, h)			
 		self.container.setPixmap(image)
 		self.container.move(x, y)
+		self.container.setAlignment(Qt.AlignCenter)
 		self.container.show()
 		# for i, image in enumerate(images):
 		# 	# w, h = widths[i], heights[i]
@@ -129,9 +142,9 @@ class Frame(QLabel):
 		next_x = play_x + spacer + playw
 
 		# print how much space is to the left of Prev btn and to the right of Next btn
-		print('Left: ', prev_x, '\nRight: ', self.w - (next_x + self.next_button.width()))
-		print('spacer: ', spacer)
-		# print('prev_x: ', prev_x, '  play_x: ', play_x, '  next_x: ', next_x)
+		# print('Left: ', prev_x, '\nRight: ', self.w - (next_x + self.next_button.width()))
+		# print('spacer: ', spacer)
+
 		self.prev_button.move(prev_x, 65)	
 		self.playpause_button.move(play_x, 65)	
 		self.next_button.move(next_x, 65)	
