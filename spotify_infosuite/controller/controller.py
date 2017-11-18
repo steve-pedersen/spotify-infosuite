@@ -280,7 +280,7 @@ class Controller(QWidget):
 				paragraph = ''
 				for i, t in enumerate(f['text'].toArray()):
 					t = t.toString()
-					paragraph += t.rstrip() if i == 0 else (' ' + t.rstrip())
+					paragraph += f['title'].toString() + '\n\n' + t.rstrip() if i == 0 else (' ' + t.rstrip())
 				bio += paragraph + '\n\n'
 
 			self.bio_frame.set_display_text(bio, 10, 45)
