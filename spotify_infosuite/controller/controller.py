@@ -4,7 +4,7 @@ import playback
 import musikki
 # import reviews #pitchfork
 # from reviews.pitchfork import pitchfork
-from reviews import *
+from reviews import reviews
 import json
 import sys
 import threading
@@ -130,6 +130,7 @@ class Controller(QWidget):
 		self.multi_frame_window.add_frame(self.review_frame)
 
 		self.get_pitchfork_review()
+		self.get_metacritic_review()
 
 	def init_images_frame(self):
 		x = self.window_w * 2 / 3
@@ -153,9 +154,16 @@ class Controller(QWidget):
 			self.images_frame.set_display_text('No results for current artist.', 10, 45)
 
 	def get_pitchfork_review(self):
-		requester = pitchfork.Requester()
-		requester.receiver.connect(self.update_review_frame)
+		requester = reviews.Requester()
+		requester.pitchfork_receiver.connect(self.update_review_frame)
 		requester.get_pitchfork_review(self.current_artist, self.current_album)
+
+	def get_metacritic_review(self):
+		requester = reviews.Requester()
+		requester.metacritic_receiver.connect(self.update_review_frame)
+		requester.get_metacritic_review(self.current_artist, self.current_album)
+
+
 
 	def update_everything(self):
 		# playback info
@@ -191,6 +199,7 @@ class Controller(QWidget):
 		
 		# new reviews needed
 		self.get_pitchfork_review()
+		self.get_metacritic_review()
 
 	def update_current_playing(self):
 		self.current_playing = self.get_current_playing()
@@ -244,7 +253,6 @@ class Controller(QWidget):
 		error = "Error: Could not find lyrics."
 		proxy = urllib.request.getproxies()
 
-		print("current playing: ", self.current_playing)
 		artist = self.get_current_artist()
 		song = self.get_current_song()
 		
@@ -344,8 +352,17 @@ class Controller(QWidget):
 			self.update_everything()
 
 	# reviews handler
+	# from metacritic:
+	# artist,album,date,critic_rating,critic_count,user_rating,user_count,img_url
 	def update_review_frame(self, review):
-		self.review_frame.set_display_text(review)
+		if isinstance(review, str):
+			self.review_frame.set_display_text(review)
+		elif isinstance(review, object):
+			print('\n-----Metacritic Results-----\n')
+			print(review.artist, ' - ', review.album)
+			print('Critic Score:\t', review.critic_rating, '\t(',review.critic_count,' reviews)')
+			print('User Score:\t', review.user_rating, '\t(',review.user_count,' reviews)')
+			print('-------------------------------------------')
 
 	# Spotify Controls
 	def open_spotify(self):

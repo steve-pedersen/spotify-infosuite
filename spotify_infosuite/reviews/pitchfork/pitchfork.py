@@ -6,17 +6,13 @@ An unofficial API for pitchfork.com reviews.
 author: Michal Czaplinski
 email: mmczaplinski@gmail.com
 """
-
+# print('in reviews/pitchfork/pitchfork.py')
 import json
 import re
 import difflib
 import sys
 import ssl
 from bs4 import BeautifulSoup
-import threading
-from threading import Thread
-from PyQt5.QtCore import *
-
 
 if sys.version_info >= (3, 0):
 	from urllib.parse import urljoin
@@ -47,7 +43,7 @@ class Review:
 	(editorial), the album cover, label, year as well as the true
 	(matched) album and artist names.
 	"""
-
+	# print('in reviews/pitchfork/pitchfork.py class Review')
 	def __init__(self, searched_artist, searched_album, matched_artist,
 				 matched_album, query, url, soup):
 		self.searched_artist = searched_artist
@@ -180,37 +176,7 @@ class MultiReview(Review):
 	def to_json(self):
 		d = self._json_safe_dict()
 		return json.dumps(d)
-
-class Requester(QThread):
-
-	receiver = pyqtSignal(str)
-
-	def __init__(self):
-		super().__init__()
-
-	def get_pitchfork_review(self, artist, album):
-
-		def __get_data(arg1, arg2):
-			artist, album = arg1, arg2
-			album = album.replace('(Deluxe Version)','').rstrip() \
-				.replace('[Remastered]','') \
-				.replace('(Deluxe Edition)','') \
-				.replace('(Remastered Deluxe Edition)','')
-			
-			print('Searching Pitchfork for album: ', album)
-			p = search(artist, album)
-
-			if p.has_review:
-				review = 'Pitchfork - Rating: '+str(p.score())+' - '+p.album() \
-					+' ('+str(p.year())+')'+'\n\n'+p.editorial() #[:800]
-			else:
-				review = p.message
-
-			self.receiver.emit(review)
-			
-		my_thread = threading.Thread(target=__get_data, args=[artist,album])
-		my_thread.setDaemon(True) 
-		my_thread.start()	
+	
 
 class NoReview:
 	def __init__(self, artist, album):
@@ -226,7 +192,7 @@ def search(artist, album):
 	Returns either a Review object or a MultiReview object depending on
 	the type of review because some pitchfork reviews cover multiple albums.
 	"""
-
+	# print('in reviews/pitchfork/pitchfork.py method search()')
 	# replace spaces in the url with the '%20'
 	query = re.sub('\s+', '%20', artist + '%20' + album)
 	# using a custom user agent header

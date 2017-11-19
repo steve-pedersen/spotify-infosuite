@@ -39,3 +39,4 @@
 # 	from pitchfork.pitchfork import Requester
 # else:
 # 	from pitchfork import search
+# print('in reviews/pitchfork/__init__.py')
