@@ -36,26 +36,32 @@ class Frame(QLabel):
 		self.display_title_label.setWordWrap(True)
 		self.frame_components.append(self.display_title_label)
 
-	def set_display_text(self, text, x=5, y=45):
+	def set_display_text(self, text, x=5, y=45,obj=''):
 		# self.display_text_label = QLabel(self)
 		min_y = self.display_title_label.height() + 8
+		scroll_height = self.h - (y+min_y)
 		if self.display_text_label.text() == '':
+
 			self.display_text_label.setText(text)
 			self.display_text_label.setGeometry(x, y, self.w, self.h)
-			self.display_text_label.setObjectName('frame_text')
+			name = 'frame_text' if obj == '' else obj
+			self.display_text_label.setObjectName(name)
 			self.display_text_label.setWordWrap(True)
+
 			self.display_text_label.setStyleSheet('')
 			self.frame_components.append(self.display_text_label)
 			scroll = QScrollArea()
 			scroll.setWidget(self.display_text_label)
-			scroll.setWidgetResizable(True)
-			scroll.setFixedHeight(self.h - (y+min_y))	
-			# self.layout.setGeometry(0, min_y, self.w, self.h - min_y)
-			# scroll.setAlignment(Qt.AlignCenter)	
+			scroll.setWidgetResizable(True)			
+			scroll.setFixedHeight(scroll_height)	
+			# scroll.ensureVisible(0, scroll_height-y*4.5)
 
+			self.display_text_label.setAlignment(Qt.AlignTop)
 			self.layout.addWidget(scroll)
 		else:
 			self.display_text_label.setText(text)
+			self.display_text_label.setAlignment(Qt.AlignTop)
+			# self.layout.setAlignment(Qt.AlignTop)
 
 	def set_display_images(self, x=5, y=45):
 		self.display_images_label.setGeometry(x, y, self.w, self.h)

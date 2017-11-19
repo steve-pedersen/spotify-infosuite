@@ -53,6 +53,10 @@ class Playback():
 	def pause(self):
 		self._make_osascript_call('tell app "Spotify" to pause')
 
+	def get_track_uri(self):
+		print()
+		# set info to info & "\n URI:      " & spotify url of current track
+
 	def get_current_artist(self):
 		instruction = ('on getCurrentTrack()\n'
 			' tell application "Spotify"\n'

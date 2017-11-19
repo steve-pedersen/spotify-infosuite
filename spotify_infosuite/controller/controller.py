@@ -236,7 +236,10 @@ class Controller(QWidget):
 				url = ''
 				for q in qbyteurl:
 					url += q
+				
+				# parse the html for lyrics
 				self.set_lyrics(url)
+			
 			elif reply.rawHeader(QByteArray(b'Status') != '200 OK'):
 				print('response not a 301 or 200. it is: ', reply.rawHeader(QByteArray(b'Status')))
 			else:
@@ -270,7 +273,9 @@ class Controller(QWidget):
 				lyrics = error
 		else:
 			lyrics = error
-		self.lyrics_frame.set_display_text(lyrics, 10, 45)
+		
+		# set those lyrics on the frame
+		self.lyrics_frame.set_display_text(lyrics, 10, 45, 'lyrics_text')
 
 	# bio handler
 	def search_bio_handler(self, reply):
@@ -293,7 +298,7 @@ class Controller(QWidget):
 					paragraph += f['title'].toString() + '\n\n' + t.rstrip() if i == 0 else (' ' + t.rstrip())
 				bio += paragraph + '\n\n'
 
-			self.bio_frame.set_display_text(bio, 10, 45)
+			self.bio_frame.set_display_text(bio, 10, 45, 'bio_text')
 			
 		else:
 			self.bio_frame.set_display_text('No artist bio found.', 10, 45)
