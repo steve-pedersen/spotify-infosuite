@@ -110,6 +110,7 @@ QLabel#frame_title {
     border-radius: 5%;
     color: #25D34D;
     font-weight: bold;
+    font-size: 16pt;
     /*text-decoration: underline;*/
 }
 

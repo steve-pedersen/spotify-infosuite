@@ -65,14 +65,6 @@ class Frame(QLabel):
 			self.display_text_label.setAlignment(Qt.AlignTop)
 			# self.layout.setAlignment(Qt.AlignTop)
 
-	def set_display_images(self, x=5, y=45):
-		self.display_images_label.setGeometry(x, y, self.w, self.h)
-		self.display_images_label.setObjectName('frame_images')
-		self.display_images_label.setStyleSheet('')
-		self.frame_components.append(self.display_images_label)
-
-		self.display_images_label.setText('test')
-
 	# TODO: maybe pass in a dict that has the pixmap, width and height of each
 	# 	rather than separate lists
 	def add_artist_images(self, images, widths, heights):
@@ -216,9 +208,9 @@ class Frame(QLabel):
 		# print('Left: ', prev_x, '\nRight: ', self.w - (next_x + self.next_button.width()))
 		# print('spacer: ', spacer)
 
-		self.prev_button.move(prev_x, 65)	
-		self.playpause_button.move(play_x, 65)	
-		self.next_button.move(next_x, 65)	
+		self.prev_button.move(prev_x, 50)	
+		self.playpause_button.move(play_x, 50)	
+		self.next_button.move(next_x, 50)	
 
 	def hide_frame_components(self):
 		for f in self.frame_components:
