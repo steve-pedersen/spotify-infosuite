@@ -1,7 +1,8 @@
 
-from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QScrollArea
+from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QScrollArea, QGroupBox
 from PyQt5.QtCore import *
 from PyQt5 import QtGui
+from PyQt5.QtGui import QPixmap
 from PyQt5 import QtCore
 
 class Frame(QLabel):
@@ -26,6 +27,7 @@ class Frame(QLabel):
 		self.view = view
 		self.setGeometry(self.x, self.y, self.w, self.h)
 		self.frame_components = []
+		self.metacritic_exists = False
 
 	def set_display_title(self, title, x, y):
 		# self.display_title_label = QLabel(self)
@@ -121,6 +123,69 @@ class Frame(QLabel):
 		self.expand_button = QPushButton('Expand', self.view)
 		self.frame_components.append(self.expand_button)
 
+	def create_layout(self, review):
+		self.hide_frame_components()
+		
+		pixmap = QPixmap()
+		pixmap.loadFromData(review.pixmap)
+		if pixmap.height() > pixmap.width():
+			pixmap = pixmap.scaledToHeight(self.h)
+		else:
+			pixmap = pixmap.scaledToWidth(self.w/4)
+		
+		if not self.metacritic_exists:	
+			# create the layout
+			x = 15
+			y = 0
+			w = self.w / 4
+			h = self.h
+			self.album_thumb = QLabel(self)		
+			self.album_thumb.setGeometry(x,y, w,h)
+			self.album_thumb.setPixmap(pixmap)
+			self.album_thumb.setAlignment(Qt.AlignCenter)
+
+			self.mc_title = QLabel(review.artist + ' - '+ review.album, self)
+			self.mc_title.setObjectName('mc_title')
+			self.mc_title.setGeometry(self.w/3,10, self.w*0.75,20)
+			self.mc_title.setWordWrap(True)
+
+			self.mc_critic = QLabel(
+				'Critic Score:\t'+ str(review.critic_rating)+ '/100\t('+str(review.critic_count)+' reviews)',
+				self
+			)
+			self.mc_critic.setObjectName('mc_critic')
+			self.mc_critic.setGeometry(self.w/3,40, self.w*0.75,20)
+			self.mc_critic.setWordWrap(True)
+
+			self.mc_user = QLabel(
+				'User Score:\t'+ str(review.user_rating)+ '/10\t('+str(review.user_count)+' reviews)',
+				self
+			)		
+			self.mc_user.setObjectName('mc_user')
+			self.mc_user.setGeometry(self.w/3,70, self.w*0.75,20)
+			self.mc_user.setWordWrap(True)
+
+			self.frame_components.extend([
+				self.album_thumb, self.mc_title, self.mc_critic, self.mc_user
+			])
+
+			# metacritic components have been created. no need to do it again when song changes.
+			self.metacritic_exists = True
+		
+		else:
+			# otherwise, update the text and image
+			self.album_thumb.setPixmap(pixmap)
+			self.mc_title.setText(review.artist + ' - '+ review.album)
+			self.mc_critic.setText(
+				'Critic Score:\t'+ str(review.critic_rating)+ '/100\t('+str(review.critic_count)+' reviews)'
+			)
+			self.mc_user.setText(
+				'User Score:\t'+ str(review.user_rating)+ '/10\t('+str(review.user_count)+' reviews)'
+			)
+
+		self.show_frame_components()
+
+
 	def create_playback_buttons(self):
 		self.playpause_button = QPushButton('Play/Pause', self.view)
 		self.prev_button = QPushButton('Prev', self.view)
@@ -154,6 +219,14 @@ class Frame(QLabel):
 		self.prev_button.move(prev_x, 65)	
 		self.playpause_button.move(play_x, 65)	
 		self.next_button.move(next_x, 65)	
+
+	def hide_frame_components(self):
+		for f in self.frame_components:
+			f.hide()
+
+	def show_frame_components(self):
+		for f in self.frame_components:
+			f.show()
 
 	def get_playback_prev_button(self):
 		return self.prev_button

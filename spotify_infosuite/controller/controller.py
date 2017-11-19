@@ -120,7 +120,7 @@ class Controller(QWidget):
 		x = self.window_w * 2 / 3
 		y = self.window_h / 2
 		w = self.window_w / 3
-		h = self.window_h / 2
+		h = self.window_h / 3
 		title_x = 10
 		title_y = 5
 		self.review_frame = model.Frame(
@@ -129,8 +129,22 @@ class Controller(QWidget):
 		self.review_frame.set_display_title('Reviews', title_x, title_y)
 		self.multi_frame_window.add_frame(self.review_frame)
 
+		self.init_metacritic_frame()
+
 		self.get_pitchfork_review()
 		self.get_metacritic_review()
+
+	def init_metacritic_frame(self):
+		x = self.window_w * 2/3
+		y = self.window_h/2 + self.window_h/3
+		w = self.window_w / 3
+		h = self.window_h / 6
+		self.metacritic_frame = model.Frame(
+			self, self.multi_frame_window, x,y, w,h, 'metacritic_frame'
+		)	
+		# self.metacritic_frame.set_display_title('Metacritic Reviews', 10, 5)
+
+		self.multi_frame_window.add_frame(self.metacritic_frame)	
 
 	def init_images_frame(self):
 		x = self.window_w * 2 / 3
@@ -163,16 +177,14 @@ class Controller(QWidget):
 		requester.metacritic_receiver.connect(self.update_review_frame)
 		requester.get_metacritic_review(self.current_artist, self.current_album)
 
-
-
 	def update_everything(self):
 		# playback info
 		self.update_current_playing()
 		self.playback_frame.set_display_title(self.current_playing, 10, 10)
 
-		self.update_artist_info(False)		
-		self.update_album_info(False)
-		self.update_song_info(False)
+		self.update_artist_info(update_playback=False)		
+		self.update_album_info(update_playback=False)
+		self.update_song_info(update_playback=False)
 
 	def update_artist_info(self, update_playback=True):
 		if update_playback:
@@ -217,6 +229,22 @@ class Controller(QWidget):
 			url = "http://genius.com/%s-%s-lyrics" % (artist.replace(' ', '-'), song.replace(' ', '-'))
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		self.lyrics_nam.get(req)
+
+	# reviews handler
+	# from metacritic:
+	# artist,album,date,critic_rating,critic_count,user_rating,user_count,img_url
+	def update_review_frame(self, review):
+		if isinstance(review, str):
+			self.review_frame.set_display_text(review)
+		elif isinstance(review, object):
+			url_data = urllib.request.urlopen(review.img_url).read()
+			review.pixmap = url_data
+			self.metacritic_frame.create_layout(review)
+			print('\n-----Metacritic Results-----\n')
+			print(review.artist, ' - ', review.album)
+			print('Critic Score:\t', review.critic_rating, '\t(',review.critic_count,' reviews)')
+			print('User Score:\t', review.user_rating, '\t(',review.user_count,' reviews)')
+			print('-------------------------------------------')
 	
 	# lyrics handler
 	def lyrics_handler(self, reply):
@@ -355,19 +383,6 @@ class Controller(QWidget):
 			self.current_album != self.get_current_album()):
 			print('need album update')
 			self.update_everything()
-
-	# reviews handler
-	# from metacritic:
-	# artist,album,date,critic_rating,critic_count,user_rating,user_count,img_url
-	def update_review_frame(self, review):
-		if isinstance(review, str):
-			self.review_frame.set_display_text(review)
-		elif isinstance(review, object):
-			print('\n-----Metacritic Results-----\n')
-			print(review.artist, ' - ', review.album)
-			print('Critic Score:\t', review.critic_rating, '\t(',review.critic_count,' reviews)')
-			print('User Score:\t', review.user_rating, '\t(',review.user_count,' reviews)')
-			print('-------------------------------------------')
 
 	# Spotify Controls
 	def open_spotify(self):

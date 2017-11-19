@@ -90,7 +90,7 @@ QLabel#bio_frame, #lyrics_frame, #images_frame {
 	border: 2px solid #000;
 }
 
-QLabel#review_frame {
+QLabel#review_frame, #metacritic_frame {
     background-color: #1D1D1D;
     border: 2px solid #000;
 }
@@ -130,6 +130,15 @@ QLabel#lyrics_text {
 }
 QLabel#bio_text {
     margin-top: -30px;
+}
+
+QLabel#mc_title, #mc_critic, #mc_user {
+    color: white;
+    font-size: 14pt;
+}
+QLabel#mc_title {
+    font-size: 16pt;
+    text-decoration: underline;
 }
 
 /*("""*/
