@@ -60,9 +60,9 @@ class Controller(QWidget):
 
 	def init_bio_frame(self):
 		x = 0
-		y = self.window_h * 0.15
+		y = self.window_h * 0.1
 		w = self.window_w / 3
-		h = self.window_h * 0.85
+		h = self.window_h * 0.9
 		self.bio_frame = model.Frame(
 			self, self.multi_frame_window, x,y, w,h, "bio_frame"
 		)
@@ -85,7 +85,7 @@ class Controller(QWidget):
 		x = 0
 		y = 0
 		w = self.window_w / 3
-		h = self.window_h * 0.15
+		h = self.window_h * 0.1
 		self.playback_frame = model.Frame(self, self.multi_frame_window, x,y, w,h, 'playback_frame')
 		self.playback_frame.set_display_title(self.get_current_playing(), 10, 10)		
 		

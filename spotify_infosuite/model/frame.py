@@ -242,9 +242,9 @@ class Frame(QLabel):
 		# print('Left: ', prev_x, '\nRight: ', self.w - (next_x + self.next_button.width()))
 		# print('spacer: ', spacer)
 
-		self.prev_button.move(prev_x, 50)	
-		self.playpause_button.move(play_x, 50)	
-		self.next_button.move(next_x, 50)	
+		self.prev_button.move(prev_x, self.display_title_label.height()+20)	
+		self.playpause_button.move(play_x, self.display_title_label.height()+20)	
+		self.next_button.move(next_x, self.display_title_label.height()+20)	
 
 	def hide_frame_components(self):
 		for f in self.frame_components:
