@@ -423,23 +423,30 @@ class Controller(QWidget):
 				widths.append(thumb_width)
 				heights.append(thumb_height)
 
-		biggest = 0
+		
 		if notfound_count > 0:
-			print(notfound_count, " 404 responses in image handler")				
+			print(notfound_count, " 404 responses in image handler")
+
+		print('Images handler found ', len(pixmaps), ' images.')
+
+		if len(pixmaps) > 0:
+			# load the biggest image as the first and only pixmap
+			biggest = 0				
 			for i, p in enumerate(pixmaps):
 				if p.width() > biggest:
-					biggest = p.width()
-		
-		# use default image of dirty-piano.jpg
-		if len(json_resp['results'].toArray()) or biggest == 0:
+					biggest = i
+			pixmaps[0] = pixmaps[biggest]
+			widths[0] = widths[biggest]
+			heights[0] = heights[biggest]
+			self.images_frame.add_artist_images(pixmaps, widths, heights)
+		else:
+			# use default image of dirty-piano.jpg
+			print('using default image')
 			pixmaps = [QPixmap('./controller/dirty-piano.jpg')]
 			widths = [pixmaps[0].width()]
 			heights = [pixmaps[0].height()]
-
-		if len(pixmaps) > 0:
 			self.images_frame.add_artist_images(pixmaps, widths, heights)
-		else:
-			self.images_frame.set_display_text('No Images Found.')
+			# self.images_frame.set_display_text('No Images Found.')
 
 	# playback handler
 	def update_playback_display(self):
