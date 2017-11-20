@@ -30,13 +30,8 @@ class Requester(QThread):
 			print('Searching Metacritic for album: ', album)
 			m = metacritic.search(artist, album, apikey)
 
-			if m.has_review:
-				self.metacritic_receiver.emit(m)
-			# else:
-			# 	self.metacritic_receiver.emit(review)
-			# 	review = m.not_found_message
-
-			
+			# if m.has_review:
+			self.metacritic_receiver.emit(m)			
 			
 		worker = threading.Thread(target=__get_data, args=[artist,album])
 		worker.setDaemon(True) 
