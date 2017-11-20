@@ -31,12 +31,15 @@ def search(artist, album, apikey):
   			"Accept": "application/json"
   		}
 	)
-	context = ssl._create_unverified_context()
-	response = urlopen(request, context=context)	
-	text = response.read().decode('UTF-8')
-	# the server responds with json so we load it into a dictionary
-	results = json.loads(text)
-	# print(results)
+	try:
+		context = ssl._create_unverified_context()
+		response = urlopen(request, context=context)	
+		text = response.read().decode('UTF-8')
+		# the server responds with json so we load it into a dictionary
+		results = json.loads(text)
+		# print(results)
+	except:
+		results = []
 	
 	# since we didn't pass in the year there may be more than one match of the album name
 	# iterate through results and check artist name for a match
