@@ -78,6 +78,10 @@ class Controller(QWidget):
 		else:
 			self.bio_frame.set_display_text('No results for current artist.', 10, 45)
 
+	def init_news_frame(self):
+		x = 0
+		y = 25
+
 	def init_playback_frame(self):
 		self.spotify = self.open_spotify()
 		self.update_current_playing()
@@ -360,23 +364,41 @@ class Controller(QWidget):
 			document = QJsonDocument()
 			error = QJsonParseError()
 			document = document.fromJson(response, error)
-			json_resp = document.object()
-			
-			for f in json_resp['results'].toArray():				
+			json_resp = document.object()			
+			notfound_count = 0
+
+			for f in json_resp['results'].toArray():
 				f = f.toObject() 
 				thumb = f['thumbnails'].toArray()[0].toObject()
 				thumb_url = thumb['url'].toString()
 				thumb_width = thumb['width'].toInt()
 				thumb_height = thumb['height'].toInt()
-				context = ssl._create_unverified_context()
-				data = urlopen(thumb_url, context=context).read()
-				pixmap = QPixmap()
-				pixmap.loadFromData(data)
+						
+				try:
+					context = ssl._create_unverified_context()
+					data = urlopen(thumb_url, context=context).read()
+					pixmap = QPixmap()
+					pixmap.loadFromData(data)
+					pixmaps.append(pixmap)
+				except:
+					notfound_count += 1
 
 				urls.append(thumb_url)
-				pixmaps.append(pixmap)
 				widths.append(thumb_width)
 				heights.append(thumb_height)
+
+		biggest = 0
+		if notfound_count > 0:
+			print(notfound_count, " 404 responses in image handler")				
+			for i, p in enumerate(pixmaps):
+				if p.width() > biggest:
+					biggest = p.width()
+		
+		# use default image of dirty-piano.jpg
+		if len(json_resp['results'].toArray()) or biggest == 0:
+			pixmaps = [QPixmap('./controller/dirty-piano.jpg')]
+			widths = [pixmaps[0].width()]
+			heights = [pixmaps[0].height()]
 
 		if len(pixmaps) > 0:
 			self.images_frame.add_artist_images(pixmaps, widths, heights)
