@@ -27,7 +27,12 @@ class Frame(QLabel):
 		self.view = view
 		self.setGeometry(self.x, self.y, self.w, self.h)
 		self.frame_components = []
+
 		self.metacritic_exists = False
+		self.mc_album_thumb = QLabel(self)
+		self.mc_title = QLabel(self)
+		self.mc_critic = QLabel(self)
+		self.mc_user = QLabel(self)
 
 	def set_display_title(self, title, x, y):
 		# self.display_title_label = QLabel(self)
@@ -123,67 +128,97 @@ class Frame(QLabel):
 		self.expand_button = QPushButton('Expand', self.view)
 		self.frame_components.append(self.expand_button)
 
-	def create_layout(self, review):
-		self.hide_frame_components()
+	def add_metacritic_content(self, review):
 		
 		pixmap = QPixmap()
 		pixmap.loadFromData(review.pixmap)
+		padding = 20
 		if pixmap.height() > pixmap.width():
-			pixmap = pixmap.scaledToHeight(self.h)
+			pixmap = pixmap.scaledToHeight(self.h - padding)
 		else:
-			pixmap = pixmap.scaledToWidth(self.w/4)
+			pixmap = pixmap.scaledToWidth(self.w/4 - padding)
 		
 		if not self.metacritic_exists:	
 			# create the layout
-			x = 15
+			x = padding/10
 			y = 0
 			w = self.w / 4
 			h = self.h
-			self.album_thumb = QLabel(self)		
-			self.album_thumb.setGeometry(x,y, w,h)
-			self.album_thumb.setPixmap(pixmap)
-			self.album_thumb.setAlignment(Qt.AlignCenter)
+					
+			self.mc_album_thumb.setGeometry(x,y, w,h)
+			self.mc_album_thumb.setPixmap(pixmap)
+			self.mc_album_thumb.setAlignment(Qt.AlignCenter)
 
-			self.mc_title = QLabel(review.artist + ' - '+ review.album, self)
+			self.mc_title.setText(review.artist + ' - '+ review.album)
 			self.mc_title.setObjectName('mc_title')
-			self.mc_title.setGeometry(self.w/3,10, self.w*0.75,20)
+			self.mc_title.setGeometry(self.w/3.8, self.h/10, self.w*0.75,20)
 			self.mc_title.setWordWrap(True)
+			self.mc_title.setStyleSheet('')
 
-			self.mc_critic = QLabel(
-				'Critic Score:\t'+ str(review.critic_rating)+ '/100\t('+str(review.critic_count)+' reviews)',
-				self
+			self.mc_critic.setText(
+				'Critic Score:   '+ str(review.critic_rating)[0]+'.'+str(review.critic_rating)[1]+
+				'  ('+str(review.critic_count)+' reviews)'			
 			)
 			self.mc_critic.setObjectName('mc_critic')
-			self.mc_critic.setGeometry(self.w/3,40, self.w*0.75,20)
+			self.mc_critic.setGeometry(self.w/3.8, self.h/2.5, self.w*0.75,20)
 			self.mc_critic.setWordWrap(True)
+			self.mc_critic.setStyleSheet('')
 
-			self.mc_user = QLabel(
-				'User Score:\t'+ str(review.user_rating)+ '/10\t('+str(review.user_count)+' reviews)',
-				self
+			self.mc_user.setText(
+				'User Score:    '+ str(review.user_rating)+ '  ('+str(review.user_count)+' reviews)'
 			)		
 			self.mc_user.setObjectName('mc_user')
-			self.mc_user.setGeometry(self.w/3,70, self.w*0.75,20)
+			self.mc_user.setGeometry(self.w/3.8, self.h/1.5, self.w*0.75,20)
 			self.mc_user.setWordWrap(True)
+			self.mc_user.setStyleSheet('')
 
 			self.frame_components.extend([
-				self.album_thumb, self.mc_title, self.mc_critic, self.mc_user
+				self.mc_album_thumb, self.mc_title, self.mc_critic, self.mc_user
 			])
 
-			# metacritic components have been created. no need to do it again when song changes.
+			# metacritic components have been created--no need to do it again when song changes.
 			self.metacritic_exists = True
 		
 		else:
 			# otherwise, update the text and image
-			self.album_thumb.setPixmap(pixmap)
+			self.mc_album_thumb.setPixmap(pixmap)
 			self.mc_title.setText(review.artist + ' - '+ review.album)
 			self.mc_critic.setText(
-				'Critic Score:\t'+ str(review.critic_rating)+ '/100\t('+str(review.critic_count)+' reviews)'
+				'Critic Score:   '+ str(review.critic_rating)[0]+'.'+str(review.critic_rating)[1]+
+				'  ('+str(review.critic_count)+' reviews)'	
 			)
 			self.mc_user.setText(
-				'User Score:\t'+ str(review.user_rating)+ '/10\t('+str(review.user_count)+' reviews)'
+				'User Score:    '+ str(review.user_rating)+ '  ('+str(review.user_count)+' reviews)'
 			)
 
 		self.show_frame_components()
+
+	# Clears Metacritic frame and creates default image & text
+	def default_metacritic_content(self, default_image):
+		padding = 20
+		if default_image.height() > default_image.width():
+			default_image = default_image.scaledToHeight(self.h - padding)
+		else:
+			default_image = default_image.scaledToWidth(self.w/4 - padding)
+
+		if not self.metacritic_exists:
+			x = padding/10
+			y = 0
+			w = self.w / 4
+			h = self.h
+				
+			self.mc_album_thumb.setGeometry(x,y, w,h)
+			self.mc_album_thumb.setAlignment(Qt.AlignCenter)
+			self.mc_title.setObjectName('mc_title')
+			self.mc_title.setGeometry(self.w/3.8, self.h/10, self.w*0.75,20)
+			self.mc_title.setWordWrap(True)
+
+		self.mc_album_thumb.setPixmap(default_image)
+		self.mc_title.setText('No results on Metacritic')
+		self.mc_title.setStyleSheet('')
+		self.mc_critic.hide()
+		self.mc_user.hide()
+
 
 
 	def create_playback_buttons(self):

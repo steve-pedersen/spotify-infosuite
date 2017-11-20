@@ -11,6 +11,8 @@ import threading
 import requests
 import urllib
 import ssl
+import os
+import sys
 
 from threading import Thread
 from time import sleep
@@ -120,7 +122,7 @@ class Controller(QWidget):
 		x = self.window_w * 2 / 3
 		y = self.window_h / 2
 		w = self.window_w / 3
-		h = self.window_h / 3
+		h = self.window_h * 0.37
 		title_x = 10
 		title_y = 5
 		self.review_frame = model.Frame(
@@ -136,9 +138,10 @@ class Controller(QWidget):
 
 	def init_metacritic_frame(self):
 		x = self.window_w * 2/3
-		y = self.window_h/2 + self.window_h/3
-		w = self.window_w / 3
-		h = self.window_h / 6
+		y = self.window_h/2 + self.window_h*0.37
+		w = self.window_w / 3		
+		h = self.window_h * 0.13
+					
 		self.metacritic_frame = model.Frame(
 			self, self.multi_frame_window, x,y, w,h, 'metacritic_frame'
 		)	
@@ -230,21 +233,36 @@ class Controller(QWidget):
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		self.lyrics_nam.get(req)
 
-	# reviews handler
-	# from metacritic:
+	# Reviews Handler
+	#
+	# Reviews object consists of the following:
 	# artist,album,date,critic_rating,critic_count,user_rating,user_count,img_url
 	def update_review_frame(self, review):
+
+		# Pitchfork frame
 		if isinstance(review, str):
 			self.review_frame.set_display_text(review)
+
+		# Metacritic frame
 		elif isinstance(review, object):
-			url_data = urllib.request.urlopen(review.img_url).read()
-			review.pixmap = url_data
-			self.metacritic_frame.create_layout(review)
-			print('\n-----Metacritic Results-----\n')
-			print(review.artist, ' - ', review.album)
-			print('Critic Score:\t', review.critic_rating, '\t(',review.critic_count,' reviews)')
-			print('User Score:\t', review.user_rating, '\t(',review.user_count,' reviews)')
-			print('-------------------------------------------')
+			default_image = QPixmap('./controller/info-icon.png')
+
+			if not review.has_review:
+				self.metacritic_frame.default_metacritic_content(default_image)
+			else:
+				try:
+					album_image = urllib.request.urlopen(review.img_url).read()
+				except:
+					album_image = default_image
+				
+				review.pixmap = album_image
+				self.metacritic_frame.add_metacritic_content(review)
+				
+				print('\n-----Metacritic Results-----\n')
+				print(review.artist, ' - ', review.album)
+				print('Critic Score:\t', review.critic_rating, '\t(',review.critic_count,' reviews)')
+				print('User Score:\t', review.user_rating, '\t(',review.user_count,' reviews)')
+				print('-------------------------------------------\n')
 	
 	# lyrics handler
 	def lyrics_handler(self, reply):

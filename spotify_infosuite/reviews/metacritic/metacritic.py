@@ -36,11 +36,20 @@ def search(artist, album, apikey):
 	text = response.read().decode('UTF-8')
 	# the server responds with json so we load it into a dictionary
 	results = json.loads(text)
-
+	# print(results)
+	
 	# since we didn't pass in the year there may be more than one match of the album name
 	# iterate through results and check artist name for a match
 	for result in results:
-		if result['PrimaryArtist'] == artist:
+
+		try:
+			match_found = result['Message'] != 'No matching item found!'
+		except Exception:
+			match_found = True
+
+		if not match_found:
+			continue
+		elif match_found and result['PrimaryArtist'] == artist:
 			try:
 				mc_name = result['PrimaryArtist']
 			except Exception:
@@ -71,6 +80,7 @@ def search(artist, album, apikey):
 				mc_user_review_count = ''
 			try:
 				mc_image_url = mc_image_url = result['ImageUrl']
+				print(mc_image_url)
 			except Exception:
 				mc_image_url = ''
 
