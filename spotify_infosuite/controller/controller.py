@@ -53,6 +53,7 @@ class Controller(QWidget):
 
 		self.init_playback_frame()
 		self.init_bio_frame()
+		self.init_news_frame()
 		self.init_review_frame()
 		self.init_images_frame()
 		self.init_lyrics_frame()
@@ -62,7 +63,7 @@ class Controller(QWidget):
 		x = 0
 		y = self.window_h * 0.1
 		w = self.window_w / 3
-		h = self.window_h * 0.9
+		h = self.window_h*2/3 - y
 		self.bio_frame = model.Frame(
 			self, self.multi_frame_window, x,y, w,h, "bio_frame"
 		)
@@ -80,7 +81,17 @@ class Controller(QWidget):
 
 	def init_news_frame(self):
 		x = 0
-		y = 25
+		y = self.window_h*2 / 3
+		w = self.window_w / 3
+		h = self.window_h / 3
+		self.news_frame = model.Frame(
+			self, self.multi_frame_window, x,y, w,h, "news_frame"
+		)
+		self.news_frame.set_display_title("News", 10, 5)
+		self.multi_frame_window.add_frame_bio(self.news_frame)
+
+		self.news_nam = QtNetwork.QNetworkAccessManager()
+		self.news_nam.finished.connect(self.news_handler)
 
 	def init_playback_frame(self):
 		self.spotify = self.open_spotify()
@@ -326,6 +337,31 @@ class Controller(QWidget):
 		
 		# set those lyrics on the frame
 		self.lyrics_frame.set_display_text(lyrics, 10, 45, 'lyrics_text')
+
+	def news_handler(self, reply):
+
+		er = reply.error()
+
+		if er == QtNetwork.QNetworkReply.NoError:
+			response = reply.readAll()
+			document = QJsonDocument()
+			error = QJsonParseError()
+			document = document.fromJson(response, error)
+			json_resp = document.object()
+
+			bio = ''
+			for f in json_resp['full'].toArray():
+				f = f.toObject()
+				paragraph = ''
+				for i, t in enumerate(f['text'].toArray()):
+					t = t.toString()
+					paragraph += f['title'].toString() + '\n\n' + t.rstrip() if i == 0 else (' ' + t.rstrip())
+				bio += paragraph + '\n\n'
+
+			self.bio_frame.set_display_text(bio, 10, 45, 'bio_text')
+			
+		else:
+			self.bio_frame.set_display_text('No artist bio found.', 10, 45)	
 
 	# bio handler
 	def search_bio_handler(self, reply):
