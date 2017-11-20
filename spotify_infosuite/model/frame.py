@@ -28,6 +28,8 @@ class Frame(QLabel):
 		self.setGeometry(self.x, self.y, self.w, self.h)
 		self.frame_components = []
 
+		self.image_label = QLabel(self)
+
 		self.metacritic_exists = False
 		self.mc_album_thumb = QLabel(self)
 		self.mc_title = QLabel(self)
@@ -72,10 +74,8 @@ class Frame(QLabel):
 
 	# TODO: maybe pass in a dict that has the pixmap, width and height of each
 	# 	rather than separate lists
-	def add_artist_images(self, images, widths, heights):
-		self.display_text_label.hide()
+	def add_artist_images(self, images, widths, heights):		
 		x, y = 10, 45
-		# w, h = self.w / 4, self.h / 3
 		w, h = self.w - x*2, self.h - y - 5
 		if widths[0] > heights[0]:			
 			if w > widths[0]:
@@ -88,24 +88,23 @@ class Frame(QLabel):
 				h = heights[0]
 			image = images[0].scaledToHeight(h)
 		
-		self.container = QLabel(self)
-		# self.container.setStyleSheet('border: 1px solid #0f0f0f;')
-		self.container.resize(w, h)			
-		self.container.setPixmap(image)
-		self.container.move(x, y)
-		self.container.setAlignment(Qt.AlignCenter)
-		self.container.show()
+		# self.image_label.setStyleSheet('border: 1px solid #0f0f0f;')
+		self.image_label.resize(w, h)
+		self.image_label.setPixmap(image)
+		self.image_label.move(x, y)
+		self.image_label.setAlignment(Qt.AlignCenter)
+		self.image_label.show()
 		# for i, image in enumerate(images):
 		# 	# w, h = widths[i], heights[i]
 		# 	w, h = self.w, self.h - y
 		# 	image = image.scaledToWidth(w)
 			
-		# 	self.container = QLabel(self)
-		# 	# self.container.setStyleSheet('border: 1px solid #0f0f0f;')
-		# 	self.container.resize(w, h)			
-		# 	self.container.setPixmap(image)
-		# 	self.container.move(x + x*i, y)
-		# 	self.container.show()
+		# 	self.image_label = QLabel(self)
+		# 	# self.image_label.setStyleSheet('border: 1px solid #0f0f0f;')
+		# 	self.image_label.resize(w, h)			
+		# 	self.image_label.setPixmap(image)
+		# 	self.image_label.move(x + x*i, y)
+		# 	self.image_label.show()
 
 
 	def get_display_text_label(self):
