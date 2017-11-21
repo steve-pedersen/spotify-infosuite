@@ -165,7 +165,7 @@ class Frame(QLabel):
 			self.mc_album_thumb.setPixmap(pixmap)
 			self.mc_album_thumb.setAlignment(Qt.AlignCenter)
 
-			self.mc_title.setText(review.artist + ' - '+ review.album)
+			self.mc_title.setText(review.album)
 			self.mc_title.setObjectName('mc_title')
 			self.mc_title.setGeometry(self.w/3.8, self.h/10, self.w*0.75,20)
 			self.mc_title.setWordWrap(True)
@@ -198,7 +198,7 @@ class Frame(QLabel):
 		else:
 			# otherwise, update the text and image
 			self.mc_album_thumb.setPixmap(pixmap)
-			self.mc_title.setText(review.artist + ' - '+ review.album)
+			self.mc_title.setText(review.album)
 			self.mc_critic.setText(
 				'Critic Score:   '+ str(review.critic_rating)[0]+'.'+str(review.critic_rating)[1]+
 				'  ('+str(review.critic_count)+' reviews)'	
