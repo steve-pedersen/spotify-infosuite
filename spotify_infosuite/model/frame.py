@@ -27,6 +27,7 @@ class Frame(QLabel):
 		self.view = view
 		self.setGeometry(self.x, self.y, self.w, self.h)
 		self.frame_components = []
+		self.images_list = []
 
 		self.image_label = QLabel(self)
 
@@ -76,23 +77,30 @@ class Frame(QLabel):
 	# 	rather than separate lists
 	def add_artist_images(self, images, widths, heights):		
 		x, y = 10, 45
-		w, h = self.w - x*2, self.h - y - 5
+		w, h = self.w - x*2, self.h - y - 40
+		self.images_list = images
+		print("SIZE: ", len(self.images_list))
+		print("w: ", w)
+		print("h: ", h)
+		print("w2: ", self.w)
+		print("h2: ", self.h)
 		if widths[0] > heights[0]:			
 			if w > widths[0]:
 				# print('image is wider than it is tall and less wide than the frame')
 				w = widths[0]
-			image = images[0].scaledToWidth(w)
+			image = self.images_list[0].scaledToWidth(w)
 		else:
 			if h > heights[0]:
 				# print('image is taller than it is wide and less tall than the frame')
 				h = heights[0]
-			image = images[0].scaledToHeight(h)
+			image = self.images_list[0].scaledToHeight(h)
 		
 		# self.image_label.setStyleSheet('border: 1px solid #0f0f0f;')
 		self.image_label.resize(w, h)
 		self.image_label.setPixmap(image)
 		self.image_label.move(x, y)
 		self.image_label.setAlignment(Qt.AlignCenter)
+		self.create_image_buttons()
 		self.image_label.show()
 		# for i, image in enumerate(images):
 		# 	# w, h = widths[i], heights[i]
@@ -106,6 +114,15 @@ class Frame(QLabel):
 		# 	self.image_label.move(x + x*i, y)
 		# 	self.image_label.show()
 
+	def next_image(self):
+		if self.images_list is not None:
+			self.image_label.setPixmap(self.images_list[1])
+		print(self.images_list)
+
+	def prev_image(self):
+		if self.images_list is not None:
+			self.image_label.setPixmap(self.images_list[0])
+		print(self.images_list)
 
 	def get_display_text_label(self):
 		return self.display_text_label
@@ -254,6 +271,23 @@ class Frame(QLabel):
 		for f in self.frame_components:
 			f.show()
 
+	def create_image_buttons(self):
+		self.next_image_button = QPushButton('>', self.view)
+		self.prev_image_button = QPushButton('<', self.view)
+		self.frame_components.extend([
+			self.next_image_button, self.prev_image_button
+		])
+
+		self.next_image_button.setObjectName('next_image_button')
+		self.prev_image_button.setObjectName('prev_image_button')
+
+		self.next_image_button.resize(40, 30)
+		self.prev_image_button.resize(40, 30)
+		next_x = 900
+		prev_x = 850
+		self.next_image_button.move(next_x, 302)
+		self.prev_image_button.move(prev_x, 302)
+
 	def get_playback_prev_button(self):
 		return self.prev_button
 
@@ -268,3 +302,9 @@ class Frame(QLabel):
 
 	def mousePressEvent(self, event):
 		self.clicked.emit(self)
+
+	def get_image_next_button(self):
+		return self.next_image_button
+
+	def get_image_prev_button(self):
+		return self.prev_image_button
