@@ -2,6 +2,7 @@ import model
 import view
 import playback
 import musikki
+import flickr
 # import reviews #pitchfork
 # from reviews.pitchfork import pitchfork
 from reviews import reviews
@@ -182,8 +183,14 @@ class Controller(QWidget):
 		# repeat until nothing found
 		# or until all services have been exhausted
 
-		if self.musikki_artist.is_found:
-			self.musikki_artist.get_full_images(self.images_nam)
+		self.flickr_search = flickr.search(self.get_current_artist())
+		if self.flickr_search is not None:
+			print('Flickr success!')
+			if self.musikki_artist.is_found:
+				self.musikki_artist.get_full_images(self.images_nam)
+
+		# if self.musikki_artist.is_found:
+		# 	self.musikki_artist.get_full_images(self.images_nam)
 		else:
 			self.images_frame.set_display_text('No results for current artist.', 10, 45)
 
