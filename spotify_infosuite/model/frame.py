@@ -78,26 +78,30 @@ class Frame(QLabel):
 	def add_artist_images(self, images, widths, heights):		
 		x, y = 10, 45
 		w, h = self.w - x*2, self.h - y - 40
-		self.images_list = images
-		print("SIZE: ", len(self.images_list))
+
+		print("SIZE: ", len(images))
 		print("w: ", w)
 		print("h: ", h)
 		print("w2: ", self.w)
 		print("h2: ", self.h)
-		if widths[0] > heights[0]:			
-			if w > widths[0]:
-				# print('image is wider than it is tall and less wide than the frame')
-				w = widths[0]
-			image = self.images_list[0].scaledToWidth(w)
-		else:
-			if h > heights[0]:
-				# print('image is taller than it is wide and less tall than the frame')
-				h = heights[0]
-			image = self.images_list[0].scaledToHeight(h)
-		
+
+		for i in range(len(images)):
+			if widths[i] > heights[i]:
+				if w > widths[i]:
+					# print('image is wider than it is tall and less wide than the frame')
+					w = widths[i]
+				image = images[i].scaledToWidth(w)
+				self.images_list.append(image)
+			else:
+				if h > heights[i]:
+					# print('image is taller than it is wide and less tall than the frame')
+					h = heights[i]
+				image = images[i].scaledToHeight(h)
+				self.images_list.append(image)
+
 		# self.image_label.setStyleSheet('border: 1px solid #0f0f0f;')
 		self.image_label.resize(w, h)
-		self.image_label.setPixmap(image)
+		self.image_label.setPixmap(self.images_list[0])
 		self.image_label.move(x, y)
 		self.image_label.setAlignment(Qt.AlignCenter)
 		self.create_image_buttons()

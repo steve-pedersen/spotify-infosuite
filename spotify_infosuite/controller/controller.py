@@ -384,6 +384,7 @@ class Controller(QWidget):
 				f = f.toObject() 
 				thumb = f['thumbnails'].toArray()[0].toObject()
 				thumb_url = thumb['url'].toString()
+				print("THUMB URL: ", thumb_url)
 				thumb_width = thumb['width'].toInt()
 				thumb_height = thumb['height'].toInt()
 
