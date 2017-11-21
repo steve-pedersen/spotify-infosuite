@@ -27,7 +27,7 @@ class Artist:
 		url = url + '/' + str(self.mkid) + '/bio'
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
-		print(url)
+		# print(url)
 
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		nam.get(req)

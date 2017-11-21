@@ -30,16 +30,26 @@ from PyQt5 import QtGui
 
 class Controller(QWidget):
 
-	def __init__(self, app, screen_width, screen_height):
+	def __init__(self, app, screen_width, screen_height, use_default=True):
 		super().__init__()
 		print(screen_width, screen_height)
 
-		space_w = screen_width / 4
-		space_h = screen_height / 4
-		self.window_w = screen_width - space_w
-		self.window_h = screen_height - space_h
-		self.window_x = space_w / 2
-		self.window_y = space_h / 2
+		window_fits = False
+		min_w, min_h = 1440, 900
+		while not window_fits:
+			space_w = screen_width / 4
+			space_h = screen_height / 4
+			self.window_w = screen_width - space_w
+			self.window_h = screen_height - space_h
+			self.window_x = space_w / 2
+			self.window_y = space_h / 2
+			if not use_default:
+				window_fits = True
+			elif self.window_w <= min_w and self.window_h <= min_h:
+				window_fits = True
+			else:
+				screen_width = min_w
+				screen_height = min_h 
 
 		self.multi_frame_window = view.MultiFrameWindow(
 			self.window_x, 
@@ -86,12 +96,17 @@ class Controller(QWidget):
 		self.spotify = self.open_spotify()
 		self.update_current_playing()
 
+		self.playback_title_x = 10
+		self.playback_title_y = 5
+
 		x = 0
 		y = 0
 		w = self.window_w / 3
 		h = self.window_h * 0.1
 		self.playback_frame = model.Frame(self, self.multi_frame_window, x,y, w,h, 'playback_frame')
-		self.playback_frame.set_display_title(self.get_current_playing(), 10, 10)		
+		self.playback_frame.set_display_title(
+			self.get_current_playing(), self.playback_title_x, self.playback_title_y
+		)		
 		
 		self.playback_frame.create_playback_buttons()		
 		self.playback_frame.get_playback_prev_button().clicked.connect(self.prev)
@@ -200,7 +215,9 @@ class Controller(QWidget):
 	def update_everything(self):
 		# playback info
 		self.update_current_playing()
-		self.playback_frame.set_display_title(self.current_playing, 10, 10)
+		self.playback_frame.set_display_title(
+			self.current_playing, self.playback_title_x, self.playback_title_y
+		)
 
 		self.update_artist_info(update_playback=False)		
 		self.update_album_info(update_playback=False)
