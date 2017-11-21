@@ -137,9 +137,13 @@ class Frame(QLabel):
 		self.frame_components.append(self.expand_button)
 
 	def add_metacritic_content(self, review):
-		
-		pixmap = QPixmap()
-		pixmap.loadFromData(review.pixmap)
+
+		if type(review.pixmap) == QPixmap:
+			pixmap = review.pixmap
+		else:
+			pixmap = QPixmap()
+			pixmap.loadFromData(review.pixmap)			
+
 		padding = 20
 		if pixmap.height() > pixmap.width():
 			pixmap = pixmap.scaledToHeight(self.h - padding)
