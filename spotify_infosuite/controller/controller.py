@@ -164,10 +164,23 @@ class Controller(QWidget):
 			self, self.multi_frame_window, x,y, w,h, 'images_frame'
 		)
 		self.images_frame.set_display_title('Images', title_x, title_y)
+
+		self.images_frame.create_image_buttons()
+		self.images_frame.get_image_next_button().clicked.connect(self.next_image_handler)
+		self.images_frame.get_image_prev_button().clicked.connect(self.prev_image_handler)
+
 		self.multi_frame_window.add_frame(self.images_frame)
 
 		self.images_nam = QtNetwork.QNetworkAccessManager()
 		self.images_nam.finished.connect(self.search_images_handler)
+
+		# if new artist is playing:
+		# check musikki for images
+		# get musikki images if avail
+		# check other service for images
+		# get images from other services if avail
+		# repeat until nothing found
+		# or until all services have been exhausted
 
 		if self.musikki_artist.is_found:
 			self.musikki_artist.get_full_images(self.images_nam)
@@ -364,7 +377,7 @@ class Controller(QWidget):
 			document = QJsonDocument()
 			error = QJsonParseError()
 			document = document.fromJson(response, error)
-			json_resp = document.object()			
+			json_resp = document.object()
 			notfound_count = 0
 
 			for f in json_resp['results'].toArray():
@@ -373,7 +386,7 @@ class Controller(QWidget):
 				thumb_url = thumb['url'].toString()
 				thumb_width = thumb['width'].toInt()
 				thumb_height = thumb['height'].toInt()
-						
+
 				try:
 					context = ssl._create_unverified_context()
 					data = urlopen(thumb_url, context=context).read()
@@ -387,7 +400,7 @@ class Controller(QWidget):
 				widths.append(thumb_width)
 				heights.append(thumb_height)
 
-		
+
 		if notfound_count > 0:
 			print(notfound_count, " 404 responses in image handler")
 
@@ -395,7 +408,7 @@ class Controller(QWidget):
 
 		if len(pixmaps) > 0:
 			# load the biggest image as the first and only pixmap
-			biggest = 0				
+			biggest = 0
 			for i, p in enumerate(pixmaps):
 				if p.width() > biggest:
 					biggest = i
@@ -411,6 +424,12 @@ class Controller(QWidget):
 			heights = [pixmaps[0].height()]
 			self.images_frame.add_artist_images(pixmaps, widths, heights)
 			# self.images_frame.set_display_text('No Images Found.')
+
+	def next_image_handler(self):
+		self.images_frame.next_image()
+
+	def prev_image_handler(self):
+		self.images_frame.prev_image()
 
 	# playback handler
 	def update_playback_display(self):
