@@ -42,7 +42,11 @@ class Frame(QLabel):
 		self.display_title_label.setText(title)
 		self.display_title_label.move(x, y)
 		self.display_title_label.resize(int(self.w*0.96), 35) # limit width to 93% of frame
-		self.display_title_label.setObjectName('frame_title')
+		
+		if self.object_title == 'playback_frame':
+			self.display_title_label.setObjectName('playback_title')
+		else:
+			self.display_title_label.setObjectName('frame_title')
 		self.display_title_label.setWordWrap(True)
 		self.frame_components.append(self.display_title_label)
 
@@ -137,9 +141,13 @@ class Frame(QLabel):
 		self.frame_components.append(self.expand_button)
 
 	def add_metacritic_content(self, review):
-		
-		pixmap = QPixmap()
-		pixmap.loadFromData(review.pixmap)
+
+		if type(review.pixmap) == QPixmap:
+			pixmap = review.pixmap
+		else:
+			pixmap = QPixmap()
+			pixmap.loadFromData(review.pixmap)			
+
 		padding = 20
 		if pixmap.height() > pixmap.width():
 			pixmap = pixmap.scaledToHeight(self.h - padding)
@@ -157,7 +165,7 @@ class Frame(QLabel):
 			self.mc_album_thumb.setPixmap(pixmap)
 			self.mc_album_thumb.setAlignment(Qt.AlignCenter)
 
-			self.mc_title.setText(review.artist + ' - '+ review.album)
+			self.mc_title.setText(review.album)
 			self.mc_title.setObjectName('mc_title')
 			self.mc_title.setGeometry(self.w/3.8, self.h/10, self.w*0.75,20)
 			self.mc_title.setWordWrap(True)
@@ -190,7 +198,7 @@ class Frame(QLabel):
 		else:
 			# otherwise, update the text and image
 			self.mc_album_thumb.setPixmap(pixmap)
-			self.mc_title.setText(review.artist + ' - '+ review.album)
+			self.mc_title.setText(review.album)
 			self.mc_critic.setText(
 				'Critic Score:   '+ str(review.critic_rating)[0]+'.'+str(review.critic_rating)[1]+
 				'  ('+str(review.critic_count)+' reviews)'	
@@ -241,9 +249,12 @@ class Frame(QLabel):
 		self.prev_button.setObjectName('prev_button')		
 		self.next_button.setObjectName('next_button')	
 
-		self.prev_button.resize(self.prev_button.sizeHint() * 1.3)	
-		self.playpause_button.resize(self.playpause_button.sizeHint() * 1.3)	
-		self.next_button.resize(self.next_button.sizeHint() * 1.3)	
+		self.prev_button.resize(self.prev_button.sizeHint().width()*1.4,
+			self.prev_button.sizeHint().height())	
+		self.playpause_button.resize(self.playpause_button.sizeHint().width()*1.4,
+			self.playpause_button.sizeHint().height())	
+		self.next_button.resize(self.next_button.sizeHint().width()*1.4,
+			self.next_button.sizeHint().height())	
 
 		prevw = self.prev_button.width()
 		playw = self.playpause_button.width()
@@ -259,9 +270,12 @@ class Frame(QLabel):
 		# print('Left: ', prev_x, '\nRight: ', self.w - (next_x + self.next_button.width()))
 		# print('spacer: ', spacer)
 
-		self.prev_button.move(prev_x, self.display_title_label.height()+20)	
-		self.playpause_button.move(play_x, self.display_title_label.height()+20)	
-		self.next_button.move(next_x, self.display_title_label.height()+20)	
+		self.prev_button.move(prev_x, self.display_title_label.height()+
+			self.display_title_label.height()/4)	
+		self.playpause_button.move(play_x, self.display_title_label.height()+
+			self.display_title_label.height()/4)	
+		self.next_button.move(next_x, self.display_title_label.height()+
+			self.display_title_label.height()/4)	
 
 	def hide_frame_components(self):
 		for f in self.frame_components:

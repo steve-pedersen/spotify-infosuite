@@ -113,6 +113,18 @@ QLabel#frame_title {
     font-size: 16pt;
     /*text-decoration: underline;*/
 }
+QLabel#playback_title {
+    position: relative;
+    background-color: #0f0f0f;
+    text-align: center;
+    padding: 1px;
+    border-radius: 5%;
+    color: #25D34D;
+    /*font-weight: bold;*/
+    font-size: 15pt;
+    /*text-decoration: underline;*/
+}
+
 
 QLabel#frame_text, #bio_text, #lyrics_text, #frame_images {
     /*position: relative*/;
@@ -135,10 +147,10 @@ QLabel#bio_text {
 
 QLabel#mc_title, #mc_critic, #mc_user {
     color: white;
-    font-size: 14pt;
+    font-size: 13pt;
 }
 QLabel#mc_title {
-    font-size: 16pt;
+    font-size: 14pt;
     text-decoration: underline;
 }
 
