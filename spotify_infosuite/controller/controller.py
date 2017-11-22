@@ -116,10 +116,13 @@ class Controller(QWidget):
 			self, self.multi_frame_window, x,y, w,h, "news_frame"
 		)
 		self.news_frame.set_display_title("News", 10, 5)
-		self.multi_frame_window.add_frame_bio(self.news_frame)
+		self.multi_frame_window.add_frame(self.news_frame)
 
 		self.news_nam = QtNetwork.QNetworkAccessManager()
 		self.news_nam.finished.connect(self.news_handler)
+
+		if self.musikki_artist.is_found:
+			self.musikki_artist.get_news(self.news_nam)
 
 	def init_playback_frame(self):
 		self.spotify = self.open_spotify()
@@ -397,19 +400,33 @@ class Controller(QWidget):
 			document = document.fromJson(response, error)
 			json_resp = document.object()
 
-			bio = ''
-			for f in json_resp['full'].toArray():
-				f = f.toObject()
-				paragraph = ''
-				for i, t in enumerate(f['text'].toArray()):
-					t = t.toString()
-					paragraph += f['title'].toString() + '\n\n' + t.rstrip() if i == 0 else (' ' + t.rstrip())
-				bio += paragraph + '\n\n'
-
-			self.bio_frame.set_display_text(bio, 10, 45, 'bio_text')
+			if len(json_resp['summary'].toObject()['errors'].toArray()) == 0 \
+				and json_resp['summary'].toObject()['result_count'].toInt() > 0:
+				
+				results = {}
+				for r in json_resp['results'].toArray():
+					for i in r.toObject():
+						print(i)
+						# author_info
+						# content_element_types
+						# entity
+						# image
+						# language
+						# mkid
+						# publish_date
+						# relation_type
+						# source
+						# subtitle
+						# summary
+						# title
+						# type
+						# url
+						
+						# print(r)
+						# {'author_info': <PyQt5.QtCore.QJsonValue object at 0x113301d68>, 'content_element_types': <PyQt5.QtCore.QJsonValue object at 0x113301dd8>, 'entity': <PyQt5.QtCore.QJsonValue object at 0x113301e48>, 'image': <PyQt5.QtCore.QJsonValue object at 0x113301eb8>, 'language': <PyQt5.QtCore.QJsonValue object at 0x113301f28>, 'mkid': <PyQt5.QtCore.QJsonValue object at 0x113301f98>, 'publish_date': <PyQt5.QtCore.QJsonValue object at 0x113382048>, 'relation_type': <PyQt5.QtCore.QJsonValue object at 0x1133820b8>, 'source': <PyQt5.QtCore.QJsonValue object at 0x113382128>, 'subtitle': <PyQt5.QtCore.QJsonValue object at 0x113382198>, 'summary': <PyQt5.QtCore.QJsonValue object at 0x113382208>, 'title': <PyQt5.QtCore.QJsonValue object at 0x113382278>, 'type': <PyQt5.QtCore.QJsonValue object at 0x1133822e8>, 'url': <PyQt5.QtCore.QJsonValue object at 0x113382358>}
 			
 		else:
-			self.bio_frame.set_display_text('No artist bio found.', 10, 45)	
+			self.news_frame.set_display_text('No news for this artist.', 10, 45)
 
 	# bio handler
 	def search_bio_handler(self, reply):
