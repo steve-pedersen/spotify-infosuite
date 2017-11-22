@@ -124,6 +124,10 @@ QLabel#playback_title {
     font-size: 15pt;
     /*text-decoration: underline;*/
 }
+QLabel#news_title, #news_summary {
+    color: #FFF;
+    font-size: 13px;
+}
 
 
 QLabel#frame_text, #bio_text, #lyrics_text, #frame_images {

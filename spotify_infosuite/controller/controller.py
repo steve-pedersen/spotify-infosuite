@@ -264,6 +264,7 @@ class Controller(QWidget):
 		self.musikki_artist = musikki.search(self.get_current_artist())
 		self.musikki_artist.get_full_bio(self.bio_nam)
 		self.musikki_artist.get_full_images(self.images_nam)
+		self.musikki_artist.get_news(self.news_nam)
 
 	def update_song_info(self, update_playback=True):
 		if update_playback:
@@ -390,7 +391,7 @@ class Controller(QWidget):
 		self.lyrics_frame.set_display_text(lyrics, 10, 45, 'lyrics_text')
 
 	def news_handler(self, reply):
-
+		print('news_handler() called')
 		er = reply.error()
 
 		if er == QtNetwork.QNetworkReply.NoError:
@@ -399,34 +400,92 @@ class Controller(QWidget):
 			error = QJsonParseError()
 			document = document.fromJson(response, error)
 			json_resp = document.object()
+			
 
 			if len(json_resp['summary'].toObject()['errors'].toArray()) == 0 \
 				and json_resp['summary'].toObject()['result_count'].toInt() > 0:
 				
+				counter = 0
 				results = {}
+				resultlist = []
 				for r in json_resp['results'].toArray():
-					for i in r.toObject():
-						print(i)
-						# author_info
-						# content_element_types
-						# entity
-						# image
-						# language
-						# mkid
-						# publish_date
-						# relation_type
-						# source
-						# subtitle
-						# summary
-						# title
-						# type
-						# url
-						
-						# print(r)
-						# {'author_info': <PyQt5.QtCore.QJsonValue object at 0x113301d68>, 'content_element_types': <PyQt5.QtCore.QJsonValue object at 0x113301dd8>, 'entity': <PyQt5.QtCore.QJsonValue object at 0x113301e48>, 'image': <PyQt5.QtCore.QJsonValue object at 0x113301eb8>, 'language': <PyQt5.QtCore.QJsonValue object at 0x113301f28>, 'mkid': <PyQt5.QtCore.QJsonValue object at 0x113301f98>, 'publish_date': <PyQt5.QtCore.QJsonValue object at 0x113382048>, 'relation_type': <PyQt5.QtCore.QJsonValue object at 0x1133820b8>, 'source': <PyQt5.QtCore.QJsonValue object at 0x113382128>, 'subtitle': <PyQt5.QtCore.QJsonValue object at 0x113382198>, 'summary': <PyQt5.QtCore.QJsonValue object at 0x113382208>, 'title': <PyQt5.QtCore.QJsonValue object at 0x113382278>, 'type': <PyQt5.QtCore.QJsonValue object at 0x1133822e8>, 'url': <PyQt5.QtCore.QJsonValue object at 0x113382358>}
-			
+
+					if counter < 1:
+
+						r = r.toObject()
+
+						results['author'], name = [], ''
+						if r['author_info'] != '':
+							if r['author_info'].toObject()['name'] != '':
+								name = r['author_info'].toObject()['name'].toString()
+						# results['author'].extend([name])
+						results['author'] = name
+
+						results['source'], avatar, title = [],'',''
+						if r['source'] != '':
+							if r['source'].toObject()['title'] != '':
+								results['src_title'] = r['source'].toObject()['title'].toString()
+							if r['source'].toObject()['avatar'].toString() != '':
+								avatar = r['source'].toObject()['avatar'].toString()
+						results['source'].extend([avatar, title])
+
+						results['date'], year, month, day = '','','',''
+						if r['publish_date'] != '':
+							if str(r['publish_date'].toObject()['year'].toInt()) != '':
+								year = str(r['publish_date'].toObject()['year'].toInt())
+							if str(r['publish_date'].toObject()['month'].toInt()) != '':
+								month = str(r['publish_date'].toObject()['month'].toInt())
+							if str(r['publish_date'].toObject()['day'].toInt()) != '':
+								day = str(r['publish_date'].toObject()['day'].toInt())
+						results['date'] = year +'-'+ month +'-'+ day
+
+						results['mkid'] = ''
+						if str(r['mkid'].toInt()) != '':
+							results['mkid'] = str(r['mkid'].toInt())
+
+						results['title'] = ''
+						if r['title'].toString() != '':
+							results['title'] = r['title'].toString()
+
+						results['newsurl'] = ''
+						if r['url'].toString() != '':
+							results['newsurl'] = r['url'].toString()
+
+						results['summary'] = ''
+						if r['summary'].toString() != '':
+							results['summary'] = r['summary'].toString()
+
+						results['imgurl'] = ''
+						if r['image'].toString() != '':
+							results['imgurl'] = r['image'].toString()
+							try:
+								img = QPixmap()
+								print('NEWS IMG URL: ', results['imgurl'])
+								# context = ssl._create_unverified_context()
+								# req = urllib.request.Request(results['imgurl'], headers={'User-Agent' : 'Mozilla/5.0'})
+								req = urllib.request.Request(results['imgurl'])
+								data = urllib.request.urlopen(req).read()
+								results['newsicon'] = img.loadFromData(data)
+								print('News image found of width: ', results['newsicon'].width())
+							except:
+								print('Error getting image in news handler')
+								results['newsicon'] = QPixmap('./controller/info-icon.png')
+
+						# results['newsicon'] = QPixmap('./controller/info-icon.png')
+						# print('news found  ', results['newsicon'].width())
+					else:
+						break
+
+						resultlist.append(results)
+					counter += 1
+				# end for
+
+				self.news_frame.add_news(results)
+			#end if
+			print('end reply is not error')
 		else:
-			self.news_frame.set_display_text('No news for this artist.', 10, 45)
+			print('no news found')
+			self.news_frame.add_news('No news for this artist.', QPixmap('./controller/info-icon.png'))
 
 	# bio handler
 	def search_bio_handler(self, reply):
