@@ -14,6 +14,7 @@ class MultiFrameWindow(QWidget):
         self.h = h
         self.window_title = window_title
         self.object_title = object_title
+        self.setWindowTitle(self.window_title)
         self.setObjectName(self.object_title)
         self.setGeometry(self.x, self.y, self.w, self.h)
         self.frames = []
