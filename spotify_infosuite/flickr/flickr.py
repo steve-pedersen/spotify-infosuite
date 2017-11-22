@@ -33,8 +33,8 @@ def search(artist):
 	url = url + 'method=flickr.photos.search&'
 	url = url + 'format=json&'
 	url = url + 'nojsoncallback=1&'
-	url = url + 'sort=relevance'
-	url = url + 'tags=music,song,musician,artist'
+	url = url + 'sort=relevance&'
+	url = url + 'tags=' + artist + ',music,musician,band,live,album,song'
 
 	url = url + '&per_page=' + str(maxResults) + '&api_key=' + appkey + '&text=' + str(query)
 	response = requests.get(url).json()

@@ -173,7 +173,7 @@ class Controller(QWidget):
 		self.multi_frame_window.add_frame(self.images_frame)
 
 		self.images_nam = QtNetwork.QNetworkAccessManager()
-		self.images_nam.finished.connect(self.search_images_handler)
+		self.images_nam.finished.connect(self.musikki_images_handler)
 
 		# if new artist is playing:
 		# check musikki for images
@@ -374,7 +374,7 @@ class Controller(QWidget):
 			self.bio_frame.set_display_text('No artist bio found.', 10, 45)
 
 	# images handler
-	def search_images_handler(self, reply):
+	def musikki_images_handler(self, reply):
 		urls, pixmaps, widths, heights = [], [], [], []
 
 		er = reply.error()
