@@ -32,32 +32,17 @@ class Controller(QWidget):
 
 	def __init__(self, app, screen_width, screen_height, use_default=True):
 		super().__init__()
-		print(screen_width, screen_height)
 
-		window_fits = False
-		min_w, min_h = 1440, 900
-		while not window_fits:
-			space_w = screen_width / 4
-			space_h = screen_height / 4
-			self.window_w = screen_width - space_w
-			self.window_h = screen_height - space_h
-			self.window_x = space_w / 2
-			self.window_y = space_h / 2
-			if not use_default:
-				window_fits = True
-			elif self.window_w <= min_w and self.window_h <= min_h:
-				window_fits = True
-			else:
-				screen_width = min_w
-				screen_height = min_h 
+		self.determine_window_size(screen_width, screen_height, use_default)
 
+		# Build the main view: Multi-Frame Window
 		self.multi_frame_window = view.MultiFrameWindow(
 			self.window_x, 
 			self.window_y, 
 			self.window_w, 
 			self.window_h, 
-			"Spotify Info Suite", 
-			"multi_frame_window"
+			"Spotify Info Suite",	# window title
+			"multi_frame_window"	# object name
 		)
 		self.multi_frame_window.show()
 
@@ -67,6 +52,39 @@ class Controller(QWidget):
 		self.init_images_frame()
 		self.init_lyrics_frame()
 
+	# Window scales to a 1080 screen resolution by default, but will revert to your 
+	# own screen resolution if the app window ends up being bigger than your screen
+	# or if use_default_size is set to False
+	def determine_window_size(self, screen_width, screen_height, use_default_size):
+		# minimum window dimensions
+		min_w, min_h = 1440, 900
+		# default window dimensions
+		def_w, def_h = 1920, 1080
+		window_fits = False
+		
+		while not window_fits:
+
+			if not use_default_size:
+				w = screen_width
+				h = screen_height
+			else:
+				w = def_w
+				h = def_h
+
+			space_w = w / 4
+			space_h = h / 4
+			self.window_w = w - space_w
+			self.window_h = h - space_h
+			self.window_x = space_w / 2 if not use_default_size else space_w * 1.17
+			self.window_y = space_h / 2 if not use_default_size else space_h * 1.2
+
+			if not use_default_size:
+				window_fits = True
+			elif self.window_w <= min_w and self.window_h <= min_h:
+				window_fits = True
+			else:
+				def_w = min_w
+				def_h = min_h 
 
 	def init_bio_frame(self):
 		x = 0
