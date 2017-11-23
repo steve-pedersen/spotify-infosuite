@@ -126,7 +126,7 @@ class Frame(QLabel):
 		height = self.display_title_label.height() * 1.3
 		self.news_img.setGeometry(15,height, self.w/10, self.h/10)
 		
-		print('No default image in news: ', def_img != None)
+		
 		img = results['newsicon'] if def_img == None else def_img
 		if img.width() > img.height():
 			img = img.scaledToWidth(self.news_img.width())
@@ -137,13 +137,14 @@ class Frame(QLabel):
 
 		if (type(results) == str):
 			self.news_title.setText(results)
+			self.news_title.setStyleSheet('')
 			self.news_title.setObjectName('news_title')
 		else:
 			src = results['src_title']
 			date = results['date']
 			title = results['title']
 			self.news_title.setText(
-				date +' - '+ src +'\n'+ title
+				date +'  -  '+ src +'\n'+ title
 			)
 			self.news_title.move(self.w/8, height)
 			self.news_title.setWordWrap(1)
@@ -154,10 +155,9 @@ class Frame(QLabel):
 			self.news_title.show()
 
 			self.news_summary.setText(results['summary'])
-			self.news_summary.move(15, self.news_title.height() + 45)
+			self.news_summary.move(10, self.news_title.height() + 45)
 			self.news_summary.setWordWrap(1)
-			self.news_summary.resize(self.news_summary.sizeHint().width()*1.5, 
-				self.news_summary.sizeHint().height())
+			self.news_summary.resize(self.w-20, self.news_summary.sizeHint().height())
 			self.news_summary.setObjectName('news_summary')
 			self.news_summary.setStyleSheet('')
 			self.news_summary.show()

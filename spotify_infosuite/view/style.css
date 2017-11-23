@@ -128,7 +128,9 @@ QLabel#news_title, #news_summary {
     color: #FFF;
     font-size: 13px;
 }
-
+QLabel#news_title {
+    text-decoration: underline;
+}
 
 QLabel#frame_text, #bio_text, #lyrics_text, #frame_images {
     /*position: relative*/;

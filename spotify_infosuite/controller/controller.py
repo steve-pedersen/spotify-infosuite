@@ -391,7 +391,8 @@ class Controller(QWidget):
 		self.lyrics_frame.set_display_text(lyrics, 10, 45, 'lyrics_text')
 
 	def news_handler(self, reply):
-		print('news_handler() called')
+		print('news_handler() gave a status of: ',
+			reply.rawHeader(QByteArray(b'Status')))
 		er = reply.error()
 
 		if er == QtNetwork.QNetworkReply.NoError:
@@ -462,8 +463,8 @@ class Controller(QWidget):
 								img = QPixmap()
 								print('NEWS IMG URL: ', results['imgurl'])
 								# context = ssl._create_unverified_context()
-								# req = urllib.request.Request(results['imgurl'], headers={'User-Agent' : 'Mozilla/5.0'})
-								req = urllib.request.Request(results['imgurl'])
+								req = urllib.request.Request(results['imgurl'], headers={"User-Agent" : "Mozilla/5.0"})
+								# req = urllib.request.Request(results['imgurl'])
 								data = urllib.request.urlopen(req).read()
 								results['newsicon'] = img.loadFromData(data)
 								print('News image found of width: ', results['newsicon'].width())
@@ -479,10 +480,8 @@ class Controller(QWidget):
 						resultlist.append(results)
 					counter += 1
 				# end for
-
 				self.news_frame.add_news(results)
 			#end if
-			print('end reply is not error')
 		else:
 			print('no news found')
 			self.news_frame.add_news('No news for this artist.', QPixmap('./controller/info-icon.png'))

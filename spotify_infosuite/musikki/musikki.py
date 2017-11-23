@@ -57,7 +57,7 @@ class Artist:
 		nam.get(req)
 
 	# https://music-api.musikki.com/reference/artists#news
-	def get_news(self, nam):		
+	def get_news(self, nam):	
 		url = self.artisturl + '/' + str(self.mkid) + '/news'
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
