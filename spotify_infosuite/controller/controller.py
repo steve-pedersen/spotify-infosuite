@@ -175,6 +175,9 @@ class Controller(QWidget):
 		self.images_nam = QtNetwork.QNetworkAccessManager()
 		self.images_nam.finished.connect(self.musikki_images_handler)
 
+		# self.flickr_images_nam = QtNetwork.QNetworkAccessManager()
+		self.images_nam.finished.connect(self.flickr_images_handler)
+
 		# if new artist is playing:
 		# check musikki for images
 		# get musikki images if avail
@@ -183,16 +186,17 @@ class Controller(QWidget):
 		# repeat until nothing found
 		# or until all services have been exhausted
 
-		self.flickr_search = flickr.search(self.get_current_artist())
-		if self.flickr_search is not None:
-			print('Flickr success!')
-			if self.musikki_artist.is_found:
-				self.musikki_artist.get_full_images(self.images_nam)
-
-		# if self.musikki_artist.is_found:
-		# 	self.musikki_artist.get_full_images(self.images_nam)
-		else:
-			self.images_frame.set_display_text('No results for current artist.', 10, 45)
+		# self.flickr_search = flickr.search(self.get_current_artist())
+		# if self.flickr_search is not None:
+		# 	print('Flickr search: ', self.flickr_search) # is the array of flickr images
+		# 	print('Flickr success!')
+		# 	if self.musikki_artist.is_found:
+		# 		self.musikki_artist.get_full_images(self.images_nam)
+		#
+		# # if self.musikki_artist.is_found:
+		# # 	self.musikki_artist.get_full_images(self.images_nam)
+		# else:
+		# 	self.images_frame.set_display_text('No results for current artist.', 10, 45)
 
 	def get_pitchfork_review(self):
 		requester = reviews.Requester()
@@ -373,6 +377,17 @@ class Controller(QWidget):
 		else:
 			self.bio_frame.set_display_text('No artist bio found.', 10, 45)
 
+	def flickr_images_handler(self, reply):
+		print('testies')
+		urls, pixmaps, widths, heights = [], [], [], []
+
+		er = reply.error()
+
+		if er == QtNetwork.QNetworkReply.NoError:
+			print('REPLY : ', reply.url())
+			print('REPLY : ', reply.rawHeader())
+			print('REPLY TYPE: ', type(reply))
+
 	# images handler
 	def musikki_images_handler(self, reply):
 		urls, pixmaps, widths, heights = [], [], [], []
@@ -391,7 +406,6 @@ class Controller(QWidget):
 				f = f.toObject() 
 				thumb = f['thumbnails'].toArray()[0].toObject()
 				thumb_url = thumb['url'].toString()
-				print("THUMB URL: ", thumb_url)
 				thumb_width = thumb['width'].toInt()
 				thumb_height = thumb['height'].toInt()
 
@@ -408,6 +422,8 @@ class Controller(QWidget):
 				widths.append(thumb_width)
 				heights.append(thumb_height)
 
+			print('URLS: ', urls)
+
 
 		if notfound_count > 0:
 			print(notfound_count, " 404 responses in image handler")
@@ -423,14 +439,14 @@ class Controller(QWidget):
 			pixmaps[0] = pixmaps[biggest]
 			widths[0] = widths[biggest]
 			heights[0] = heights[biggest]
-			self.images_frame.add_artist_images(pixmaps, widths, heights)
+			self.images_frame.add_musikki_artist_images(pixmaps, widths, heights)
 		else:
 			# use default image of dirty-piano.jpg
-			print('using default image')
-			pixmaps = [QPixmap('./controller/dirty-piano.jpg')]
-			widths = [pixmaps[0].width()]
-			heights = [pixmaps[0].height()]
-			self.images_frame.add_artist_images(pixmaps, widths, heights)
+			print('will search flickr as a backup')
+			# pixmaps = [QPixmap('./controller/dirty-piano.jpg')]
+			# widths = [pixmaps[0].width()]
+			# heights = [pixmaps[0].height()]
+			# self.images_frame.add_artist_images(pixmaps, widths, heights)
 			# self.images_frame.set_display_text('No Images Found.')
 
 	def next_image_handler(self):
