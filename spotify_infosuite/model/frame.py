@@ -104,7 +104,7 @@ class Frame(QLabel):
 		self.image_label.setPixmap(image)
 		self.image_label.move(x, y)
 		self.image_label.setAlignment(Qt.AlignCenter)
-		self.create_image_buttons()
+		# self.create_image_buttons()
 		self.image_label.show()
 		# for i, image in enumerate(images):
 		# 	# w, h = widths[i], heights[i]

@@ -25,7 +25,8 @@ class Artist:
 		url = self.artisturl + '/' + str(self.mkid) + '/bio'
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
-		# print(url)
+		print('bio url: ', url)
+
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		nam.get(req)
 
@@ -89,6 +90,15 @@ class Artist:
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
 
+		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
+		nam.get(req)
+
+	# https://music-api.musikki.com/reference/artists#social
+	def get_social_media(self, nam):
+		url = self.artisturl + '/' + str(self.mkid) + 'social?q=[service-name:twitter]'
+		url = url + '&appkey=' + self.appkey
+		url = url + '&appid=' + self.appid
+		print('social url: ', url)
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		nam.get(req)
 

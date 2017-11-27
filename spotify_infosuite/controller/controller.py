@@ -51,6 +51,7 @@ class Controller(QWidget):
 		self.init_review_frame()
 		self.init_images_frame()
 		self.init_lyrics_frame()
+		self.init_social_frame()
 
 	# Window scales to a 1080 screen resolution by default, but will revert to your 
 	# own screen resolution if the app window ends up being bigger than your screen
@@ -142,7 +143,7 @@ class Controller(QWidget):
 		x = self.window_w / 3
 		y = 0
 		w = self.window_w / 3
-		h = self.window_h
+		h = self.window_h / 1.2
 		self.lyrics_frame = model.Frame(
 			self, self.multi_frame_window, x,y, w,h, "lyrics_frame"
 		)
@@ -219,6 +220,26 @@ class Controller(QWidget):
 			self.musikki_artist.get_full_images(self.images_nam)
 		else:
 			self.images_frame.set_display_text('No results for current artist.', 10, 45)
+
+	def init_social_frame(self):
+		x = self.window_w / 3
+		y = self.window_h/2 + self.window_h*0.32
+		w = self.window_w / 3
+		h = self.window_h * 0.18
+		self.social_frame = model.Frame(
+			self, self.multi_frame_window, x,y, w,h, "social_frame"
+		)
+
+		self.social_frame.set_display_title("Social", 10, 5)
+		self.multi_frame_window.add_frame(self.social_frame)
+
+		self.social_nam = QtNetwork.QNetworkAccessManager()
+		self.social_nam.finished.connect(self.social_handler)
+
+		if self.musikki_artist.is_found:
+			self.musikki_artist.get_full_social(self.social_nam)
+		else:
+			self.social_frame.set_display_text('No results for current artist.', 10, 45)
 
 	def get_pitchfork_review(self):
 		requester = reviews.Requester()
