@@ -13,6 +13,7 @@ import urllib
 import ssl
 import os
 import sys
+import shutil
 
 from threading import Thread
 from time import sleep
@@ -391,8 +392,7 @@ class Controller(QWidget):
 		self.lyrics_frame.set_display_text(lyrics, 10, 45, 'lyrics_text')
 
 	def news_handler(self, reply):
-		print('news_handler() gave a status of: ',
-			reply.rawHeader(QByteArray(b'Status')))
+
 		er = reply.error()
 
 		if er == QtNetwork.QNetworkReply.NoError:
@@ -402,7 +402,6 @@ class Controller(QWidget):
 			document = document.fromJson(response, error)
 			json_resp = document.object()
 			
-
 			if len(json_resp['summary'].toObject()['errors'].toArray()) == 0 \
 				and json_resp['summary'].toObject()['result_count'].toInt() > 0:
 				
@@ -419,7 +418,6 @@ class Controller(QWidget):
 						if r['author_info'] != '':
 							if r['author_info'].toObject()['name'] != '':
 								name = r['author_info'].toObject()['name'].toString()
-						# results['author'].extend([name])
 						results['author'] = name
 
 						results['source'], avatar, title = [],'',''
@@ -460,20 +458,19 @@ class Controller(QWidget):
 						if r['image'].toString() != '':
 							results['imgurl'] = r['image'].toString()
 							try:
-								img = QPixmap()
-								print('NEWS IMG URL: ', results['imgurl'])
-								# context = ssl._create_unverified_context()
-								req = urllib.request.Request(results['imgurl'], headers={"User-Agent" : "Mozilla/5.0"})
-								# req = urllib.request.Request(results['imgurl'])
-								data = urllib.request.urlopen(req).read()
-								results['newsicon'] = img.loadFromData(data)
-								print('News image found of width: ', results['newsicon'].width())
-							except:
-								print('Error getting image in news handler')
+								url = results['imgurl']
+								
+								r = requests.get(url, stream=True)
+								filename = './controller/images/'+results['title']+'.jpg'
+								with open(filename, 'wb') as fd:
+									for chunk in r.iter_content(chunk_size=128):
+										fd.write(chunk)
+								results['newsicon'] = QPixmap(filename)										
+
+							except BaseException as e:
+								print(e)
 								results['newsicon'] = QPixmap('./controller/info-icon.png')
 
-						# results['newsicon'] = QPixmap('./controller/info-icon.png')
-						# print('news found  ', results['newsicon'].width())
 					else:
 						break
 
@@ -483,7 +480,7 @@ class Controller(QWidget):
 				self.news_frame.add_news(results)
 			#end if
 		else:
-			print('no news found')
+			print('No news found')
 			self.news_frame.add_news('No news for this artist.', QPixmap('./controller/info-icon.png'))
 
 	# bio handler

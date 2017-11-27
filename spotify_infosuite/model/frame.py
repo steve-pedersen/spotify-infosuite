@@ -124,7 +124,7 @@ class Frame(QLabel):
 
 	def add_news(self, results, def_img=None):
 		height = self.display_title_label.height() * 1.3
-		self.news_img.setGeometry(15,height, self.w/10, self.h/10)
+		self.news_img.setGeometry(10,height, self.w/3, self.h/3)
 		
 		
 		img = results['newsicon'] if def_img == None else def_img
@@ -146,16 +146,16 @@ class Frame(QLabel):
 			self.news_title.setText(
 				date +'  -  '+ src +'\n'+ title
 			)
-			self.news_title.move(self.w/8, height)
+			self.news_title.move(self.w/3 + 20, height)
 			self.news_title.setWordWrap(1)
-			self.news_title.resize(self.news_title.sizeHint().width()*1.3, 
+			self.news_title.resize(self.w*2/3 - 25, 
 				self.news_title.sizeHint().height())
 			self.news_title.setObjectName('news_title')
 			self.news_title.setStyleSheet('')
 			self.news_title.show()
 
 			self.news_summary.setText(results['summary'])
-			self.news_summary.move(10, self.news_title.height() + 45)
+			self.news_summary.move(10, self.news_img.height()+45)
 			self.news_summary.setWordWrap(1)
 			self.news_summary.resize(self.w-20, self.news_summary.sizeHint().height())
 			self.news_summary.setObjectName('news_summary')
