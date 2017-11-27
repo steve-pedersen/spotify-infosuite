@@ -227,6 +227,8 @@ class Controller(QWidget):
 		self.musikki_artist = musikki.search(self.get_current_artist())
 		self.musikki_artist.get_full_bio(self.bio_nam)
 		self.musikki_artist.get_full_images(self.images_nam)
+		self.images_frame.clear_images_list()
+		self.flickr_artist.get_full_images(self.flickr_images_nam, self.get_current_artist())
 
 	def update_song_info(self, update_playback=True):
 		if update_playback:

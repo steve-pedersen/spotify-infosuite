@@ -180,6 +180,9 @@ class Frame(QLabel):
 				self.image_label.setPixmap(self.images_list[self.current_image])
 				print('New PREV_IMAGE: ', self.images_list[self.current_image])
 
+	def clear_images_list(self):
+		del self.images_list[:]
+
 	def get_display_text_label(self):
 		return self.display_text_label
 	def get_display_title_label(self):
