@@ -181,9 +181,18 @@ class Frame(QLabel):
 	def get_display_image_labels(self):
 		return self.display_images_label
 
-	def set_expand_button(self):
-		self.expand_button = QPushButton('Expand', self.view)
-		self.frame_components.append(self.expand_button)
+	def create_expando_button(self):
+		self.expando_btn = QPushButton('Expand', self)
+		self.expando_btn.setObjectName('expando_btn')
+		self.expando_btn.setGeometry(
+			self.w/2 - self.expando_btn.width()/2,	# x
+			self.h - self.expando_btn.height(),		# y
+			self.expando_btn.sizeHint().width(),	# w
+			self.expando_btn.sizeHint().height()	# h
+		)
+		self.expando_btn.setStyleSheet('')
+		self.frame_components.append(self.expando_btn)
+		return self.expando_btn
 
 	def add_metacritic_content(self, review):
 
@@ -359,8 +368,8 @@ class Frame(QLabel):
 	def get_frame_components(self):
 		return self.frame_components
 
-	def mousePressEvent(self, event):
-		self.clicked.emit(self)
+	# def mousePressEvent(self, event):
+	# 	self.clicked.emit(self)
 
 	def get_image_next_button(self):
 		return self.next_image_button

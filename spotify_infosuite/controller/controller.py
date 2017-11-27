@@ -97,6 +97,9 @@ class Controller(QWidget):
 			self, self.multi_frame_window, x,y, w,h, "bio_frame"
 		)
 		self.bio_frame.set_display_title("Bio", 10, 5)
+		self.bio_expando_btn = self.bio_frame.create_expando_button()
+		self.bio_expando_btn.clicked.connect(self.expand_bio)
+
 		self.multi_frame_window.add_frame_bio(self.bio_frame)
 
 		self.bio_nam = QtNetwork.QNetworkAccessManager()
@@ -592,6 +595,9 @@ class Controller(QWidget):
 			self.current_album != self.get_current_album()):
 			print('need album update')
 			self.update_everything()
+
+	def expand_bio(self):
+		print('expando bio!')
 
 	# Spotify Controls
 	def open_spotify(self):
