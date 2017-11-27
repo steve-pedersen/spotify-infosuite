@@ -110,8 +110,8 @@ class Frame(QLabel):
 		self.image_label.move(x, y)
 		self.image_label.setAlignment(Qt.AlignCenter)
 		self.create_image_buttons()
-		self.image_label.show()
-		self.musikki_images_added is True
+		# self.image_label.show()
+		self.musikki_images_added = True
 		# for i, image in enumerate(images):
 		# 	# w, h = widths[i], heights[i]
 		# 	w, h = self.w, self.h - y
@@ -124,7 +124,7 @@ class Frame(QLabel):
 		# 	self.image_label.move(x + x*i, y)
 		# 	self.image_label.show()
 
-	def add_flickr_artist_images(self, images, widths, heights):
+	def add_flickr_artist_images(self, images):
 		x, y = 10, 45
 		w, h = self.w - x*2, self.h - y - 40
 		self.current_image = 0
@@ -138,18 +138,18 @@ class Frame(QLabel):
 		print('images: ', len(images))
 
 		for i in range(len(images)):
-			if widths[i] > heights[i]:
-				if w > widths[i]:
-					# print('image is wider than it is tall and less wide than the frame')
-					w = widths[i]
-				image = images[i].scaledToWidth(w)
-				self.images_list.append(image)
-			else:
-				if h > heights[i]:
-					# print('image is taller than it is wide and less tall than the frame')
-					h = heights[i]
-				image = images[i].scaledToHeight(h)
-				self.images_list.append(image)
+			# if widths[i] > heights[i]:
+			# 	if w > widths[i]:
+			# 		# print('image is wider than it is tall and less wide than the frame')
+			# 		w = widths[i]
+			# 	image = images[i].scaledToWidth(w)
+			# 	self.images_list.append(image)
+			# else:
+			# 	if h > heights[i]:
+			# 		# print('image is taller than it is wide and less tall than the frame')
+			# 		h = heights[i]
+			image = images[i].scaledToHeight(h)
+			self.images_list.append(image)
 
 		print('IMAGES LIST: ', self.images_list)
 
@@ -160,7 +160,7 @@ class Frame(QLabel):
 		self.image_label.setAlignment(Qt.AlignCenter)
 		self.create_image_buttons()
 		self.image_label.show()
-		self.flickr_images_added is True
+		self.flickr_images_added = True
 
 	def next_image(self):
 		if self.images_list is not None:
