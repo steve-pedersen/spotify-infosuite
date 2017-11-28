@@ -654,13 +654,8 @@ class Controller(QWidget):
 
 	def expand_bio(self):
 		offset = 50
-		scalar = 0.75
 		self.single_frame_window.init_popup(
-			self.window_x - 50, 
-			self.window_y - 50, 
-			self.window_w * scalar, 
-			self.window_h * scalar,
-			'Bio', 'single_frame_window'
+			self.window_x - offset, self.window_y - offset, 'Bio', 'single_frame_window'
 		)
 		self.bio_frame.create_bio_popup(self.single_frame_window)
 		self.single_frame_window.add_frame(self.bio_frame)

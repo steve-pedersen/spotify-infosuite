@@ -236,7 +236,7 @@ class Frame(QLabel):
 		self.expando_btn.setObjectName('expando_btn')
 		self.expando_btn.setGeometry(
 			self.w/2 - self.expando_btn.width()/2,	# x
-			self.h - self.expando_btn.height(),		# y
+			self.h - self.expando_btn.height()-6,	# y
 			self.expando_btn.sizeHint().width(),	# w
 			self.expando_btn.sizeHint().height()	# h
 		)

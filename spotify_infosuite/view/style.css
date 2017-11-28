@@ -76,7 +76,7 @@ QPushButton#expando_btn {
     border-bottom: 2px solid #0f0f0f;
     border-top: 1px solid #8e8e8e;
     border-left: 1px solid #8e8e8e;
-    padding: 4px 8px 4px 8px;
+    padding: 4px 12px 4px 12px;
     border-radius: 3px;
 }
 QPushButton#expando_btn:hover {
