@@ -14,6 +14,12 @@
 QWidget#multi_frame_window {
 	background-color: #0f0f0f;
 }
+QWidget#single_frame_window {
+    background-color: #0f0f0f;
+}
+QLabel#popup_text {
+    color: #fff;
+}
 
 QPushButton#prev_button {
 	font-weight: bold;
@@ -47,7 +53,7 @@ QPushButton#next_button:hover, #next_image_button:hover, #prev_image_button:hove
     color: #0f0f0f;
 }
 
-QPushButton#playpause_button {
+QPushButton#playpause_button{
 	font-weight: bold;
 	background-color: #0f0f0f;
     color: white;
@@ -61,6 +67,26 @@ QPushButton#playpause_button {
 QPushButton#playpause_button:hover {
 	background-color: #25D34D ;
     color: #0f0f0f;
+}
+
+QPushButton#expando_btn {
+    background-color: #1D1D1D;
+    color: #fff;
+    border-right: 2px solid #0f0f0f;
+    border-bottom: 2px solid #0f0f0f;
+    border-top: 1px solid #8e8e8e;
+    border-left: 1px solid #8e8e8e;
+    padding: 4px 12px 4px 12px;
+    border-radius: 3px;
+}
+QPushButton#expando_btn:hover {
+    background-color: #25D34D;
+    border-top: 2px solid #0f0f0f;
+    border-left: 2px solid #0f0f0f;
+    border-right: 1px solid #8e8e8e;
+    border-bottom: 1px solid #8e8e8e;
+    font-weight: bold;
+    color: #000;
 }
 
 /* Playback Frame */

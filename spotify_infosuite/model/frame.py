@@ -27,6 +27,7 @@ class Frame(QLabel):
 		self.view = view
 		self.setGeometry(self.x, self.y, self.w, self.h)
 		self.frame_components = []
+		self.popup_components = []
 		self.images_list = []
 
 		self.image_label = QLabel(self)
@@ -42,7 +43,8 @@ class Frame(QLabel):
 		self.news_summary = QLabel(self)
 
 	def set_display_title(self, title, x, y):
-		# self.display_title_label = QLabel(self)
+		self.display_title = title
+
 		self.display_title_label.setText(title)
 		self.display_title_label.move(x, y)
 		self.display_title_label.resize(int(self.w*0.96), 35) # limit width to 93% of frame
@@ -55,7 +57,8 @@ class Frame(QLabel):
 		self.frame_components.append(self.display_title_label)
 
 	def set_display_text(self, text, x=5, y=45,obj=''):
-		# self.display_text_label = QLabel(self)
+		self.display_text = text
+		
 		min_y = self.display_title_label.height() + 8
 		scroll_height = self.h - (y+min_y)
 		if self.display_text_label.text() == '':
@@ -80,6 +83,14 @@ class Frame(QLabel):
 			self.display_text_label.setText(text)
 			self.display_text_label.setAlignment(Qt.AlignTop)
 			# self.layout.setAlignment(Qt.AlignTop)
+
+	def create_bio_popup(self, popup):
+		self.popup_title = QLabel(self.display_title, popup)
+		self.popup_text = QLabel(self.display_text, popup)
+		self.popup_components.extend([self.popup_title, self.popup_text])
+		for p in self.popup_components:
+			p.setWordWrap(True)
+			p.setObjectName('popup_text')
 
 	# TODO: maybe pass in a dict that has the pixmap, width and height of each
 	# 	rather than separate lists
@@ -220,9 +231,18 @@ class Frame(QLabel):
 	def get_display_image_labels(self):
 		return self.display_images_label
 
-	def set_expand_button(self):
-		self.expand_button = QPushButton('Expand', self.view)
-		self.frame_components.append(self.expand_button)
+	def create_expando_button(self):
+		self.expando_btn = QPushButton('Expand', self)
+		self.expando_btn.setObjectName('expando_btn')
+		self.expando_btn.setGeometry(
+			self.w/2 - self.expando_btn.width()/2,	# x
+			self.h - self.expando_btn.height()-6,	# y
+			self.expando_btn.sizeHint().width(),	# w
+			self.expando_btn.sizeHint().height()	# h
+		)
+		self.expando_btn.setStyleSheet('')
+		self.frame_components.append(self.expando_btn)
+		return self.expando_btn
 
 	def add_metacritic_content(self, review):
 
@@ -398,6 +418,12 @@ class Frame(QLabel):
 
 	def get_frame_components(self):
 		return self.frame_components
+
+	def get_popup_components(self):
+		return self.popup_components
+
+	def set_view(self, view):
+		self.view = view
 
 	# def mousePressEvent(self, event):
 	# 	self.clicked.emit(self)

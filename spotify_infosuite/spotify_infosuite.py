@@ -12,7 +12,7 @@ if __name__ == '__main__':
 
 	screen_resolution = app.desktop().screenGeometry()
 	width, height = screen_resolution.width(), screen_resolution.height()
-	
+
 	# run app with selected window dimensions
 	controller = Controller(app, width, height, use_default)
 	
