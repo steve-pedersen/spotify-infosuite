@@ -48,7 +48,7 @@ class Controller(QWidget):
 		)
 		self.multi_frame_window.show()
 
-		self.single_frame_window = view.SingleFrameWindow()
+		self.single_frame_window = view.SingleFrameWindow(screen_width, screen_height)
 
 		self.init_playback_frame()
 		self.init_bio_frame()

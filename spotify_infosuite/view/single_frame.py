@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QAction, QLineEdit
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QAction, QLineEdit, QVBoxLayout, QHBoxLayout, QScrollArea
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtMultimedia import QSoundEffect
 from PyQt5.QtCore import *
@@ -6,9 +6,10 @@ import os
 
 class SingleFrameWindow(QWidget):
 
-    def __init__(self):
+    def __init__(self, screen_w, screen_h):
         super().__init__()
-        
+        self.screen_w = screen_w
+        self.screen_h = screen_h
 
     def init_popup(self, x, y, window_title, object_title):
         self.x = x
@@ -28,8 +29,17 @@ class SingleFrameWindow(QWidget):
             component.show()        
 
         self.w = frame.popup_text.width()        
-        self.h = frame.popup_text.height()
-        
+        self.h = frame.popup_text.height() if frame.popup_text.height() < self.screen_h else self.screen_h-100
+
+        # frame.popup_text.setAlignment(Qt.AlignTop)
+        popup_scroll = QScrollArea()
+        popup_scroll.setWidget(frame.popup_text)
+        popup_scroll.setWidgetResizable(True)          
+        popup_scroll.setFixedHeight(self.h)
+        popup_scroll.setStyleSheet('background-color: #0f0f0f;')  
+        popup_layout = QVBoxLayout(self)
+        popup_layout.addWidget(popup_scroll)
+       
         self.setGeometry(self.x, self.y, self.w, self.h)
         self.load_styles()
 

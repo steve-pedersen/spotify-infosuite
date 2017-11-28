@@ -84,9 +84,9 @@ class Frame(QLabel):
 			self.display_text_label.setAlignment(Qt.AlignTop)
 			# self.layout.setAlignment(Qt.AlignTop)
 
-	def create_bio_popup(self, popup):
-		self.popup_title = QLabel(self.display_title, popup)
-		self.popup_text = QLabel(self.display_text, popup)
+	def create_bio_popup(self, popup_window):
+		self.popup_title = QLabel('Biography: '+self.controller.current_artist, popup_window)
+		self.popup_text = QLabel(self.display_text, popup_window)
 		self.popup_components.extend([self.popup_title, self.popup_text])
 		for p in self.popup_components:
 			p.setWordWrap(True)
@@ -140,6 +140,7 @@ class Frame(QLabel):
 			self.news_title.setText(results)
 			self.news_title.setStyleSheet('')
 			self.news_title.setObjectName('news_title')
+			self.news_summary.setText('')
 		else:
 			src = results['src_title']
 			date = results['date']
