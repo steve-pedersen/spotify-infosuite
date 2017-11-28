@@ -341,7 +341,7 @@ class Controller(QWidget):
 
 		# Metacritic frame
 		elif isinstance(review, object):
-			default_image = QPixmap('./controller/info-icon.png')
+			default_image = QPixmap(os.path.dirname(__file__)+'/info-icon.png')
 
 			if not review.has_review:
 				self.metacritic_frame.default_metacritic_content(default_image)
@@ -354,7 +354,7 @@ class Controller(QWidget):
 				review.pixmap = album_image
 				self.metacritic_frame.add_metacritic_content(review)
 				
-				print('\n-----Metacritic Results-----\n')
+				print('\n-----Metacritic Results-----')
 				print(review.artist, ' - ', review.album)
 				print('Critic Score:\t', review.critic_rating, '\t(',review.critic_count,' reviews)')
 				print('User Score:\t', review.user_rating, '\t(',review.user_count,' reviews)')
@@ -483,7 +483,7 @@ class Controller(QWidget):
 								url = results['imgurl']
 								
 								r = requests.get(url, stream=True)
-								filename = './controller/images/'+results['title']+'.jpg'
+								filename = os.path.dirname(__file__)+'/images/'+results['title']+'.jpg'
 								with open(filename, 'wb') as fd:
 									for chunk in r.iter_content(chunk_size=128):
 										fd.write(chunk)
@@ -491,7 +491,7 @@ class Controller(QWidget):
 
 							except BaseException as e:
 								print(e)
-								results['newsicon'] = QPixmap('./controller/info-icon.png')
+								results['newsicon'] = QPixmap(os.path.dirname(__file__)+'/info-icon.png')
 
 					else:
 						break
@@ -503,7 +503,7 @@ class Controller(QWidget):
 			#end if
 		else:
 			print('No news found')
-			self.news_frame.add_news('No news for this artist.', QPixmap('./controller/info-icon.png'))
+			self.news_frame.add_news('No news for this artist.', QPixmap(os.path.dirname(__file__)+'/info-icon.png'))
 
 	# bio handler
 	def search_bio_handler(self, reply):
@@ -567,7 +567,7 @@ class Controller(QWidget):
 			self.images_frame.add_flickr_artist_images(pixmaps)
 		else:
 			# use default image of dirty-piano.jpg
-			pixmaps = [QPixmap('./controller/dirty-piano.jpg')]
+			pixmaps = [QPixmap(os.path.dirname(__file__)+'/dirty-piano.jpg')]
 			self.images_frame.add_flickr_artist_images(pixmaps)
 
 	# images handler
@@ -620,7 +620,7 @@ class Controller(QWidget):
 		else:
 			# use default image of dirty-piano.jpg
 			print('will search flickr as a backup')
-			# pixmaps = [QPixmap('./controller/dirty-piano.jpg')]
+			# pixmaps = [QPixmap(os.path.dirname(__file__)+'/dirty-piano.jpg')]
 			# widths = [pixmaps[0].width()]
 			# heights = [pixmaps[0].height()]
 			# self.images_frame.add_artist_images(pixmaps, widths, heights)
