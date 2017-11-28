@@ -342,10 +342,11 @@ class Frame(QLabel):
 
 		self.next_image_button.resize(40, 30)
 		self.prev_image_button.resize(40, 30)
-		next_x = 900
-		prev_x = 850
-		self.next_image_button.move(next_x, 302)
-		self.prev_image_button.move(prev_x, 302)
+		next_x = self.x + self.w/2
+		prev_x = self.x + self.w/2 - 50
+		y = self.h - 35
+		self.next_image_button.move(next_x, y)
+		self.prev_image_button.move(prev_x, y)
 
 	def get_playback_prev_button(self):
 		return self.prev_button
