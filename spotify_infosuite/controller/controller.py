@@ -492,8 +492,6 @@ class Controller(QWidget):
 			document = document.fromJson(response, error)
 			json_resp = document.object()
 
-			print('json_resp: ', json_resp['timeline_posts'].toArray()[0].toObject()['content'].toString())
-
 			service_name = json_resp['service_name'].toString()
 
 			year = json_resp['timeline_posts'].toArray()[0].toObject()['date'].toObject()['year'].toInt()
