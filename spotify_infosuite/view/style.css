@@ -19,6 +19,7 @@ QWidget#single_frame_window {
 }
 QLabel#popup_text {
     color: #fff;
+    font-size: 15pt;
 }
 
 QPushButton#prev_button {
