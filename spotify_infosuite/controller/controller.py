@@ -562,12 +562,8 @@ class Controller(QWidget):
 					# widths.append(thumb_width)
 					# heights.append(thumb_height)
 
-			print('URLS: ', urls)
-
 		if notfound_count > 0:
 			print(notfound_count, " 404 responses in image handler")
-
-		print('Images handler found ', len(pixmaps), ' images.')
 
 		if len(pixmaps) > 0:
 			# # load the biggest image as the first and only pixmap
@@ -621,13 +617,8 @@ class Controller(QWidget):
 				widths.append(thumb_width)
 				heights.append(thumb_height)
 
-			print('URLS: ', urls)
-
-
 		if notfound_count > 0:
 			print(notfound_count, " 404 responses in image handler")
-
-		print('Images handler found ', len(pixmaps), ' images.')
 
 		if len(pixmaps) > 0:
 			# load the biggest image as the first and only pixmap

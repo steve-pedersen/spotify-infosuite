@@ -61,8 +61,6 @@ def search(artist):
 			photoUrl = 'https://farm' + str(p['farm']) + '.staticflickr.com/' + str(p['server'])
 			photoUrl = photoUrl + '/' + str(p['id']) + '_' + str(p['secret']) + '.jpg'
 			photoUrls.append(photoUrl)
-			print(photoUrl)
-			print(type(photoUrl))
 		# fileNames = self.model.requestImages(photoUrls)
 		return photoUrls
 

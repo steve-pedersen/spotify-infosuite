@@ -100,7 +100,6 @@ class Artist:
 		url = self.artisturl + '/' + str(self.mkid) + '/social?q=[service-name:twitter]'
 		url = url + '&appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
-		print('twitter url: ', url)
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		nam.get(req)
 
@@ -109,7 +108,6 @@ class Artist:
 		url = self.artisturl + '/' + str(self.mkid) + '/social?q=[service-name:facebook]'
 		url = url + '&appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
-		print('facebook url: ', url)
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		nam.get(req)
 

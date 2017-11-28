@@ -98,14 +98,6 @@ class Frame(QLabel):
 		x, y = 10, 45
 		w, h = self.w - x*2, self.h - y - 40
 		self.current_image = 0
-		# print('current image: ', self.current_image)
-		#
-		# print("SIZE: ", len(images))
-		# print("w: ", w)
-		# print("h: ", h)
-		# print("w2: ", self.w)
-		# print("h2: ", self.h)
-		print('images: ', len(images))
 
 		for i in range(len(images)):
 			if widths[i] > heights[i]:
@@ -120,8 +112,6 @@ class Frame(QLabel):
 					h = heights[i]
 				image = images[i].scaledToHeight(h)
 				self.images_list.append(image)
-
-		print('IMAGES LIST: ', self.images_list)
 
 		# self.image_label.setStyleSheet('border: 1px solid #0f0f0f;')
 		self.image_label.resize(w, h)
@@ -177,21 +167,11 @@ class Frame(QLabel):
 		x, y = 10, 45
 		w, h = self.w - x*2, self.h - y - 40
 		self.current_image = 0
-		# print('current image: ', self.current_image)
-		#
-		# print("SIZE: ", len(images))
-		# print("w: ", w)
-		# print("h: ", h)
-		# print("w2: ", self.w)
-		# print("h2: ", self.h)
-		print('images: ', len(images))
 
 		for i in range(len(images)):
 
 			image = images[i].scaledToHeight(h)
 			self.images_list.append(image)
-
-		print('IMAGES LIST: ', self.images_list)
 
 		# self.image_label.setStyleSheet('border: 1px solid #0f0f0f;')
 		self.image_label.resize(w, h)
@@ -206,19 +186,13 @@ class Frame(QLabel):
 		if self.images_list is not None:
 			if self.current_image < len(self.images_list) - 1:
 				self.current_image = self.current_image + 1
-				print('current image: ', self.current_image)
-				print('length: ', len(self.images_list))
 				self.image_label.setPixmap(self.images_list[self.current_image])
-				print('New NEXT_IMAGE: ', self.images_list[self.current_image])
 
 	def prev_image(self):
 		if self.images_list is not None:
 			if self.current_image > 0:
 				self.current_image = self.current_image - 1
-				print('current image: ', self.current_image)
-				print('length: ', len(self.images_list))
 				self.image_label.setPixmap(self.images_list[self.current_image])
-				print('New PREV_IMAGE: ', self.images_list[self.current_image])
 
 	def clear_images_list(self):
 		del self.images_list[:]
