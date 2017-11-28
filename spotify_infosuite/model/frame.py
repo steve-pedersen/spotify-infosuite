@@ -17,7 +17,7 @@ class Frame(QLabel):
 		self.w = w
 		self.h = h
 		self.object_title = title
-		self.setObjectName((self.object_title))
+		self.setObjectName(self.object_title)
 		self.char_limit = limit
 		self.display_title_label = QLabel(self)
 		self.display_text_label = QLabel(self)
@@ -27,11 +27,12 @@ class Frame(QLabel):
 		self.view = view
 		self.setGeometry(self.x, self.y, self.w, self.h)
 		self.frame_components = []
-		self.popup_components = []
+		# self.popup_components = []
 		self.images_list = []
 
 		self.image_label = QLabel(self)
 
+		self.results_found = False
 		self.metacritic_exists = False
 		self.mc_album_thumb = QLabel(self)
 		self.mc_title = QLabel(self)
@@ -41,6 +42,9 @@ class Frame(QLabel):
 		self.news_img = QLabel(self)
 		self.news_title = QLabel(self)
 		self.news_summary = QLabel(self)
+
+		self.popup_title = None
+		self.popup_text = None
 
 	def set_display_title(self, title, x, y):
 		self.display_title = title
@@ -87,6 +91,7 @@ class Frame(QLabel):
 	def create_bio_popup(self, popup_window):
 		self.popup_title = QLabel('Biography: '+self.controller.current_artist, popup_window)
 		self.popup_text = QLabel(self.display_text, popup_window)
+		self.popup_components = []
 		self.popup_components.extend([self.popup_title, self.popup_text])
 		for p in self.popup_components:
 			p.setWordWrap(True)
@@ -138,8 +143,11 @@ class Frame(QLabel):
 
 		if (type(results) == str):
 			self.news_title.setText(results)
-			self.news_title.setStyleSheet('')
+			self.news_title.move(self.w/3 + 20, height)
+			self.news_title.resize(
+				self.news_title.sizeHint().width(), self.news_title.sizeHint().height())
 			self.news_title.setObjectName('news_title')
+			self.news_title.setStyleSheet('')
 			self.news_summary.setText('')
 		else:
 			src = results['src_title']
@@ -408,3 +416,8 @@ class Frame(QLabel):
 
 	def get_image_prev_button(self):
 		return self.prev_image_button
+
+	def set_results(self, found):
+		self.results_found = found
+	def has_results(self):
+		return self.results_found

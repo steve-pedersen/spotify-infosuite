@@ -63,7 +63,7 @@ class Artist:
 		url = self.artisturl + '/' + str(self.mkid) + '/news'
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
-
+		print('Searching Musikki for news about '+self.artist)
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		nam.get(req)
 
@@ -116,7 +116,8 @@ def search(artist, song='', album=''):
 	# replace spaces in the url with the '%20'
 	query = re.sub('\s+', '%20', artist)
 
-	with open('./musikki/credentials.json') as creds:
+	# with open('./musikki/credentials.json') as creds:
+	with open(os.path.dirname(__file__) + '/credentials.json') as creds:
 		credentials = json.load(creds)
 
 	appid = credentials['musikki']['appid']
