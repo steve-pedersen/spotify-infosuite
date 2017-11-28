@@ -15,6 +15,8 @@ class Artist:
 		self.appid = appid
 		self.appkey = appkey
 		self.is_found = is_found
+		self.twitter_search = False
+		self.facebook_search = False
 		self.artisturl = 'https://music-api.musikki.com/v1/artists'
 		self.images = []
 
@@ -95,6 +97,7 @@ class Artist:
 
 	# https://music-api.musikki.com/reference/artists#social
 	def get_social_media_twitter(self, nam):
+		self.twitter_search = True
 		url = self.artisturl + '/' + str(self.mkid) + '/social?q=[service-name:twitter]'
 		url = url + '&appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
@@ -103,6 +106,7 @@ class Artist:
 		nam.get(req)
 
 	def get_social_media_facebook(self, nam):
+		self.facebook_search = True
 		url = self.artisturl + '/' + str(self.mkid) + '/social?q=[service-name:facebook]'
 		url = url + '&appkey=' + self.appkey
 		url = url + '&appid=' + self.appid

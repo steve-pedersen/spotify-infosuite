@@ -484,7 +484,6 @@ class Controller(QWidget):
 
 	def social_handler(self, reply):
 		er = reply.error()
-		print('REPLY: ', reply.rawHeaderList())
 
 		if er == QtNetwork.QNetworkReply.NoError:
 			response = reply.readAll()
@@ -508,12 +507,13 @@ class Controller(QWidget):
 			social_text = date + ' - via ' + service_name + '\n\n' + content
 
 			self.social_frame.set_display_text(social_text, 10, 45, 'social_text')
-			self.social_error = False
-		# elif self.musikki_artist.is_found:
-		# 	self.musikki_artist.get_social_media_facebook(self.social_nam)
-		else:
+			self.musikki_artist.twitter_search = False
+
+		elif self.musikki_artist.facebook_search == False:
 			self.musikki_artist.get_social_media_facebook(self.social_nam)
-			# self.social_frame.set_display_text('No social media found.', 10, 45)
+		else:
+			self.social_frame.set_display_text('No social media found.', 10, 45)
+			self.musikki_artist.facebook_search = False
 
 	def next_image_handler(self):
 		self.images_frame.next_image()
