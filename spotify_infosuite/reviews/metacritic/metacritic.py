@@ -83,7 +83,6 @@ def search(artist, album, apikey):
 				mc_user_review_count = ''
 			try:
 				mc_image_url = mc_image_url = result['ImageUrl']
-				print(mc_image_url)
 			except Exception:
 				mc_image_url = ''
 

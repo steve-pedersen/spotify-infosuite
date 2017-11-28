@@ -317,10 +317,10 @@ class Controller(QWidget):
 		self.current_artist = self.get_current_artist()
 		self.current_song = self.get_current_song()
 		self.current_album = self.get_current_album()	
-		print('\n-----Now Playing-----')
+		print('\n\n-----Now Playing-----')
 		print('Artist:\t', self.current_artist)
 		print('Song:\t', self.current_song)
-		print('Album:\t', self.current_album)
+		print('Album:\t', self.current_album, '\n')
 
 	def get_lyrics(self, url=''):
 		artist, song = self.current_artist, self.current_song
@@ -559,28 +559,15 @@ class Controller(QWidget):
 						notfound_count += 1
 
 					urls.append(photo_url)
-					# widths.append(thumb_width)
-					# heights.append(thumb_height)
 
 		if notfound_count > 0:
 			print(notfound_count, " 404 responses in image handler")
 
 		if len(pixmaps) > 0:
-			# # load the biggest image as the first and only pixmap
-			# biggest = 0
-			# for i, p in enumerate(pixmaps):
-			# 	if p.width() > biggest:
-			# 		biggest = i
-			# pixmaps[0] = pixmaps[biggest]
-			# widths[0] = widths[biggest]
-			# heights[0] = heights[biggest]
 			self.images_frame.add_flickr_artist_images(pixmaps)
 		else:
 			# use default image of dirty-piano.jpg
 			pixmaps = [QPixmap('./controller/dirty-piano.jpg')]
-			# widths = [pixmaps[0].width()]
-			# heights = [pixmaps[0].height()]
-			# maybe below should be add_no_artist_image
 			self.images_frame.add_flickr_artist_images(pixmaps)
 
 	# images handler
