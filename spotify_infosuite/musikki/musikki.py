@@ -63,7 +63,7 @@ class Artist:
 		url = self.artisturl + '/' + str(self.mkid) + '/news'
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
-
+		print('Searching Musikki for news about '+self.artist)
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		nam.get(req)
 

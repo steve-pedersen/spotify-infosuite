@@ -35,6 +35,7 @@ class Controller(QWidget):
 	def __init__(self, app, screen_width, screen_height, use_default=True):
 		super().__init__()
 
+		self.screen_width, self.screen_height = screen_width, screen_height
 		self.determine_window_size(screen_width, screen_height, use_default)
 
 		# Build the main view: Multi-Frame Window
@@ -47,8 +48,6 @@ class Controller(QWidget):
 			"multi_frame_window"	# object name
 		)
 		self.multi_frame_window.show()
-
-		self.single_frame_window = view.SingleFrameWindow(screen_width, screen_height)
 
 		self.init_playback_frame()
 		self.init_bio_frame()
@@ -414,6 +413,7 @@ class Controller(QWidget):
 		self.lyrics_frame.set_display_text(lyrics, 10, 45, 'lyrics_text')
 
 	def news_handler(self, reply):
+		default_img = os.path.dirname(__file__) + '/info-icon.png'
 
 		er = reply.error()
 
@@ -491,7 +491,7 @@ class Controller(QWidget):
 
 							except BaseException as e:
 								print(e)
-								results['newsicon'] = QPixmap(os.path.dirname(__file__)+'/info-icon.png')
+								results['newsicon'] = QPixmap(default_img)
 
 					else:
 						break
@@ -501,9 +501,12 @@ class Controller(QWidget):
 				# end for
 				self.news_frame.add_news(results)
 			#end if
+			else:
+				print('No news found')
+				self.news_frame.add_news('No news for this artist.', QPixmap(default_img))
 		else:
 			print('No news found')
-			self.news_frame.add_news('No news for this artist.', QPixmap(os.path.dirname(__file__)+'/info-icon.png'))
+			self.news_frame.add_news('No news for this artist.', QPixmap(default_img))
 
 	# bio handler
 	def search_bio_handler(self, reply):
@@ -526,6 +529,7 @@ class Controller(QWidget):
 					paragraph += f['title'].toString() + '\n\n' + t.rstrip() if i == 0 else (' ' + t.rstrip())
 				bio += paragraph + '\n\n'
 
+			self.bio_frame.set_results(True)
 			self.bio_frame.set_display_text(bio, 10, 45, 'bio_text')
 			
 		else:
@@ -685,13 +689,17 @@ class Controller(QWidget):
 			self.update_song_info(update_playback=False)
 
 	def expand_bio(self):
-		offset = 50
-		self.single_frame_window.init_popup(
-			self.window_x - offset, self.window_y - offset, 'Bio', 'single_frame_window'
-		)
-		self.bio_frame.create_bio_popup(self.single_frame_window)
-		self.single_frame_window.add_frame(self.bio_frame)
-		self.single_frame_window.show()
+		if self.bio_frame.has_results():
+			self.bio_popup_window = view.SingleFrameWindow(self.screen_width, self.screen_height)
+			offset = 50
+			self.bio_popup_window.init_popup(
+				self.window_x - offset, self.window_y - offset, 'Bio', 'single_frame_window'
+			)
+			self.bio_frame.create_bio_popup(self.bio_popup_window)
+			self.bio_popup_window.add_frame(self.bio_frame)
+			self.bio_popup_window.show()
+		else:
+			print('No bio results, so no bio popup')
 
 	# Spotify Controls
 	def open_spotify(self):

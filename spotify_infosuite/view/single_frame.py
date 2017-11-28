@@ -20,6 +20,7 @@ class SingleFrameWindow(QWidget):
         self.setObjectName(self.object_title)
         
         self.setFocus()
+        self.setAttribute(Qt.WA_DeleteOnClose)
         # A modal widget prevents widgets in all other windows from getting any input.
         # self.isModal()
 
@@ -28,10 +29,13 @@ class SingleFrameWindow(QWidget):
         for component in frame.get_popup_components():
             component.show()        
 
-        self.w = frame.popup_text.width()        
-        self.h = frame.popup_text.height() if frame.popup_text.height() < self.screen_h else self.screen_h-100
+        def_width = 1000
+        def_height = 1000
+        self.w = def_width   
+        self.h = def_height   
+        self.h = frame.popup_text.height() if frame.popup_text.height() < self.screen_h else def_height
 
-        # frame.popup_text.setAlignment(Qt.AlignTop)
+        frame.popup_text.setAlignment(Qt.AlignTop)
         popup_scroll = QScrollArea()
         popup_scroll.setWidget(frame.popup_text)
         popup_scroll.setWidgetResizable(True)          
