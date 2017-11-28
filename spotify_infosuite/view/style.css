@@ -14,6 +14,12 @@
 QWidget#multi_frame_window {
 	background-color: #0f0f0f;
 }
+QWidget#single_frame_window {
+    background-color: #0f0f0f;
+}
+QLabel#popup_text {
+    color: #fff;
+}
 
 QPushButton#prev_button {
 	font-weight: bold;

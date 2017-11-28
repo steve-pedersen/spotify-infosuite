@@ -8,7 +8,7 @@ class SingleFrameWindow(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.load_styles()
+        
 
     def init_popup(self, x, y, w, h, window_title, object_title):
         self.x = x
@@ -19,7 +19,7 @@ class SingleFrameWindow(QWidget):
         self.object_title = object_title
         self.setWindowTitle(self.window_title)
         self.setObjectName(self.object_title)
-        self.setGeometry(self.x, self.y, self.w, self.h)
+        
 
         self.setFocus()
         # A modal widget prevents widgets in all other windows from getting any input.
@@ -27,9 +27,16 @@ class SingleFrameWindow(QWidget):
 
 
     def add_frame(self, frame):
-        for component in frame.get_frame_components():
+        for component in frame.get_popup_components():
             component.show()        
+        if frame.popup_text.width() < self.w:
+            self.w = frame.popup_text.width()
+        if frame.popup_text.height() > self.h:
+            self.h = frame.popup_text.height()
         frame.show()
+
+        self.setGeometry(self.x, self.y, self.w, self.h)
+        self.load_styles()
 
 
     # Opens css stylesheet and apply it to Spotify Infosuite elements

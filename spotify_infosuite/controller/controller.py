@@ -64,7 +64,7 @@ class Controller(QWidget):
 		# minimum window dimensions
 		min_w, min_h = 1440, 900
 		# default window dimensions
-		def_w, def_h = 1680, 1050
+		def_w, def_h = 1920, 1080
 		window_fits = False
 		
 		while not window_fits:
@@ -653,14 +653,16 @@ class Controller(QWidget):
 			self.update_everything()
 
 	def expand_bio(self):
+		offset = 50
+		scalar = 0.75
 		self.single_frame_window.init_popup(
-			self.window_x, 
-			self.window_y, 
-			self.window_w, 
-			self.window_h,
-			'Bio', 'multi_frame_window'
+			self.window_x - 50, 
+			self.window_y - 50, 
+			self.window_w * scalar, 
+			self.window_h * scalar,
+			'Bio', 'single_frame_window'
 		)
-		# self.bio_frame.set_view(self.single_frame_window)
+		self.bio_frame.create_bio_popup(self.single_frame_window)
 		self.single_frame_window.add_frame(self.bio_frame)
 		self.single_frame_window.show()
 
