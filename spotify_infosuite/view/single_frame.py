@@ -36,7 +36,7 @@ class SingleFrameWindow(QWidget):
         popup_scroll.setWidget(frame.popup_text)
         popup_scroll.setWidgetResizable(True)          
         popup_scroll.setFixedHeight(self.h)
-        popup_scroll.setStyleSheet('background-color: #0f0f0f;')  
+        popup_scroll.setStyleSheet('background-color: #1D1D1D;')  
         popup_layout = QVBoxLayout(self)
         popup_layout.addWidget(popup_scroll)
        
