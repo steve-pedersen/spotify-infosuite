@@ -670,17 +670,19 @@ class Controller(QWidget):
 				self.current_song != self.get_current_song()):
 				if self.current_album != self.get_current_album():
 					print('Album change...')
-					self.update_everything()
+					self.update_album_info(update_playback=True)
+					self.update_song_info(update_playback=False)
 				else:
 					print('Song change...')
-					self.update_song_info()
+					self.update_song_info(update_playback=True)
 			else:
 				print('Artist and song change...')
 				self.update_everything()
 		elif (self.current_artist == self.get_current_artist() and
 			self.current_album != self.get_current_album()):
-			print('need album update')
-			self.update_everything()
+			print('Album changed but song & artist did not...')
+			self.update_album_info(update_playback=True)
+			self.update_song_info(update_playback=False)
 
 	def expand_bio(self):
 		offset = 50
