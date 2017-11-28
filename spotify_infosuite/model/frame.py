@@ -80,7 +80,7 @@ class Frame(QLabel):
 			self.display_text_label.setAlignment(Qt.AlignTop)
 			self.layout.addWidget(scroll)
 		else:
-			self.display_text_label.setText(self.bio_text)
+			self.display_text_label.setText(text)
 			self.display_text_label.setAlignment(Qt.AlignTop)
 			# self.layout.setAlignment(Qt.AlignTop)
 
