@@ -78,7 +78,7 @@ class Controller(QWidget):
 			space_h = h / 4
 			self.window_w = w - space_w
 			self.window_h = h - space_h
-			self.window_x = space_w / 2 # if not use_default_size else space_w * 1.17
+			self.window_x = space_w / 4 # if not use_default_size else space_w * 1.17
 			self.window_y = space_h / 2 # if not use_default_size else space_h * 1.2
 
 			if not use_default_size:
