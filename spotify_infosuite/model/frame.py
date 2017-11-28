@@ -84,44 +84,44 @@ class Frame(QLabel):
 
 	# TODO: maybe pass in a dict that has the pixmap, width and height of each
 	# 	rather than separate lists
-	def add_artist_images(self, images, widths, heights):		
+	def add_musikki_artist_images(self, images, widths, heights):
 		x, y = 10, 45
 		w, h = self.w - x*2, self.h - y - 40
-		self.images_list = images
-		print("SIZE: ", len(self.images_list))
-		print("w: ", w)
-		print("h: ", h)
-		print("w2: ", self.w)
-		print("h2: ", self.h)
-		if widths[0] > heights[0]:			
-			if w > widths[0]:
-				# print('image is wider than it is tall and less wide than the frame')
-				w = widths[0]
-			image = self.images_list[0].scaledToWidth(w)
-		else:
-			if h > heights[0]:
-				# print('image is taller than it is wide and less tall than the frame')
-				h = heights[0]
-			image = self.images_list[0].scaledToHeight(h)
-		
+		self.current_image = 0
+		# print('current image: ', self.current_image)
+		#
+		# print("SIZE: ", len(images))
+		# print("w: ", w)
+		# print("h: ", h)
+		# print("w2: ", self.w)
+		# print("h2: ", self.h)
+		print('images: ', len(images))
+
+		for i in range(len(images)):
+			if widths[i] > heights[i]:
+				if w > widths[i]:
+					# print('image is wider than it is tall and less wide than the frame')
+					w = widths[i]
+				image = images[i].scaledToWidth(w)
+				self.images_list.append(image)
+			else:
+				if h > heights[i]:
+					# print('image is taller than it is wide and less tall than the frame')
+					h = heights[i]
+				image = images[i].scaledToHeight(h)
+				self.images_list.append(image)
+
+		print('IMAGES LIST: ', self.images_list)
+
 		# self.image_label.setStyleSheet('border: 1px solid #0f0f0f;')
 		self.image_label.resize(w, h)
-		self.image_label.setPixmap(image)
+		self.image_label.setPixmap(self.images_list[self.current_image])
 		self.image_label.move(x, y)
 		self.image_label.setAlignment(Qt.AlignCenter)
 		self.create_image_buttons()
-		self.image_label.show()
-		# for i, image in enumerate(images):
-		# 	# w, h = widths[i], heights[i]
-		# 	w, h = self.w, self.h - y
-		# 	image = image.scaledToWidth(w)
-			
-		# 	self.image_label = QLabel(self)
-		# 	# self.image_label.setStyleSheet('border: 1px solid #0f0f0f;')
-		# 	self.image_label.resize(w, h)			
-		# 	self.image_label.setPixmap(image)
-		# 	self.image_label.move(x + x*i, y)
-		# 	self.image_label.show()
+		# self.image_label.show()
+		self.musikki_images_added = True
+
 
 	def add_news(self, results, def_img=None):
 		height = self.display_title_label.height() * 1.3
@@ -163,16 +163,55 @@ class Frame(QLabel):
 			self.news_summary.setStyleSheet('')
 			self.news_summary.show()
 
+	def add_flickr_artist_images(self, images):
+		x, y = 10, 45
+		w, h = self.w - x*2, self.h - y - 40
+		self.current_image = 0
+		# print('current image: ', self.current_image)
+		#
+		# print("SIZE: ", len(images))
+		# print("w: ", w)
+		# print("h: ", h)
+		# print("w2: ", self.w)
+		# print("h2: ", self.h)
+		print('images: ', len(images))
+
+		for i in range(len(images)):
+
+			image = images[i].scaledToHeight(h)
+			self.images_list.append(image)
+
+		print('IMAGES LIST: ', self.images_list)
+
+		# self.image_label.setStyleSheet('border: 1px solid #0f0f0f;')
+		self.image_label.resize(w, h)
+		self.image_label.setPixmap(self.images_list[self.current_image])
+		self.image_label.move(x, y)
+		self.image_label.setAlignment(Qt.AlignCenter)
+		self.create_image_buttons()
+		self.image_label.show()
+		self.flickr_images_added = True
 
 	def next_image(self):
 		if self.images_list is not None:
-			self.image_label.setPixmap(self.images_list[1])
-		print(self.images_list)
+			if self.current_image < len(self.images_list) - 1:
+				self.current_image = self.current_image + 1
+				print('current image: ', self.current_image)
+				print('length: ', len(self.images_list))
+				self.image_label.setPixmap(self.images_list[self.current_image])
+				print('New NEXT_IMAGE: ', self.images_list[self.current_image])
 
 	def prev_image(self):
 		if self.images_list is not None:
-			self.image_label.setPixmap(self.images_list[0])
-		print(self.images_list)
+			if self.current_image > 0:
+				self.current_image = self.current_image - 1
+				print('current image: ', self.current_image)
+				print('length: ', len(self.images_list))
+				self.image_label.setPixmap(self.images_list[self.current_image])
+				print('New PREV_IMAGE: ', self.images_list[self.current_image])
+
+	def clear_images_list(self):
+		del self.images_list[:]
 
 	def get_display_text_label(self):
 		return self.display_text_label
@@ -352,10 +391,11 @@ class Frame(QLabel):
 
 		self.next_image_button.resize(40, 30)
 		self.prev_image_button.resize(40, 30)
-		next_x = 900
-		prev_x = 850
-		self.next_image_button.move(next_x, 302)
-		self.prev_image_button.move(prev_x, 302)
+		next_x = self.x + self.w/2
+		prev_x = self.x + self.w/2 - 50
+		y = self.h - 35
+		self.next_image_button.move(next_x, y)
+		self.prev_image_button.move(prev_x, y)
 
 	def get_playback_prev_button(self):
 		return self.prev_button

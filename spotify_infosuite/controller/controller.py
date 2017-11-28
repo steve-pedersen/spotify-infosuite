@@ -2,6 +2,7 @@ import model
 import view
 import playback
 import musikki
+import flickr
 # import reviews #pitchfork
 # from reviews.pitchfork import pitchfork
 from reviews import reviews
@@ -79,8 +80,8 @@ class Controller(QWidget):
 			space_h = h / 4
 			self.window_w = w - space_w
 			self.window_h = h - space_h
-			self.window_x = space_w / 2 #if not use_default_size else space_w * 1.17
-			self.window_y = space_h / 2 #if not use_default_size else space_h * 1.2
+			self.window_x = space_w / 4 # if not use_default_size else space_w * 1.17
+			self.window_y = space_h / 2 # if not use_default_size else space_h * 1.2
 
 			if not use_default_size:
 				window_fits = True
@@ -172,7 +173,6 @@ class Controller(QWidget):
 		self.lyrics_nam = QtNetwork.QNetworkAccessManager()
 		self.lyrics_nam.finished.connect(self.lyrics_handler)
 
-		# self.set_lyrics()
 		self.get_lyrics()
 
 	def init_review_frame(self):
@@ -224,21 +224,21 @@ class Controller(QWidget):
 
 		self.multi_frame_window.add_frame(self.images_frame)
 
-		self.images_nam = QtNetwork.QNetworkAccessManager()
-		self.images_nam.finished.connect(self.search_images_handler)
+		self.flickr_images_nam = QtNetwork.QNetworkAccessManager()
+		self.flickr_images_nam.finished.connect(self.flickr_images_handler)
 
-		# if new artist is playing:
-		# check musikki for images
-		# get musikki images if avail
-		# check other service for images
-		# get images from other services if avail
-		# repeat until nothing found
-		# or until all services have been exhausted
+		self.images_nam = QtNetwork.QNetworkAccessManager()
+		self.images_nam.finished.connect(self.musikki_images_handler)
+
+
+		self.flickr_artist = flickr.flickr.Flickr(self.get_current_artist())
 
 		if self.musikki_artist.is_found:
 			self.musikki_artist.get_full_images(self.images_nam)
+			self.flickr_artist.get_full_images(self.flickr_images_nam, self.get_current_artist())
 		else:
 			self.images_frame.set_display_text('No results for current artist.', 10, 45)
+
 
 	def get_pitchfork_review(self):
 		requester = reviews.Requester()
@@ -271,6 +271,8 @@ class Controller(QWidget):
 		self.musikki_artist.get_full_bio(self.bio_nam)
 		self.musikki_artist.get_full_images(self.images_nam)
 		self.musikki_artist.get_news(self.news_nam)
+		self.images_frame.clear_images_list()
+		self.flickr_artist.get_full_images(self.flickr_images_nam, self.get_current_artist())
 
 	def update_song_info(self, update_playback=True):
 		if update_playback:
@@ -341,12 +343,6 @@ class Controller(QWidget):
 	def lyrics_handler(self, reply):
 
 		er = reply.error()
-
-		# for h in reply.rawHeaderList():
-		# 	header_key = ''
-		# 	for l in h:
-		# 		header_key += l
-		# 	print(header_key, ': ', reply.rawHeader(QByteArray(h)))
 
 		if er == QtNetwork.QNetworkReply.NoError:
 
@@ -514,8 +510,64 @@ class Controller(QWidget):
 		else:
 			self.bio_frame.set_display_text('No artist bio found.', 10, 45)
 
+	def flickr_images_handler(self, reply):
+		urls, pixmaps, widths, heights = [], [], [], []
+
+		er = reply.error()
+
+		if er == QtNetwork.QNetworkReply.NoError:
+			response = reply.readAll()
+			document = QJsonDocument()
+			error = QJsonParseError()
+			document = document.fromJson(response, error)
+			json_resp = document.object()
+			notfound_count = 0
+
+			if (json_resp['stat'] == 'ok'):
+				for p in json_resp['photos'].toObject()['photo'].toArray():
+					photo_url = 'https://farm' + str(p.toObject()['farm'].toInt()) + '.staticflickr.com/' + str(p.toObject()['server'].toString())
+					photo_url = photo_url + '/' + str(p.toObject()['id'].toString()) + '_' + str(p.toObject()['secret'].toString()) + '.jpg'
+
+					try:
+						context = ssl._create_unverified_context()
+						data = urlopen(photo_url, context=context).read()
+						pixmap = QPixmap()
+						pixmap.loadFromData(data)
+						pixmaps.append(pixmap)
+					except:
+						notfound_count += 1
+
+					urls.append(photo_url)
+					# widths.append(thumb_width)
+					# heights.append(thumb_height)
+
+			print('URLS: ', urls)
+
+		if notfound_count > 0:
+			print(notfound_count, " 404 responses in image handler")
+
+		print('Images handler found ', len(pixmaps), ' images.')
+
+		if len(pixmaps) > 0:
+			# # load the biggest image as the first and only pixmap
+			# biggest = 0
+			# for i, p in enumerate(pixmaps):
+			# 	if p.width() > biggest:
+			# 		biggest = i
+			# pixmaps[0] = pixmaps[biggest]
+			# widths[0] = widths[biggest]
+			# heights[0] = heights[biggest]
+			self.images_frame.add_flickr_artist_images(pixmaps)
+		else:
+			# use default image of dirty-piano.jpg
+			pixmaps = [QPixmap('./controller/dirty-piano.jpg')]
+			# widths = [pixmaps[0].width()]
+			# heights = [pixmaps[0].height()]
+			# maybe below should be add_no_artist_image
+			self.images_frame.add_flickr_artist_images(pixmaps)
+
 	# images handler
-	def search_images_handler(self, reply):
+	def musikki_images_handler(self, reply):
 		urls, pixmaps, widths, heights = [], [], [], []
 
 		er = reply.error()
@@ -548,6 +600,8 @@ class Controller(QWidget):
 				widths.append(thumb_width)
 				heights.append(thumb_height)
 
+			print('URLS: ', urls)
+
 
 		if notfound_count > 0:
 			print(notfound_count, " 404 responses in image handler")
@@ -563,14 +617,14 @@ class Controller(QWidget):
 			pixmaps[0] = pixmaps[biggest]
 			widths[0] = widths[biggest]
 			heights[0] = heights[biggest]
-			self.images_frame.add_artist_images(pixmaps, widths, heights)
+			self.images_frame.add_musikki_artist_images(pixmaps, widths, heights)
 		else:
 			# use default image of dirty-piano.jpg
-			print('using default image')
-			pixmaps = [QPixmap('./controller/dirty-piano.jpg')]
-			widths = [pixmaps[0].width()]
-			heights = [pixmaps[0].height()]
-			self.images_frame.add_artist_images(pixmaps, widths, heights)
+			print('will search flickr as a backup')
+			# pixmaps = [QPixmap('./controller/dirty-piano.jpg')]
+			# widths = [pixmaps[0].width()]
+			# heights = [pixmaps[0].height()]
+			# self.images_frame.add_artist_images(pixmaps, widths, heights)
 			# self.images_frame.set_display_text('No Images Found.')
 
 	def next_image_handler(self):
