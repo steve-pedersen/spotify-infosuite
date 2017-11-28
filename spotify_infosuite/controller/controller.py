@@ -47,6 +47,8 @@ class Controller(QWidget):
 		)
 		self.multi_frame_window.show()
 
+		self.single_frame_window = view.SingleFrameWindow()
+
 		self.init_playback_frame()
 		self.init_bio_frame()
 		self.init_news_frame()
@@ -61,7 +63,7 @@ class Controller(QWidget):
 		# minimum window dimensions
 		min_w, min_h = 1440, 900
 		# default window dimensions
-		def_w, def_h = 1920, 1080
+		def_w, def_h = 1680, 1050
 		window_fits = False
 		
 		while not window_fits:
@@ -77,8 +79,8 @@ class Controller(QWidget):
 			space_h = h / 4
 			self.window_w = w - space_w
 			self.window_h = h - space_h
-			self.window_x = space_w / 2 if not use_default_size else space_w * 1.17
-			self.window_y = space_h / 2 if not use_default_size else space_h * 1.2
+			self.window_x = space_w / 2 #if not use_default_size else space_w * 1.17
+			self.window_y = space_h / 2 #if not use_default_size else space_h * 1.2
 
 			if not use_default_size:
 				window_fits = True
@@ -597,7 +599,16 @@ class Controller(QWidget):
 			self.update_everything()
 
 	def expand_bio(self):
-		print('expando bio!')
+		self.single_frame_window.init_popup(
+			self.window_x, 
+			self.window_y, 
+			self.window_w, 
+			self.window_h,
+			'Bio', 'multi_frame_window'
+		)
+		# self.bio_frame.set_view(self.single_frame_window)
+		self.single_frame_window.add_frame(self.bio_frame)
+		self.single_frame_window.show()
 
 	# Spotify Controls
 	def open_spotify(self):

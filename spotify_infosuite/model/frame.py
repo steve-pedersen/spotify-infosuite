@@ -55,12 +55,13 @@ class Frame(QLabel):
 		self.frame_components.append(self.display_title_label)
 
 	def set_display_text(self, text, x=5, y=45,obj=''):
+		self.bio_text = text
 		# self.display_text_label = QLabel(self)
 		min_y = self.display_title_label.height() + 8
 		scroll_height = self.h - (y+min_y)
 		if self.display_text_label.text() == '':
 
-			self.display_text_label.setText(text)
+			self.display_text_label.setText(self.bio_text)
 			self.display_text_label.setGeometry(x, y, self.w, self.h)
 			name = 'frame_text' if obj == '' else obj
 			self.display_text_label.setObjectName(name)
@@ -77,7 +78,7 @@ class Frame(QLabel):
 			self.display_text_label.setAlignment(Qt.AlignTop)
 			self.layout.addWidget(scroll)
 		else:
-			self.display_text_label.setText(text)
+			self.display_text_label.setText(self.bio_text)
 			self.display_text_label.setAlignment(Qt.AlignTop)
 			# self.layout.setAlignment(Qt.AlignTop)
 
@@ -367,6 +368,9 @@ class Frame(QLabel):
 
 	def get_frame_components(self):
 		return self.frame_components
+
+	def set_view(self, view):
+		self.view = view
 
 	# def mousePressEvent(self, event):
 	# 	self.clicked.emit(self)
