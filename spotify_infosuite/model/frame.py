@@ -187,7 +187,7 @@ class Frame(QLabel):
 		self.image_label.setPixmap(self.images_list[self.current_image])
 		self.image_label.move(x, y)
 		self.image_label.setAlignment(Qt.AlignCenter)
-		self.create_image_buttons()
+		# self.create_image_buttons()
 		self.image_label.show()
 		self.flickr_images_added = True
 

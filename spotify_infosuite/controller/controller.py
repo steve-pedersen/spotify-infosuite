@@ -54,6 +54,7 @@ class Controller(QWidget):
 		self.init_review_frame()
 		self.init_images_frame()
 		self.init_lyrics_frame()
+		self.init_social_frame()
 
 	# Window scales to a 1080 screen resolution by default, but will revert to your 
 	# own screen resolution if the app window ends up being bigger than your screen
@@ -158,7 +159,7 @@ class Controller(QWidget):
 		x = self.window_w / 3
 		y = 0
 		w = self.window_w / 3
-		h = self.window_h
+		h = self.window_h / 1.2
 		self.lyrics_frame = model.Frame(
 			self, self.multi_frame_window, x,y, w,h, "lyrics_frame"
 		)
@@ -234,6 +235,25 @@ class Controller(QWidget):
 		else:
 			self.images_frame.set_display_text('No results for current artist.', 10, 45)
 
+	def init_social_frame(self):
+		x = self.window_w / 3
+		y = self.window_h/2 + self.window_h*0.32
+		w = self.window_w / 3
+		h = self.window_h * 0.18
+		self.social_frame = model.Frame(
+			self, self.multi_frame_window, x,y, w,h, "social_frame"
+		)
+
+		self.social_frame.set_display_title("Social", 10, 5)
+		self.multi_frame_window.add_frame(self.social_frame)
+
+		self.social_nam = QtNetwork.QNetworkAccessManager()
+		self.social_nam.finished.connect(self.social_handler)
+
+		if self.musikki_artist.is_found:
+			self.musikki_artist.get_social_media_twitter(self.social_nam)
+		else:
+			self.social_frame.set_display_text('No results for current artist.', 10, 45)
 
 	def get_pitchfork_review(self):
 		requester = reviews.Requester()
@@ -268,6 +288,7 @@ class Controller(QWidget):
 		self.musikki_artist.get_news(self.news_nam)
 		self.images_frame.clear_images_list()
 		self.flickr_artist.get_full_images(self.flickr_images_nam, self.get_current_artist())
+		self.musikki_artist.get_social_media_twitter(self.social_nam)
 
 	def update_song_info(self, update_playback=True):
 		if update_playback:
@@ -621,6 +642,37 @@ class Controller(QWidget):
 			# heights = [pixmaps[0].height()]
 			# self.images_frame.add_artist_images(pixmaps, widths, heights)
 			# self.images_frame.set_display_text('No Images Found.')
+
+	def social_handler(self, reply):
+		er = reply.error()
+
+		if er == QtNetwork.QNetworkReply.NoError:
+			response = reply.readAll()
+			document = QJsonDocument()
+			error = QJsonParseError()
+			document = document.fromJson(response, error)
+			json_resp = document.object()
+
+			service_name = json_resp['service_name'].toString()
+
+			year = json_resp['timeline_posts'].toArray()[0].toObject()['date'].toObject()['year'].toInt()
+			month = json_resp['timeline_posts'].toArray()[0].toObject()['date'].toObject()['month'].toInt()
+			day = json_resp['timeline_posts'].toArray()[0].toObject()['date'].toObject()['day'].toInt()
+
+			date = str(month) + '/' + str(day) + '/' + str(year)
+
+			content = json_resp['timeline_posts'].toArray()[0].toObject()['content'].toString()
+
+			social_text = date + ' - via ' + service_name + '\n\n' + content
+
+			self.social_frame.set_display_text(social_text, 10, 45, 'social_text')
+			self.musikki_artist.twitter_search = False
+
+		elif self.musikki_artist.facebook_search == False:
+			self.musikki_artist.get_social_media_facebook(self.social_nam)
+		else:
+			self.social_frame.set_display_text('No social media found.', 10, 45)
+			self.musikki_artist.facebook_search = False
 
 	def next_image_handler(self):
 		self.images_frame.next_image()
