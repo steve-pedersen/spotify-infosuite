@@ -2,6 +2,7 @@ from reviews.pitchfork import pitchfork
 from reviews.metacritic import metacritic
 import threading
 import json
+import os
 from threading import Thread
 from PyQt5.QtCore import *
 
@@ -23,7 +24,8 @@ class Requester(QThread):
 			artist, album = arg1, arg2
 			album = self.get_formatted_album_string(album, 'metacritic')
 
-			with open('./reviews/credentials.json') as creds:
+			# with open('./reviews/credentials.json') as creds:
+			with open(os.path.dirname(__file__) + '/credentials.json') as creds:
 				credentials = json.load(creds)
 			apikey = credentials['metacritic']['apikey']
 			

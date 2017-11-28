@@ -50,7 +50,8 @@ class SingleFrameWindow(QWidget):
     def load_styles(self):
         self.setStyleSheet('')
         style = ''
-        with open('./view/style.css') as f:
+        # with open('./view/style.css') as f:
+        with open(os.path.dirname(__file__) + '/style.css') as f:
             for line in f:
                 style += line
                 # print(line)

@@ -18,7 +18,8 @@ class Flickr:
 		query = query.replace(' ', '%20')
 		maxResults = 20
 
-		with open('./flickr/credentials.json') as creds:
+		# with open('./flickr/credentials.json') as creds:
+		with open(os.path.dirname(__file__) + '/credentials.json') as creds:
 			credentials = json.load(creds)
 
 		appkey = credentials['flickr']['appkey']
@@ -40,7 +41,8 @@ def search(artist):
 	query = query.replace(' ', '%20')
 	maxResults = 20
 
-	with open('./flickr/credentials.json') as creds:
+	# with open('./flickr/credentials.json') as creds:
+	with open(os.path.dirname(__file__) + '/credentials.json') as creds:
 		credentials = json.load(creds)
 
 	appkey = credentials['flickr']['appkey']
