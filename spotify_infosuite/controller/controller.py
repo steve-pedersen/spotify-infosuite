@@ -237,7 +237,7 @@ class Controller(QWidget):
 		self.social_nam.finished.connect(self.social_handler)
 
 		if self.musikki_artist.is_found:
-			self.musikki_artist.get_full_social(self.social_nam)
+			self.musikki_artist.get_social_media_twitter(self.social_nam)
 		else:
 			self.social_frame.set_display_text('No results for current artist.', 10, 45)
 
@@ -271,6 +271,7 @@ class Controller(QWidget):
 		self.musikki_artist = musikki.search(self.get_current_artist())
 		self.musikki_artist.get_full_bio(self.bio_nam)
 		self.musikki_artist.get_full_images(self.images_nam)
+		self.musikki_artist.get_social_media_twitter(self.social_nam)
 
 	def update_song_info(self, update_playback=True):
 		if update_playback:
@@ -480,6 +481,39 @@ class Controller(QWidget):
 			heights = [pixmaps[0].height()]
 			self.images_frame.add_artist_images(pixmaps, widths, heights)
 			# self.images_frame.set_display_text('No Images Found.')
+
+	def social_handler(self, reply):
+		er = reply.error()
+		print('REPLY: ', reply.rawHeaderList())
+
+		if er == QtNetwork.QNetworkReply.NoError:
+			response = reply.readAll()
+			document = QJsonDocument()
+			error = QJsonParseError()
+			document = document.fromJson(response, error)
+			json_resp = document.object()
+
+			print('json_resp: ', json_resp['timeline_posts'].toArray()[0].toObject()['content'].toString())
+
+			service_name = json_resp['service_name'].toString()
+
+			year = json_resp['timeline_posts'].toArray()[0].toObject()['date'].toObject()['year'].toInt()
+			month = json_resp['timeline_posts'].toArray()[0].toObject()['date'].toObject()['month'].toInt()
+			day = json_resp['timeline_posts'].toArray()[0].toObject()['date'].toObject()['day'].toInt()
+
+			date = str(month) + '/' + str(day) + '/' + str(year)
+
+			content = json_resp['timeline_posts'].toArray()[0].toObject()['content'].toString()
+
+			social_text = date + ' - via ' + service_name + '\n\n' + content
+
+			self.social_frame.set_display_text(social_text, 10, 45, 'social_text')
+			self.social_error = False
+		# elif self.musikki_artist.is_found:
+		# 	self.musikki_artist.get_social_media_facebook(self.social_nam)
+		else:
+			self.musikki_artist.get_social_media_facebook(self.social_nam)
+			# self.social_frame.set_display_text('No social media found.', 10, 45)
 
 	def next_image_handler(self):
 		self.images_frame.next_image()

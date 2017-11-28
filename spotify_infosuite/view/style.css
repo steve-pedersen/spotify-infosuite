@@ -126,7 +126,7 @@ QLabel#playback_title {
 }
 
 
-QLabel#frame_text, #bio_text, #lyrics_text, #frame_images {
+QLabel#frame_text, #bio_text, #lyrics_text, #frame_images, #social_text {
     /*position: relative*/;
     background-color: #0f0f0f;
 	/*padding-top: 25px;*/

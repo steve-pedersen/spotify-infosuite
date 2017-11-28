@@ -94,11 +94,19 @@ class Artist:
 		nam.get(req)
 
 	# https://music-api.musikki.com/reference/artists#social
-	def get_social_media(self, nam):
-		url = self.artisturl + '/' + str(self.mkid) + 'social?q=[service-name:twitter]'
+	def get_social_media_twitter(self, nam):
+		url = self.artisturl + '/' + str(self.mkid) + '/social?q=[service-name:twitter]'
 		url = url + '&appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
-		print('social url: ', url)
+		print('twitter url: ', url)
+		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
+		nam.get(req)
+
+	def get_social_media_facebook(self, nam):
+		url = self.artisturl + '/' + str(self.mkid) + '/social?q=[service-name:facebook]'
+		url = url + '&appkey=' + self.appkey
+		url = url + '&appid=' + self.appid
+		print('facebook url: ', url)
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		nam.get(req)
 
