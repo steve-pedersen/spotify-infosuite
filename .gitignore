@@ -3,6 +3,7 @@
 # { "musikki": { "appid": "<id>", "appkey": "<key>" } }
 spotify_infosuite/musikki/credentials.json
 credentials.json
+spotify_infosuite/controller/images/*.jpg
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
