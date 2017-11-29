@@ -21,7 +21,8 @@ class SingleFrameWindow(QWidget):
         
         self.setFocus()
         self.setAttribute(Qt.WA_DeleteOnClose)
-        self.setWindowModality(Qt.WindowModal)
+        # self.setWindowModality(Qt.WindowModal)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.Popup)
         # self.setWindowModality(Qt.ApplicationModal)
 
         # self.setAttribute(Qt.WA_TranslucentBackground)
