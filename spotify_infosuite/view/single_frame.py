@@ -21,6 +21,13 @@ class SingleFrameWindow(QWidget):
         
         self.setFocus()
         self.setAttribute(Qt.WA_DeleteOnClose)
+        self.setWindowModality(Qt.WindowModal)
+        # self.setWindowModality(Qt.ApplicationModal)
+
+        # self.setAttribute(Qt.WA_TranslucentBackground)
+        # self.setAttribute(Qt.WA_StaticContents)
+        
+        
         # A modal widget prevents widgets in all other windows from getting any input.
         # self.isModal()
 
