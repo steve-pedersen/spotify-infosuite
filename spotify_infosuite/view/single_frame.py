@@ -21,6 +21,14 @@ class SingleFrameWindow(QWidget):
         
         self.setFocus()
         self.setAttribute(Qt.WA_DeleteOnClose)
+        # self.setWindowModality(Qt.WindowModal)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.Popup)
+        # self.setWindowModality(Qt.ApplicationModal)
+
+        # self.setAttribute(Qt.WA_TranslucentBackground)
+        # self.setAttribute(Qt.WA_StaticContents)
+        
+        
         # A modal widget prevents widgets in all other windows from getting any input.
         # self.isModal()
 
@@ -30,9 +38,8 @@ class SingleFrameWindow(QWidget):
             component.show()        
 
         def_width = 1000
-        def_height = 1000
-        self.w = def_width   
-        self.h = def_height   
+        def_height = 900 if 900 < self.screen_h else self.screen_h - 50
+        self.w = def_width    
         self.h = frame.popup_text.height() if frame.popup_text.height() < self.screen_h else def_height
 
         frame.popup_text.setAlignment(Qt.AlignTop)
@@ -44,11 +51,19 @@ class SingleFrameWindow(QWidget):
         popup_layout = QVBoxLayout(self)
         popup_layout.addWidget(popup_scroll)
        
+        close_btn = QPushButton('x', self)
+        close_btn.move(self.w-25, 0)
+        close_btn.resize(25, 20)
+        close_btn.setObjectName('close_popup_btn')
+        close_btn.clicked.connect(self.close_popup)
+
         self.setGeometry(self.x, self.y, self.w, self.h)
         self.load_styles()
 
         frame.show()
 
+    def close_popup(self):
+        self.close()
 
     # Opens css stylesheet and apply it to Spotify Infosuite elements
     def load_styles(self):

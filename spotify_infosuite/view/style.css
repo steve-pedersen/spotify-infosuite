@@ -21,6 +21,17 @@ QLabel#popup_text {
     color: #fff;
     font-size: 15pt;
 }
+QPushButton#close_popup_btn {
+    font-weight: bold;
+    background-color: #0f0f0f;
+    color: white;
+    border: 1px solid #25D34D;
+    border-radius: 3px; 
+}
+QPushButton#close_popup_btn:hover {
+    background-color: #25D34D ;
+    color: #0f0f0f;   
+}
 
 QPushButton#prev_button {
 	font-weight: bold;
