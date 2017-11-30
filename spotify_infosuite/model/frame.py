@@ -88,8 +88,8 @@ class Frame(QLabel):
 			self.display_text_label.setAlignment(Qt.AlignTop)
 			# self.layout.setAlignment(Qt.AlignTop)
 
-	def create_bio_popup(self, popup_window):
-		self.popup_title = QLabel('Biography: '+self.controller.current_artist, popup_window)
+	def create_popup(self, popup_window):
+		self.popup_title = QLabel(self.display_title+': '+self.controller.current_artist, popup_window)
 		self.popup_text = QLabel(self.display_text, popup_window)
 		self.popup_components = []
 		self.popup_components.extend([self.popup_title, self.popup_text])
@@ -237,10 +237,10 @@ class Frame(QLabel):
 
 		padding = 20
 		if pixmap.height() > pixmap.width():
-			pixmap = pixmap.scaledToHeight(self.h - padding)
+			pixmap = pixmap.scaledToHeight(self.h - padding-24)
 		else:
-			pixmap = pixmap.scaledToWidth(self.w/4 - padding)
-		
+			pixmap = pixmap.scaledToWidth(self.w/4 - padding-24)
+
 		if not self.metacritic_exists:	
 			# create the layout
 			x = padding/10
@@ -293,6 +293,7 @@ class Frame(QLabel):
 			self.mc_user.setText(
 				'User Score:    '+ str(review.user_rating)+ '  ('+str(review.user_count)+' reviews)'
 			)
+		# self.mc_album_thumb.setStyleSheet('border: 8px solid #1d1d1d; background-color: #333333;')
 
 		self.show_frame_components()
 
@@ -358,11 +359,11 @@ class Frame(QLabel):
 		# print('spacer: ', spacer)
 
 		self.prev_button.move(prev_x, self.display_title_label.height()+
-			self.display_title_label.height()/4)	
+			self.display_title_label.height()/3)	
 		self.playpause_button.move(play_x, self.display_title_label.height()+
-			self.display_title_label.height()/4)	
+			self.display_title_label.height()/3)	
 		self.next_button.move(next_x, self.display_title_label.height()+
-			self.display_title_label.height()/4)	
+			self.display_title_label.height()/3)	
 
 	def hide_frame_components(self):
 		for f in self.frame_components:

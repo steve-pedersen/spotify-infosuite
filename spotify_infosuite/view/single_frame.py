@@ -41,6 +41,8 @@ class SingleFrameWindow(QWidget):
         def_height = 900 if 900 < self.screen_h else self.screen_h - 50
         self.w = def_width    
         self.h = frame.popup_text.height() if frame.popup_text.height() < self.screen_h else def_height
+        self.x = self.screen_w/2 - self.w/2
+        self.y = self.y
 
         frame.popup_text.setAlignment(Qt.AlignTop)
         popup_scroll = QScrollArea()
