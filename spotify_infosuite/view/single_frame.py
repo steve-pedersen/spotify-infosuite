@@ -21,28 +21,18 @@ class SingleFrameWindow(QWidget):
         
         self.setFocus()
         self.setAttribute(Qt.WA_DeleteOnClose)
-        # self.setWindowModality(Qt.WindowModal)
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Popup)
-        # self.setWindowModality(Qt.ApplicationModal)
-
-        # self.setAttribute(Qt.WA_TranslucentBackground)
-        # self.setAttribute(Qt.WA_StaticContents)
-        
-        
-        # A modal widget prevents widgets in all other windows from getting any input.
-        # self.isModal()
 
 
     def add_frame(self, frame):
         for component in frame.get_popup_components():
             component.show()        
 
-        def_width = 1000
-        def_height = 900 if 900 < self.screen_h else self.screen_h - 50
-        self.w = def_width    
-        self.h = frame.popup_text.height() if frame.popup_text.height() < self.screen_h else def_height
+        padding = 100
+        self.w = 1000
+        self.h = frame.popup_text.height() if (frame.popup_text.height() < self.screen_h-padding) else self.screen_h-padding
         self.x = self.screen_w/2 - self.w/2
-        self.y = self.y
+        self.y = padding/2
 
         frame.popup_text.setAlignment(Qt.AlignTop)
         popup_scroll = QScrollArea()
