@@ -237,10 +237,10 @@ class Frame(QLabel):
 
 		padding = 20
 		if pixmap.height() > pixmap.width():
-			pixmap = pixmap.scaledToHeight(self.h - padding)
+			pixmap = pixmap.scaledToHeight(self.h - padding-24)
 		else:
-			pixmap = pixmap.scaledToWidth(self.w/4 - padding)
-		
+			pixmap = pixmap.scaledToWidth(self.w/4 - padding-24)
+
 		if not self.metacritic_exists:	
 			# create the layout
 			x = padding/10
@@ -293,6 +293,7 @@ class Frame(QLabel):
 			self.mc_user.setText(
 				'User Score:    '+ str(review.user_rating)+ '  ('+str(review.user_count)+' reviews)'
 			)
+		# self.mc_album_thumb.setStyleSheet('border: 8px solid #1d1d1d; background-color: #333333;')
 
 		self.show_frame_components()
 
