@@ -163,7 +163,7 @@ class Controller(QWidget):
 		x = self.window_w / 3
 		y = 0
 		w = self.window_w / 3
-		h = self.window_h * 0.82 # * 0.18
+		h = self.window_h * 0.75
 		self.lyrics_frame = model.Frame(
 			self, self.multi_frame_window, x,y, w,h, "lyrics_frame"
 		)
@@ -247,9 +247,9 @@ class Controller(QWidget):
 
 	def init_social_frame(self):
 		x = self.window_w / 3
-		y = self.window_h/2 + self.window_h*0.32
+		y = self.window_h * 0.75
 		w = self.window_w / 3
-		h = self.window_h * 0.18
+		h = self.window_h * 0.25
 		self.social_frame = model.Frame(
 			self, self.multi_frame_window, x,y, w,h, "social_frame"
 		)
