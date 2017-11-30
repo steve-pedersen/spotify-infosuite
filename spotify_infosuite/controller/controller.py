@@ -163,13 +163,17 @@ class Controller(QWidget):
 		x = self.window_w / 3
 		y = 0
 		w = self.window_w / 3
-		h = self.window_h / 1.2
+		h = self.window_h * 0.82 # * 0.18
 		self.lyrics_frame = model.Frame(
 			self, self.multi_frame_window, x,y, w,h, "lyrics_frame"
 		)
-
 		self.lyrics_frame.set_display_title("Lyrics", 10, 5)
+		
+		self.lyrics_expando_btn = self.lyrics_frame.create_expando_button()
+		self.lyrics_expando_btn.clicked.connect(self.expand_lyrics)
+
 		self.multi_frame_window.add_frame(self.lyrics_frame)
+
 		self.lyrics_nam = QtNetwork.QNetworkAccessManager()
 		self.lyrics_nam.finished.connect(self.lyrics_handler)
 
@@ -185,7 +189,9 @@ class Controller(QWidget):
 		self.review_frame = model.Frame(
 			self, self.multi_frame_window, x,y, w,h, 'review_frame'
 		)
-		self.review_frame.set_display_title('Reviews', title_x, title_y)
+		self.review_frame.set_display_title('Reviews', title_x, title_y)		
+		self.review_expando_btn = self.review_frame.create_expando_button()
+		self.review_expando_btn.clicked.connect(self.expand_review)		
 		self.multi_frame_window.add_frame(self.review_frame)
 
 		self.init_metacritic_frame()
@@ -285,21 +291,24 @@ class Controller(QWidget):
 			self.update_current_playing()
 			self.playback_frame.set_display_title(self.current_playing, 10, 10)		
 		
-		# new bio needed
+		# Update the collowing frames, which are dependent on artist:
+		#	Bio, News, Social Media, Images
 		self.musikki_artist = musikki.search(self.get_current_artist())
-		self.musikki_artist.get_full_bio(self.bio_nam)
-		self.musikki_artist.get_full_images(self.images_nam)
+		self.musikki_artist.get_full_bio(self.bio_nam)		
 		self.musikki_artist.get_news(self.news_nam)
-		self.images_frame.clear_images_list()
-		self.flickr_artist.get_full_images(self.flickr_images_nam, self.get_current_artist())
 		self.musikki_artist.get_social_media_twitter(self.social_nam)
+		self.images_frame.clear_images_list()
+		self.musikki_artist.get_full_images(self.images_nam)
+		self.flickr_artist.get_full_images(self.flickr_images_nam, self.get_current_artist())
+		
 
 	def update_song_info(self, update_playback=True):
 		if update_playback:
 			self.update_current_playing()
 			self.playback_frame.set_display_title(self.current_playing, 10, 10)	
 
-		# self.set_lyrics()	
+		# Update the collowing frames, which are dependent on song:
+		#	Lyrics
 		self.get_lyrics()	
 
 	def update_album_info(self, update_playback=True):
@@ -307,7 +316,8 @@ class Controller(QWidget):
 			self.update_current_playing()
 			self.playback_frame.set_display_title(self.current_playing, 10, 10)	
 		
-		# new reviews needed
+		# Update the collowing frames, which are dependent on album:
+		#	Reviews: Pitchfork, Metacritic
 		self.get_pitchfork_review()
 		self.get_metacritic_review()
 
@@ -336,6 +346,7 @@ class Controller(QWidget):
 
 		# Pitchfork frame
 		if isinstance(review, str):
+			self.review_frame.set_results(True)
 			self.review_frame.set_display_text(review)
 
 		# Metacritic frame
@@ -377,12 +388,7 @@ class Controller(QWidget):
 			
 			elif reply.rawHeader(QByteArray(b'Status') != '200 OK'):
 				print('response not a 301 or 200. it is: ', reply.rawHeader(QByteArray(b'Status')))
-			else:
-				# test print statements... shouldn't get here
-				print('got here somehow')
-				print('status: ', reply.rawHeader(QByteArray(b'Status')))
-				qbyteurl = reply.rawHeader(QByteArray(b'Location'))
-				print(qbyteurl)
+
 		else:
 			self.set_lyrics(url='', lyrics_exist=False)
 
@@ -399,11 +405,13 @@ class Controller(QWidget):
 				if url == '':
 					url = "http://genius.com/%s-%s-lyrics" % (artist.replace(' ', '-'), song.replace(' ', '-'))
 				lyricspage = requests.get(url, proxies=proxy)
-				# print(url)
+
 				soup = BeautifulSoup(lyricspage.text, 'html.parser')
 				lyrics = soup.text.split('Lyrics')[3].split('More on Genius')[0]
 				if artist.lower().replace(" ", "") not in soup.text.lower().replace(" ", ""):
 					lyrics = error
+
+				self.lyrics_frame.set_results(True)
 			except Exception:
 				lyrics = error
 		else:
@@ -690,16 +698,31 @@ class Controller(QWidget):
 
 	def expand_bio(self):
 		if self.bio_frame.has_results():
-			self.bio_popup_window = view.SingleFrameWindow(self.screen_width, self.screen_height)
-			offset = 50
-			self.bio_popup_window.init_popup(
-				self.window_x - offset, self.window_y - offset, 'Bio', 'single_frame_window'
-			)
-			self.bio_frame.create_bio_popup(self.bio_popup_window)
-			self.bio_popup_window.add_frame(self.bio_frame)
-			self.bio_popup_window.show()
+			self.build_popup(self.bio_frame)
 		else:
 			print('No bio results, so no bio popup')
+
+	def expand_lyrics(self):
+		if self.lyrics_frame.has_results():
+			self.build_popup(self.lyrics_frame)
+		else:
+			print('No lyrics results, so no lyrics popup')
+
+	def expand_review(self):
+		if self.review_frame.has_results():
+			self.build_popup(self.review_frame)
+		else:
+			print('No lyrics results, so no lyrics popup')
+
+	def build_popup(self, source_frame):
+		offset = 50
+		self.popup_window = view.SingleFrameWindow(self.screen_width, self.screen_height)		
+		self.popup_window.init_popup(
+			self.window_x-offset, self.window_y-offset, source_frame.display_title, 'single_frame_window'
+		)
+		source_frame.create_popup(self.popup_window)
+		self.popup_window.add_frame(source_frame)
+		self.popup_window.show()		
 
 	# Spotify Controls
 	def open_spotify(self):

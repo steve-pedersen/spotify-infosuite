@@ -88,8 +88,8 @@ class Frame(QLabel):
 			self.display_text_label.setAlignment(Qt.AlignTop)
 			# self.layout.setAlignment(Qt.AlignTop)
 
-	def create_bio_popup(self, popup_window):
-		self.popup_title = QLabel('Biography: '+self.controller.current_artist, popup_window)
+	def create_popup(self, popup_window):
+		self.popup_title = QLabel(self.display_title+': '+self.controller.current_artist, popup_window)
 		self.popup_text = QLabel(self.display_text, popup_window)
 		self.popup_components = []
 		self.popup_components.extend([self.popup_title, self.popup_text])
@@ -358,11 +358,11 @@ class Frame(QLabel):
 		# print('spacer: ', spacer)
 
 		self.prev_button.move(prev_x, self.display_title_label.height()+
-			self.display_title_label.height()/4)	
+			self.display_title_label.height()/3)	
 		self.playpause_button.move(play_x, self.display_title_label.height()+
-			self.display_title_label.height()/4)	
+			self.display_title_label.height()/3)	
 		self.next_button.move(next_x, self.display_title_label.height()+
-			self.display_title_label.height()/4)	
+			self.display_title_label.height()/3)	
 
 	def hide_frame_components(self):
 		for f in self.frame_components:
