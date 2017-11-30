@@ -89,7 +89,7 @@ class Frame(QLabel):
 			# self.layout.setAlignment(Qt.AlignTop)
 
 	def create_popup(self, popup_window):
-		self.popup_title = QLabel(self.display_title+': '+self.controller.current_artist, popup_window)
+		self.popup_title = QLabel(self.display_title, popup_window)
 		self.popup_text = QLabel(self.display_text, popup_window)
 		self.popup_components = []
 		self.popup_components.extend([self.popup_title, self.popup_text])
