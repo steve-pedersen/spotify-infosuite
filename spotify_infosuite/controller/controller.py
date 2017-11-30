@@ -648,20 +648,35 @@ class Controller(QWidget):
 			document = document.fromJson(response, error)
 			json_resp = document.object()
 
-			service_name = json_resp['service_name'].toString()
+			found = True
+			try:
+				service_name = json_resp['service_name'].toString()
+			except:
+				found = False
+				service_name = ''
 
-			year = json_resp['timeline_posts'].toArray()[0].toObject()['date'].toObject()['year'].toInt()
-			month = json_resp['timeline_posts'].toArray()[0].toObject()['date'].toObject()['month'].toInt()
-			day = json_resp['timeline_posts'].toArray()[0].toObject()['date'].toObject()['day'].toInt()
+			try:
+				year = json_resp['timeline_posts'].toArray()[0].toObject()['date'].toObject()['year'].toInt()
+				month = json_resp['timeline_posts'].toArray()[0].toObject()['date'].toObject()['month'].toInt()
+				day = json_resp['timeline_posts'].toArray()[0].toObject()['date'].toObject()['day'].toInt()
+			except:
+				year, month, day = 0000, 00, 00
 
 			date = str(month) + '/' + str(day) + '/' + str(year)
 
-			content = json_resp['timeline_posts'].toArray()[0].toObject()['content'].toString()
+			try:
+				content = json_resp['timeline_posts'].toArray()[0].toObject()['content'].toString()
+			except:
+				content = ''
 
 			social_text = date + ' - via ' + service_name + '\n\n' + content
 
-			self.social_frame.set_display_text(social_text, 10, 45, 'social_text')
-			self.musikki_artist.twitter_search = False
+			if found:
+				self.social_frame.set_display_text(social_text, 10, 45, 'social_text')
+				self.musikki_artist.twitter_search = False
+			elif not found:
+				self.social_frame.set_display_text('No social media found.', 10, 45)
+				self.musikki_artist.facebook_search = False				
 
 		elif self.musikki_artist.facebook_search == False:
 			self.musikki_artist.get_social_media_facebook(self.social_nam)
