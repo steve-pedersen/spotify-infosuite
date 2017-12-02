@@ -200,13 +200,13 @@ def search(artist, album):
 					  data=None,
 					  headers={'User-Agent': 'michalczaplinski/pitchfork-v0.1'})
 	context = ssl._create_unverified_context()
-	response = urlopen(request, context=context)
-	text = response.read().decode('UTF-8').split('window.App=')[1].split(';</script>')[0]
-
-	# the server responds with json so we load it into a dictionary
-	obj = json.loads(text)
 
 	try:
+		response = urlopen(request, context=context)
+		text = response.read().decode('UTF-8').split('window.App=')[1].split(';</script>')[0]
+
+		# the server responds with json so we load it into a dictionary
+		obj = json.loads(text)
 		# get the nested dictionary containing url to the review and album name
 		review_dict = obj['context']['dispatcher']['stores']['SearchStore']['results']['albumreviews']['items'][0]
 	except IndexError:
@@ -222,7 +222,10 @@ def search(artist, album):
 					  data=None,
 					  headers={'User-Agent': 'michalczaplinski/pitchfork-v0.1'})
 	context = ssl._create_unverified_context()
-	response_text = urlopen(request, context=context).read()
+	try:
+		response_text = urlopen(request, context=context).read()		
+	except:
+		response_text = ''
 	soup = BeautifulSoup(response_text, "lxml")
 
 	# check if the review does not review multiple albums
