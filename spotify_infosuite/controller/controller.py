@@ -446,8 +446,11 @@ class Controller(QWidget):
 
 						results['author'], name = [], ''
 						if r['author_info'] != '':
-							if r['author_info'].toObject()['name'] != '':
-								name = r['author_info'].toObject()['name'].toString()
+							try:
+								if r['author_info'].toObject()['name'] != '':
+									name = r['author_info'].toObject()['name'].toString()
+							except:
+								name = ''
 						results['author'] = name
 
 						results['source'], avatar, title = [],'',''
