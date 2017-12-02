@@ -49,10 +49,14 @@ def search(artist, album, apikey):
 			match_found = result['Message'] != 'No matching item found!'
 		except Exception:
 			match_found = True
+		try:
+			mc_artist = result['PrimaryArtist']
+		except:
+			mc_artist = ''
 
 		if not match_found:
 			continue
-		elif match_found and result['PrimaryArtist'] == artist:
+		elif match_found and mc_artist == artist:
 			try:
 				mc_name = result['PrimaryArtist']
 			except Exception:
