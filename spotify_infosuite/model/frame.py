@@ -5,6 +5,7 @@ from PyQt5 import QtGui
 from PyQt5.QtGui import QPixmap
 from PyQt5 import QtCore
 
+
 class Frame(QLabel):
 
 	# when QLabel is clicked, emit a signal with an object param
@@ -128,6 +129,8 @@ class Frame(QLabel):
 		x, y = 10, 45
 		w, h = self.w - x*2, self.h - y - 40
 		self.current_image = 0
+		self.photo_list = []
+
 		# print('current image: ', self.current_image)
 		#
 		# print("SIZE: ", len(images))
@@ -148,14 +151,17 @@ class Frame(QLabel):
 			# 	if h > heights[i]:
 			# 		# print('image is taller than it is wide and less tall than the frame')
 			# 		h = heights[i]
-			image = images[i].scaledToHeight(h)
-			self.images_list.append(image)
 
-		print('IMAGES LIST: ', self.images_list)
+			print("image ", images[i])
+			image = images[i]
+
+			self.photo_list.append(image)
+
+		print('IMAGES LIST: ', self.photo_list)
 
 		# self.image_label.setStyleSheet('border: 1px solid #0f0f0f;')
 		self.image_label.resize(w, h)
-		self.image_label.setPixmap(self.images_list[self.current_image])
+		self.image_label.setPixmap(self.photo_list[self.current_image])
 		self.image_label.move(x, y)
 		self.image_label.setAlignment(Qt.AlignCenter)
 		self.create_image_buttons()

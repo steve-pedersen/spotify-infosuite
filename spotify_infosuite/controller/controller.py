@@ -5,6 +5,7 @@ import musikki
 import flickr
 # import reviews #pitchfork
 # from reviews.pitchfork import pitchfork
+from flickr import flickr_thread
 from reviews import reviews
 import json
 import sys
@@ -172,20 +173,22 @@ class Controller(QWidget):
 
 		self.multi_frame_window.add_frame(self.images_frame)
 
-		self.flickr_images_nam = QtNetwork.QNetworkAccessManager()
-		self.flickr_images_nam.finished.connect(self.flickr_images_handler)
+		self.get_images()
 
-		self.images_nam = QtNetwork.QNetworkAccessManager()
-		self.images_nam.finished.connect(self.musikki_images_handler)
-
-
-		self.flickr_artist = flickr.flickr.Flickr(self.get_current_artist())
-
-		if self.musikki_artist.is_found:
-			self.musikki_artist.get_full_images(self.images_nam)
-			self.flickr_artist.get_full_images(self.flickr_images_nam, self.get_current_artist())
-		else:
-			self.images_frame.set_display_text('No results for current artist.', 10, 45)
+		# self.flickr_images_nam = QtNetwork.QNetworkAccessManager()
+		# self.flickr_images_nam.finished.connect(self.flickr_images_handler)
+		#
+		# self.images_nam = QtNetwork.QNetworkAccessManager()
+		# self.images_nam.finished.connect(self.musikki_images_handler)
+		#
+		#
+		# self.flickr_artist = flickr.flickr.Flickr(self.get_current_artist())
+		#
+		# if self.musikki_artist.is_found:
+		# 	self.musikki_artist.get_full_images(self.images_nam)
+		# 	self.flickr_artist.get_full_images(self.flickr_images_nam, self.get_current_artist())
+		# else:
+		# 	self.images_frame.set_display_text('No results for current artist.', 10, 45)
 
 		# self.flickr_search = flickr.search(self.get_current_artist())
 		# if self.flickr_search is not None:
@@ -198,6 +201,11 @@ class Controller(QWidget):
 		# # 	self.musikki_artist.get_full_images(self.images_nam)
 		# else:
 		# 	self.images_frame.set_display_text('No results for current artist.', 10, 45)
+
+	def get_images(self):
+		requester = flickr_thread.Requester()
+		requester.flickr_reciever.connect(self.update_images_frame)
+		requester.get_images(self.current_artist)
 
 	def get_pitchfork_review(self):
 		requester = reviews.Requester()
@@ -294,6 +302,12 @@ class Controller(QWidget):
 				print('Critic Score:\t', review.critic_rating, '\t(',review.critic_count,' reviews)')
 				print('User Score:\t', review.user_rating, '\t(',review.user_count,' reviews)')
 				print('-------------------------------------------\n')
+
+	def update_images_frame(self, images):
+		print("I M A G E S: ", images)
+		if len(images) > 0:
+			self.images_frame.add_flickr_artist_images(images)
+
 	
 	# lyrics handler
 	def lyrics_handler(self, reply):
@@ -450,9 +464,14 @@ class Controller(QWidget):
 			json_resp = document.object()
 			notfound_count = 0
 
-			for f in json_resp['results'].toArray():
-				f = f.toObject() 
-				thumb = f['thumbnails'].toArray()[0].toObject()
+			print("musikki len: ", len(json_resp['results'].toArray()))
+
+			if len(json_resp['results'].toArray()) > 0:
+				f = json_resp['results'].toArray()
+
+				# f[0].toObject()
+				print("f : ", f[0].toObject()['thumbnails'])
+				thumb = f[0].toObject()['thumbnails'].toArray()[0].toObject()
 				thumb_url = thumb['url'].toString()
 				thumb_width = thumb['width'].toInt()
 				thumb_height = thumb['height'].toInt()
@@ -470,7 +489,29 @@ class Controller(QWidget):
 				widths.append(thumb_width)
 				heights.append(thumb_height)
 
-			print('URLS: ', urls)
+			print('URLS dude: ', urls)
+
+			# for f in json_resp['results'].toArray():
+			# 	f = f.toObject()
+			# 	thumb = f['thumbnails'].toArray()[0].toObject()
+			# 	thumb_url = thumb['url'].toString()
+			# 	thumb_width = thumb['width'].toInt()
+			# 	thumb_height = thumb['height'].toInt()
+			#
+			# 	try:
+			# 		context = ssl._create_unverified_context()
+			# 		data = urlopen(thumb_url, context=context).read()
+			# 		pixmap = QPixmap()
+			# 		pixmap.loadFromData(data)
+			# 		pixmaps.append(pixmap)
+			# 	except:
+			# 		notfound_count += 1
+			#
+			# 	urls.append(thumb_url)
+			# 	widths.append(thumb_width)
+			# 	heights.append(thumb_height)
+			#
+			# print('URLS: ', urls)
 
 
 		if notfound_count > 0:

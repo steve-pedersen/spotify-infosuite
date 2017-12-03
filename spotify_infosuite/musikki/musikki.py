@@ -40,7 +40,7 @@ class Artist:
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
 		# print('Musikki is getting images at: ', url)
-
+		print("URL :: ", url)
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		nam.get(req)
 
