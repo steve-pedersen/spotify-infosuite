@@ -15,50 +15,6 @@ class Flickr:
 
 		self.images = []
 
-	# # will fetch images and place it into specified container
-	# def get_full_images(self, nam, artist):
-	#
-	# 	query = artist
-	# 	query = query.replace(' ', '%20')
-	# 	maxResults = 1
-	#
-	# 	with open('./flickr/credentials.json') as creds:
-	# 		credentials = json.load(creds)
-	#
-	# 	appkey = credentials['flickr']['appkey']
-	#
-	# 	url = 'https://api.flickr.com/services/rest/?'
-	# 	url = url + 'method=flickr.photos.search&'
-	# 	url = url + 'format=json&'
-	# 	url = url + 'nojsoncallback=1&'
-	# 	url = url + 'sort=relevance&'
-	# 	url = url + 'tags=' + artist + ',music,musician,band,live,album,song'
-	#
-	# 	url = url + '&per_page=' + str(maxResults) + '&api_key=' + appkey + '&text=' + str(query)
-	# 	req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
-	# 	nam.get(req)
-	#
-	# def get_more_images(self, nam, artist):
-	# 	query = artist
-	# 	query = query.replace(' ', '%20')
-	# 	maxResults = 20
-	#
-	# 	with open('./flickr/credentials.json') as creds:
-	# 		credentials = json.load(creds)
-	#
-	# 	appkey = credentials['flickr']['appkey']
-	#
-	# 	url = 'https://api.flickr.com/services/rest/?'
-	# 	url = url + 'method=flickr.photos.search&'
-	# 	url = url + 'format=json&'
-	# 	url = url + 'nojsoncallback=1&'
-	# 	url = url + 'sort=relevance&'
-	# 	url = url + 'tags=' + artist + ',music,musician,band,live,album,song'
-	#
-	# 	url = url + '&per_page=' + str(maxResults) + '&api_key=' + appkey + '&text=' + str(query)
-	# 	req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
-	# 	nam.get(req)
-
 # Search for a specified amount of images (at the maximum) and display in browser
 def search(artist, appkey):
 	notfound_count = 0
