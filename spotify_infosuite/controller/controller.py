@@ -96,7 +96,7 @@ class Controller(QWidget):
 		x = 0
 		y = self.window_h * 0.1
 		w = self.window_w / 3
-		h = self.window_h*2/3 - y
+		h = self.window_h*3/4 - y
 		self.bio_frame = model.Frame(
 			self, self.multi_frame_window, x,y, w,h, "bio_frame"
 		)
@@ -117,9 +117,9 @@ class Controller(QWidget):
 
 	def init_news_frame(self):
 		x = 0
-		y = self.window_h*2 / 3
+		y = self.window_h*3 / 4
 		w = self.window_w / 3
-		h = self.window_h / 3
+		h = self.window_h / 4
 		self.news_frame = model.Frame(
 			self, self.multi_frame_window, x,y, w,h, "news_frame"
 		)

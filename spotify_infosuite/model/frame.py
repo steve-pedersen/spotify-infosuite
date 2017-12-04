@@ -157,7 +157,7 @@ class Frame(QLabel):
 			self.news_title.move(self.w/3 + 20, height)
 			self.news_title.setWordWrap(1)
 			self.news_title.resize(self.w*2/3 - 25,
-				self.news_title.sizeHint().height())
+				self.news_img.height())
 			self.news_title.setObjectName('news_title')
 			self.news_title.setStyleSheet('')
 			self.news_title.show()
