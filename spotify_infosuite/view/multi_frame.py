@@ -14,6 +14,7 @@ class MultiFrameWindow(QWidget):
         self.h = h
         self.window_title = window_title
         self.object_title = object_title
+        self.setWindowTitle(self.window_title)
         self.setObjectName(self.object_title)
         self.setGeometry(self.x, self.y, self.w, self.h)
         self.frames = []
@@ -35,7 +36,8 @@ class MultiFrameWindow(QWidget):
     # Opens css stylesheet and apply it to Spotify Infosuite elements
     def load_styles(self):
         style = ''
-        with open('./view/style.css') as f:
+        # with open('./view/style.css') as f:
+        with open(os.path.dirname(__file__) + '/style.css') as f:
             for line in f:
                 style += line
                 # print(line)

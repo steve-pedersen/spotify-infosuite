@@ -1,1 +1,2 @@
 from view.multi_frame import MultiFrameWindow
+from view.single_frame import SingleFrameWindow

@@ -18,7 +18,7 @@ class Frame(QLabel):
 		self.w = w
 		self.h = h
 		self.object_title = title
-		self.setObjectName((self.object_title))
+		self.setObjectName(self.object_title)
 		self.char_limit = limit
 		self.display_title_label = QLabel(self)
 		self.display_text_label = QLabel(self)
@@ -28,27 +28,42 @@ class Frame(QLabel):
 		self.view = view
 		self.setGeometry(self.x, self.y, self.w, self.h)
 		self.frame_components = []
+		# self.popup_components = []
 		self.images_list = []
 
 		self.image_label = QLabel(self)
 
+		self.results_found = False
 		self.metacritic_exists = False
 		self.mc_album_thumb = QLabel(self)
 		self.mc_title = QLabel(self)
 		self.mc_critic = QLabel(self)
 		self.mc_user = QLabel(self)
 
+		self.news_img = QLabel(self)
+		self.news_title = QLabel(self)
+		self.news_summary = QLabel(self)
+
+		self.popup_title = None
+		self.popup_text = None
+
 	def set_display_title(self, title, x, y):
-		# self.display_title_label = QLabel(self)
+		self.display_title = title
+
 		self.display_title_label.setText(title)
 		self.display_title_label.move(x, y)
 		self.display_title_label.resize(int(self.w*0.96), 35) # limit width to 93% of frame
-		self.display_title_label.setObjectName('frame_title')
+
+		if self.object_title == 'playback_frame':
+			self.display_title_label.setObjectName('playback_title')
+		else:
+			self.display_title_label.setObjectName('frame_title')
 		self.display_title_label.setWordWrap(True)
 		self.frame_components.append(self.display_title_label)
 
 	def set_display_text(self, text, x=5, y=45,obj=''):
-		# self.display_text_label = QLabel(self)
+		self.display_text = text
+
 		min_y = self.display_title_label.height() + 8
 		scroll_height = self.h - (y+min_y)
 		if self.display_text_label.text() == '':
@@ -74,20 +89,21 @@ class Frame(QLabel):
 			self.display_text_label.setAlignment(Qt.AlignTop)
 			# self.layout.setAlignment(Qt.AlignTop)
 
+	def create_popup(self, popup_window):
+		self.popup_title = QLabel(self.display_title, popup_window)
+		self.popup_text = QLabel(self.display_text, popup_window)
+		self.popup_components = []
+		self.popup_components.extend([self.popup_title, self.popup_text])
+		for p in self.popup_components:
+			p.setWordWrap(True)
+			p.setObjectName('popup_text')
+
 	# TODO: maybe pass in a dict that has the pixmap, width and height of each
 	# 	rather than separate lists
 	def add_musikki_artist_images(self, images, widths, heights):
 		x, y = 10, 45
 		w, h = self.w - x*2, self.h - y - 40
 		self.current_image = 0
-		# print('current image: ', self.current_image)
-		#
-		# print("SIZE: ", len(images))
-		# print("w: ", w)
-		# print("h: ", h)
-		# print("w2: ", self.w)
-		# print("h2: ", self.h)
-		print('images: ', len(images))
 
 		for i in range(len(images)):
 			if widths[i] > heights[i]:
@@ -103,8 +119,6 @@ class Frame(QLabel):
 				image = images[i].scaledToHeight(h)
 				self.images_list.append(image)
 
-		print('IMAGES LIST: ', self.images_list)
-
 		# self.image_label.setStyleSheet('border: 1px solid #0f0f0f;')
 		self.image_label.resize(w, h)
 		self.image_label.setPixmap(self.images_list[self.current_image])
@@ -113,58 +127,67 @@ class Frame(QLabel):
 		self.create_image_buttons()
 		# self.image_label.show()
 		self.musikki_images_added = True
-		# for i, image in enumerate(images):
-		# 	# w, h = widths[i], heights[i]
-		# 	w, h = self.w, self.h - y
-		# 	image = image.scaledToWidth(w)
-			
-		# 	self.image_label = QLabel(self)
-		# 	# self.image_label.setStyleSheet('border: 1px solid #0f0f0f;')
-		# 	self.image_label.resize(w, h)			
-		# 	self.image_label.setPixmap(image)
-		# 	self.image_label.move(x + x*i, y)
-		# 	self.image_label.show()
+
+
+	def add_news(self, results, def_img=None):
+		height = self.display_title_label.height() * 1.3
+		self.news_img.setGeometry(10,height, self.w/3, self.h/3)
+
+
+		img = results['newsicon'] if def_img == None else def_img
+		if img.width() > img.height():
+			img = img.scaledToWidth(self.news_img.width())
+		else:
+			img = img.scaledToHeight(self.news_img.height())
+		self.news_img.setPixmap(img)
+		self.news_img.show()
+
+		if (type(results) == str):
+			self.news_title.setText(results)
+			self.news_title.move(self.w/3 + 20, height)
+			self.news_title.resize(
+				self.news_title.sizeHint().width(), self.news_title.sizeHint().height())
+			self.news_title.setObjectName('news_title')
+			self.news_title.setStyleSheet('')
+			self.news_summary.setText('')
+		else:
+			src = results['src_title']
+			date = results['date']
+			title = results['title']
+			self.news_title.setText(
+				date +'  -  '+ src +'\n'+ title
+			)
+			self.news_title.move(self.w/3 + 20, height)
+			self.news_title.setWordWrap(1)
+			self.news_title.resize(self.w*2/3 - 25,
+				self.news_title.sizeHint().height())
+			self.news_title.setObjectName('news_title')
+			self.news_title.setStyleSheet('')
+			self.news_title.show()
+
+			self.news_summary.setText(results['summary'])
+			self.news_summary.move(10, self.news_img.height()+45)
+			self.news_summary.setWordWrap(1)
+			self.news_summary.resize(self.w-20, self.news_summary.sizeHint().height())
+			self.news_summary.setObjectName('news_summary')
+			self.news_summary.setStyleSheet('')
+			self.news_summary.show()
 
 	def add_flickr_artist_images(self, images):
 		x, y = 10, 45
 		w, h = self.w - x*2, self.h - y - 40
 		self.current_image = 0
 
-
-		# print('current image: ', self.current_image)
-		#
-		# print("SIZE: ", len(images))
-		# print("w: ", w)
-		# print("h: ", h)
-		# print("w2: ", self.w)
-		# print("h2: ", self.h)
-		print('images: ', len(images))
-
 		for i in range(len(images)):
-			# if widths[i] > heights[i]:
-			# 	if w > widths[i]:
-			# 		# print('image is wider than it is tall and less wide than the frame')
-			# 		w = widths[i]
-			# 	image = images[i].scaledToWidth(w)
-			# 	self.images_list.append(image)
-			# else:
-			# 	if h > heights[i]:
-			# 		# print('image is taller than it is wide and less tall than the frame')
-			# 		h = heights[i]
-
-			print("image ", images[i])
 			image = images[i]
-
 			self.images_list.append(image)
-
-		print('IMAGES LIST: ', self.images_list)
 
 		# self.image_label.setStyleSheet('border: 1px solid #0f0f0f;')
 		self.image_label.resize(w, h)
 		self.image_label.setPixmap(self.images_list[self.current_image])
 		self.image_label.move(x, y)
 		self.image_label.setAlignment(Qt.AlignCenter)
-		self.create_image_buttons()
+		# self.create_image_buttons()
 		self.image_label.show()
 		self.flickr_images_added = True
 
@@ -172,19 +195,13 @@ class Frame(QLabel):
 		if self.images_list is not None:
 			if self.current_image < len(self.images_list) - 1:
 				self.current_image = self.current_image + 1
-				print('current image: ', self.current_image)
-				print('length: ', len(self.images_list))
 				self.image_label.setPixmap(self.images_list[self.current_image])
-				print('New NEXT_IMAGE: ', self.images_list[self.current_image])
 
 	def prev_image(self):
 		if self.images_list is not None:
 			if self.current_image > 0:
 				self.current_image = self.current_image - 1
-				print('current image: ', self.current_image)
-				print('length: ', len(self.images_list))
 				self.image_label.setPixmap(self.images_list[self.current_image])
-				print('New PREV_IMAGE: ', self.images_list[self.current_image])
 
 	def clear_images_list(self):
 		del self.images_list[:]
@@ -197,20 +214,33 @@ class Frame(QLabel):
 	def get_display_image_labels(self):
 		return self.display_images_label
 
-	def set_expand_button(self):
-		self.expand_button = QPushButton('Expand', self.view)
-		self.frame_components.append(self.expand_button)
+	def create_expando_button(self):
+		self.expando_btn = QPushButton('Expand', self)
+		self.expando_btn.setObjectName('expando_btn')
+		self.expando_btn.setGeometry(
+			self.w/2 - self.expando_btn.width()/2,	# x
+			self.h - self.expando_btn.height()-6,	# y
+			self.expando_btn.sizeHint().width(),	# w
+			self.expando_btn.sizeHint().height()	# h
+		)
+		self.expando_btn.setStyleSheet('')
+		self.frame_components.append(self.expando_btn)
+		return self.expando_btn
 
 	def add_metacritic_content(self, review):
-		
-		pixmap = QPixmap()
-		pixmap.loadFromData(review.pixmap)
+
+		if type(review.pixmap) == QPixmap:
+			pixmap = review.pixmap
+		else:
+			pixmap = QPixmap()
+			pixmap.loadFromData(review.pixmap)
+
 		padding = 20
 		if pixmap.height() > pixmap.width():
-			pixmap = pixmap.scaledToHeight(self.h - padding)
+			pixmap = pixmap.scaledToHeight(self.h - padding-24)
 		else:
-			pixmap = pixmap.scaledToWidth(self.w/4 - padding)
-		
+			pixmap = pixmap.scaledToWidth(self.w/4 - padding-24)
+
 		if not self.metacritic_exists:	
 			# create the layout
 			x = padding/10
@@ -222,7 +252,7 @@ class Frame(QLabel):
 			self.mc_album_thumb.setPixmap(pixmap)
 			self.mc_album_thumb.setAlignment(Qt.AlignCenter)
 
-			self.mc_title.setText(review.artist + ' - '+ review.album)
+			self.mc_title.setText(review.album)
 			self.mc_title.setObjectName('mc_title')
 			self.mc_title.setGeometry(self.w/3.8, self.h/10, self.w*0.75,20)
 			self.mc_title.setWordWrap(True)
@@ -255,7 +285,7 @@ class Frame(QLabel):
 		else:
 			# otherwise, update the text and image
 			self.mc_album_thumb.setPixmap(pixmap)
-			self.mc_title.setText(review.artist + ' - '+ review.album)
+			self.mc_title.setText(review.album)
 			self.mc_critic.setText(
 				'Critic Score:   '+ str(review.critic_rating)[0]+'.'+str(review.critic_rating)[1]+
 				'  ('+str(review.critic_count)+' reviews)'	
@@ -263,6 +293,7 @@ class Frame(QLabel):
 			self.mc_user.setText(
 				'User Score:    '+ str(review.user_rating)+ '  ('+str(review.user_count)+' reviews)'
 			)
+		# self.mc_album_thumb.setStyleSheet('border: 8px solid #1d1d1d; background-color: #333333;')
 
 		self.show_frame_components()
 
@@ -306,9 +337,12 @@ class Frame(QLabel):
 		self.prev_button.setObjectName('prev_button')		
 		self.next_button.setObjectName('next_button')	
 
-		self.prev_button.resize(self.prev_button.sizeHint() * 1.3)	
-		self.playpause_button.resize(self.playpause_button.sizeHint() * 1.3)	
-		self.next_button.resize(self.next_button.sizeHint() * 1.3)	
+		self.prev_button.resize(self.prev_button.sizeHint().width()*1.4,
+			self.prev_button.sizeHint().height())
+		self.playpause_button.resize(self.playpause_button.sizeHint().width()*1.4,
+			self.playpause_button.sizeHint().height())
+		self.next_button.resize(self.next_button.sizeHint().width()*1.4,
+			self.next_button.sizeHint().height())
 
 		prevw = self.prev_button.width()
 		playw = self.playpause_button.width()
@@ -324,9 +358,12 @@ class Frame(QLabel):
 		# print('Left: ', prev_x, '\nRight: ', self.w - (next_x + self.next_button.width()))
 		# print('spacer: ', spacer)
 
-		self.prev_button.move(prev_x, self.display_title_label.height()+20)	
-		self.playpause_button.move(play_x, self.display_title_label.height()+20)	
-		self.next_button.move(next_x, self.display_title_label.height()+20)	
+		self.prev_button.move(prev_x, self.display_title_label.height()+
+			self.display_title_label.height()/3)
+		self.playpause_button.move(play_x, self.display_title_label.height()+
+			self.display_title_label.height()/3)
+		self.next_button.move(next_x, self.display_title_label.height()+
+			self.display_title_label.height()/3)
 
 	def hide_frame_components(self):
 		for f in self.frame_components:
@@ -348,10 +385,11 @@ class Frame(QLabel):
 
 		self.next_image_button.resize(40, 30)
 		self.prev_image_button.resize(40, 30)
-		next_x = 900
-		prev_x = 850
-		self.next_image_button.move(next_x, 302)
-		self.prev_image_button.move(prev_x, 302)
+		next_x = self.x + self.w/2
+		prev_x = self.x + self.w/2 - 50
+		y = self.h - 35
+		self.next_image_button.move(next_x, y)
+		self.prev_image_button.move(prev_x, y)
 
 	def get_playback_prev_button(self):
 		return self.prev_button
@@ -365,11 +403,22 @@ class Frame(QLabel):
 	def get_frame_components(self):
 		return self.frame_components
 
-	def mousePressEvent(self, event):
-		self.clicked.emit(self)
+	def get_popup_components(self):
+		return self.popup_components
+
+	def set_view(self, view):
+		self.view = view
+
+	# def mousePressEvent(self, event):
+	# 	self.clicked.emit(self)
 
 	def get_image_next_button(self):
 		return self.next_image_button
 
 	def get_image_prev_button(self):
 		return self.prev_image_button
+
+	def set_results(self, found):
+		self.results_found = found
+	def has_results(self):
+		return self.results_found

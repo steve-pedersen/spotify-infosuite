@@ -5,8 +5,6 @@ from threading import Thread
 from PyQt5.QtCore import *
 
 
-print('in flickr_thread.py')
-
 class Requester(QThread):
 
 	# print('in reviews.py Requester class')

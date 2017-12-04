@@ -14,6 +14,24 @@
 QWidget#multi_frame_window {
 	background-color: #0f0f0f;
 }
+QWidget#single_frame_window {
+    background-color: #0f0f0f;
+}
+QLabel#popup_text {
+    color: #fff;
+    font-size: 15pt;
+}
+QPushButton#close_popup_btn {
+    font-weight: bold;
+    background-color: #0f0f0f;
+    color: white;
+    border: 1px solid #25D34D;
+    border-radius: 3px; 
+}
+QPushButton#close_popup_btn:hover {
+    background-color: #25D34D ;
+    color: #0f0f0f;   
+}
 
 QPushButton#prev_button {
 	font-weight: bold;
@@ -47,7 +65,7 @@ QPushButton#next_button:hover, #next_image_button:hover, #prev_image_button:hove
     color: #0f0f0f;
 }
 
-QPushButton#playpause_button {
+QPushButton#playpause_button{
 	font-weight: bold;
 	background-color: #0f0f0f;
     color: white;
@@ -61,6 +79,26 @@ QPushButton#playpause_button {
 QPushButton#playpause_button:hover {
 	background-color: #25D34D ;
     color: #0f0f0f;
+}
+
+QPushButton#expando_btn {
+    background-color: #1D1D1D;
+    color: #fff;
+    border-right: 2px solid #0f0f0f;
+    border-bottom: 2px solid #0f0f0f;
+    border-top: 1px solid #8e8e8e;
+    border-left: 1px solid #8e8e8e;
+    padding: 4px 12px 4px 12px;
+    border-radius: 3px;
+}
+QPushButton#expando_btn:hover {
+    background-color: #25D34D;
+    border-top: 2px solid #0f0f0f;
+    border-left: 2px solid #0f0f0f;
+    border-right: 1px solid #8e8e8e;
+    border-bottom: 1px solid #8e8e8e;
+    font-weight: bold;
+    color: #000;
 }
 
 /* Playback Frame */
@@ -85,7 +123,7 @@ QPushButton#next_button {
 }
 
 
-QLabel#bio_frame, #lyrics_frame, #images_frame {
+QLabel#bio_frame, #lyrics_frame, #images_frame, #social_frame {
     background-color: #1D1D1D;
 	border: 2px solid #000;
 }
@@ -113,8 +151,30 @@ QLabel#frame_title {
     font-size: 16pt;
     /*text-decoration: underline;*/
 }
+QLabel#playback_title {
+    position: relative;
+    background-color: #0f0f0f;
+    text-align: center;
+    padding: 1px;
+    border-radius: 5%;
+    color: #25D34D;
+    /*font-weight: bold;*/
+    font-size: 15pt;
+    /*text-decoration: underline;*/
+}
+QLabel#news_frame {
+    background-color: #1D1D1D;
+    border: 2px solid #000;
+}
+QLabel#news_title, #news_summary {
+    color: #FFF;
+    font-size: 13px;
+}
+QLabel#news_title {
+    text-decoration: underline;
+}
 
-QLabel#frame_text, #bio_text, #lyrics_text, #frame_images {
+QLabel#frame_text, #bio_text, #lyrics_text, #frame_images, #social_text {
     /*position: relative*/;
     background-color: #0f0f0f;
 	/*padding-top: 25px;*/
@@ -135,10 +195,10 @@ QLabel#bio_text {
 
 QLabel#mc_title, #mc_critic, #mc_user {
     color: white;
-    font-size: 14pt;
+    font-size: 13pt;
 }
 QLabel#mc_title {
-    font-size: 16pt;
+    font-size: 14pt;
     text-decoration: underline;
 }
 

@@ -15,32 +15,99 @@ class Artist:
 		self.appid = appid
 		self.appkey = appkey
 		self.is_found = is_found
-
+		self.twitter_search = False
+		self.facebook_search = False
+		self.artisturl = 'https://music-api.musikki.com/v1/artists'
 		self.images = []
 
 		print('Musikki found artist with name: ', self.artist)
 
-	# will fetch bio text and place it into specified container
+	# https://music-api.musikki.com/reference/artists#bio
 	def get_full_bio(self, nam):
-
-		url = 'https://music-api.musikki.com/v1/artists'
-		url = url + '/' + str(self.mkid) + '/bio'
+		url = self.artisturl + '/' + str(self.mkid) + '/bio'
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
-		print(url)
 
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		nam.get(req)
 
-	# will fetch images and place it into specified container
+	# https://music-api.musikki.com/reference/artists#images
 	def get_full_images(self, nam):
-
-		url = 'https://music-api.musikki.com/v1/artists'
-		url = url + '/' + str(self.mkid) + '/images'
+		url = self.artisturl + '/' + str(self.mkid) + '/images'
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
-		# print('Musikki is getting images at: ', url)
-		print("URL :: ", url)
+
+		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
+		nam.get(req)
+
+	# https://music-api.musikki.com/reference/artists#collaborations
+	def get_collaborations(self, nam):
+		url = self.artisturl + '/' + str(self.mkid) + '/collaborations'
+		url = url + '?appkey=' + self.appkey
+		url = url + '&appid=' + self.appid
+
+		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
+		nam.get(req)
+
+	# https://music-api.musikki.com/reference/artists#labels
+	def get_labels(self, nam, q=''):
+		url = self.artisturl + '/' + str(self.mkid) + '/labels'
+		url = url + '?appkey=' + self.appkey
+		url = url + '&appid=' + self.appid
+
+		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
+		nam.get(req)
+
+	# https://music-api.musikki.com/reference/artists#news
+	def get_news(self, nam):
+		url = self.artisturl + '/' + str(self.mkid) + '/news'
+		url = url + '?appkey=' + self.appkey
+		url = url + '&appid=' + self.appid
+		print('Searching Musikki for news about '+self.artist)
+		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
+		nam.get(req)
+
+	# https://music-api.musikki.com/reference/artists#related
+	def get_related_artists(self, nam):
+		url = self.artisturl + '/' + str(self.mkid) + '/related'
+		url = url + '?appkey=' + self.appkey
+		url = url + '&appid=' + self.appid
+
+		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
+		nam.get(req)
+
+	# https://music-api.musikki.com/reference/artists#releases
+	def get_releases(self, nam, q=''):
+		url = self.artisturl + '/' + str(self.mkid) + '/releases'
+		url = url + '?appkey=' + self.appkey
+		url = url + '&appid=' + self.appid
+
+		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
+		nam.get(req)
+
+	# https://music-api.musikki.com/reference/artists#summary
+	def get_release_summary(self, nam):
+		url = self.artisturl + '/' + str(self.mkid) + '/releases/summary'
+		url = url + '?appkey=' + self.appkey
+		url = url + '&appid=' + self.appid
+
+		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
+		nam.get(req)
+
+	# https://music-api.musikki.com/reference/artists#social
+	def get_social_media_twitter(self, nam):
+		self.twitter_search = True
+		url = self.artisturl + '/' + str(self.mkid) + '/social?q=[service-name:twitter]'
+		url = url + '&appkey=' + self.appkey
+		url = url + '&appid=' + self.appid
+		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
+		nam.get(req)
+
+	def get_social_media_facebook(self, nam):
+		self.facebook_search = True
+		url = self.artisturl + '/' + str(self.mkid) + '/social?q=[service-name:facebook]'
+		url = url + '&appkey=' + self.appkey
+		url = url + '&appid=' + self.appid
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		nam.get(req)
 
@@ -49,7 +116,8 @@ def search(artist, song='', album=''):
 	# replace spaces in the url with the '%20'
 	query = re.sub('\s+', '%20', artist)
 
-	with open('./musikki/credentials.json') as creds:
+	# with open('./musikki/credentials.json') as creds:
+	with open(os.path.dirname(__file__) + '/credentials.json') as creds:
 		credentials = json.load(creds)
 
 	appid = credentials['musikki']['appid']
