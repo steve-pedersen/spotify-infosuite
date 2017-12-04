@@ -16,7 +16,7 @@ class Flickr:
 		self.images = []
 
 # Search for a specified amount of images (at the maximum) and display in browser
-def search(artist, appkey):
+def search(artist):
 	notfound_count = 0
 	pixmaps = []
 	query = artist

@@ -225,10 +225,6 @@ class Controller(QWidget):
 		)
 		self.images_frame.set_display_title('Images', title_x, title_y)
 
-		self.images_frame.create_image_buttons()
-		self.images_frame.get_image_next_button().clicked.connect(self.next_image_handler)
-		self.images_frame.get_image_prev_button().clicked.connect(self.prev_image_handler)
-
 		self.multi_frame_window.add_frame(self.images_frame)
 
 		self.images_nam = QtNetwork.QNetworkAccessManager()
@@ -370,8 +366,14 @@ class Controller(QWidget):
 
 	def update_images_frame(self, images):
 		if len(images) > 0:
+			# add image scrolling buttons
+			self.images_frame.create_image_buttons()
+			self.images_frame.get_image_next_button().clicked.connect(self.next_image_handler)
+			self.images_frame.get_image_prev_button().clicked.connect(self.prev_image_handler)
+			self.images_frame.get_image_next_button().show()
+			self.images_frame.get_image_prev_button().show()
+			# add the flickr images
 			self.images_frame.add_flickr_artist_images(images)
-
 
 	# lyrics handler
 	def lyrics_handler(self, reply):

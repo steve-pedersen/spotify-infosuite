@@ -98,8 +98,6 @@ class Frame(QLabel):
 			p.setWordWrap(True)
 			p.setObjectName('popup_text')
 
-	# TODO: maybe pass in a dict that has the pixmap, width and height of each
-	# 	rather than separate lists
 	def add_musikki_artist_images(self, images, widths, heights):
 		x, y = 10, 45
 		w, h = self.w - x*2, self.h - y - 40
@@ -119,13 +117,12 @@ class Frame(QLabel):
 				image = images[i].scaledToHeight(h)
 				self.images_list.append(image)
 
-		# self.image_label.setStyleSheet('border: 1px solid #0f0f0f;')
+
 		self.image_label.resize(w, h)
 		self.image_label.setPixmap(self.images_list[self.current_image])
 		self.image_label.move(x, y)
 		self.image_label.setAlignment(Qt.AlignCenter)
-		self.create_image_buttons()
-		# self.image_label.show()
+		# self.create_image_buttons()
 		self.musikki_images_added = True
 
 
