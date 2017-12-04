@@ -7,11 +7,20 @@ from PyQt5 import QtCore
 
 
 class Frame(QLabel):
+	"""Frame is the main component of a window and serves as a container 
+	for all of the Frame components (display_title, display_text, etc.).
+	
+	Args:
+		controller (object) -- the application controller
+		view (object) -- the window this Frame is connected to
+		x (int) -- position of Frame
+		y (int) -- position of Frame
+		w (int) -- width of Frame
+		h (int) -- height of Frame
+		title (str) -- the object title used as an id for stylesheet
 
-	# when QLabel is clicked, emit a signal with an object param
-	clicked = pyqtSignal(object)
-
-	def __init__(self, controller, view, x, y, w, h, title, limit=0):
+	"""
+	def __init__(self, controller, view, x, y, w, h, title):
 		super().__init__(view)
 		self.x = x
 		self.y = y
@@ -19,21 +28,20 @@ class Frame(QLabel):
 		self.h = h
 		self.object_title = title
 		self.setObjectName(self.object_title)
-		self.char_limit = limit
+		self.setGeometry(self.x, self.y, self.w, self.h)
+
 		self.display_title_label = QLabel(self)
 		self.display_text_label = QLabel(self)
 		self.display_images_label = QLabel(self)
 		self.layout = QVBoxLayout(self)
 		self.controller = controller
 		self.view = view
-		self.setGeometry(self.x, self.y, self.w, self.h)
+				
 		self.frame_components = []
-		# self.popup_components = []
 		self.images_list = []
-
 		self.image_label = QLabel(self)
 
-		self.results_found = False
+		self.results_found = False		
 		self.metacritic_exists = False
 		self.mc_album_thumb = QLabel(self)
 		self.mc_title = QLabel(self)
@@ -44,53 +52,73 @@ class Frame(QLabel):
 		self.news_title = QLabel(self)
 		self.news_summary = QLabel(self)
 
-		self.popup_title = None
-		self.popup_text = None
 
 	def set_display_title(self, title, x, y):
-		self.display_title = title
+		"""This is the default frame title
+		
+		Args:
+			title (str) -- text used in this QLabel
+			x (int) -- position
+			y (int) -- position
 
+		"""
+		self.display_title = title
 		self.display_title_label.setText(title)
 		self.display_title_label.move(x, y)
-		self.display_title_label.resize(int(self.w*0.96), 35) # limit width to 93% of frame
-
+		self.display_title_label.resize(int(self.w*0.96), 35)
+		self.display_title_label.setWordWrap(True)
 		if self.object_title == 'playback_frame':
 			self.display_title_label.setObjectName('playback_title')
 		else:
 			self.display_title_label.setObjectName('frame_title')
-		self.display_title_label.setWordWrap(True)
+		
 		self.frame_components.append(self.display_title_label)
 
-	def set_display_text(self, text, x=5, y=45,obj=''):
-		self.display_text = text
 
+	def set_display_text(self, text, x=5, y=45,obj=''):
+		"""This is the default, scrollable text area component
+		
+		Args:
+			text (str) -- text used in this QLabel
+			x (int) -- position
+			y (int) -- position
+			obj (str) -- for setObjectName for stylesheet
+
+		"""
+		self.display_text = text
 		min_y = self.display_title_label.height() + 8
 		scroll_height = self.h - (y+min_y)
+		
 		if self.display_text_label.text() == '':
-
-			self.display_text_label.setText(text)
-			self.display_text_label.setGeometry(x, y, self.w, self.h)
 			name = 'frame_text' if obj == '' else obj
 			self.display_text_label.setObjectName(name)
+			self.display_text_label.setText(text)
+			self.display_text_label.setGeometry(x, y, self.w, self.h)
 			self.display_text_label.setWordWrap(True)
-
 			self.display_text_label.setStyleSheet('')
+			self.display_text_label.setAlignment(Qt.AlignTop)
 			self.frame_components.append(self.display_text_label)
+			
 			scroll = QScrollArea()
 			scroll.setWidget(self.display_text_label)
 			scroll.setWidgetResizable(True)			
-			scroll.setFixedHeight(scroll_height)	
-			# scroll.ensureVisible(0, scroll_height-y*4.5)
-
-			self.display_text_label.setAlignment(Qt.AlignTop)
-			self.layout.addWidget(scroll)
+			scroll.setFixedHeight(scroll_height)				
+			self.layout.addWidget(scroll)			
 		else:
 			self.display_text_label.setText(text)
 			self.display_text_label.setAlignment(Qt.AlignTop)
-			# self.layout.setAlignment(Qt.AlignTop)
+
 
 	def create_popup(self, popup_window):
+		"""Creates new text QLabel full of text from this frame's 
+		display_text and attach it to the popup_window.
+		
+		Args:
+			popup_window (object) -- SingleFrameWindow (QWidget)
+
+		"""
 		self.popup_title = QLabel(self.display_title, popup_window)
+		self.popup_title.resize(200, 22)
 		self.popup_text = QLabel(self.display_text, popup_window)
 		self.popup_components = []
 		self.popup_components.extend([self.popup_title, self.popup_text])
@@ -98,38 +126,17 @@ class Frame(QLabel):
 			p.setWordWrap(True)
 			p.setObjectName('popup_text')
 
-	def add_musikki_artist_images(self, images, widths, heights):
-		x, y = 10, 45
-		w, h = self.w - x*2, self.h - y - 40
-		self.current_image = 0
-
-		for i in range(len(images)):
-			if widths[i] > heights[i]:
-				if w > widths[i]:
-					# print('image is wider than it is tall and less wide than the frame')
-					w = widths[i]
-				image = images[i].scaledToWidth(w)
-				self.images_list.append(image)
-			else:
-				if h > heights[i]:
-					# print('image is taller than it is wide and less tall than the frame')
-					h = heights[i]
-				image = images[i].scaledToHeight(h)
-				self.images_list.append(image)
-
-
-		self.image_label.resize(w, h)
-		self.image_label.setPixmap(self.images_list[self.current_image])
-		self.image_label.move(x, y)
-		self.image_label.setAlignment(Qt.AlignCenter)
-		# self.create_image_buttons()
-		self.musikki_images_added = True
-
 
 	def add_news(self, results, def_img=None):
+		"""Formats the content for the News frame
+		
+		Args:
+			results (dict) -- news data
+			def_image (QPixmap)
+
+		"""
 		height = self.display_title_label.height() * 1.3
 		self.news_img.setGeometry(10,height, self.w/3, self.h/3)
-
 
 		img = results['newsicon'] if def_img == None else def_img
 		if img.width() > img.height():
@@ -139,8 +146,9 @@ class Frame(QLabel):
 		self.news_img.setPixmap(img)
 		self.news_img.show()
 
-		if (type(results) == str):
-			self.news_title.setText(results)
+		if not results['found']:
+			# no news, use defaults
+			self.news_title.setText(results['message'])
 			self.news_title.move(self.w/3 + 20, height)
 			self.news_title.resize(
 				self.news_title.sizeHint().width(), self.news_title.sizeHint().height())
@@ -148,6 +156,7 @@ class Frame(QLabel):
 			self.news_title.setStyleSheet('')
 			self.news_summary.setText('')
 		else:
+			# news found, use results data
 			src = results['src_title']
 			date = results['date']
 			title = results['title']
@@ -170,7 +179,48 @@ class Frame(QLabel):
 			self.news_summary.setStyleSheet('')
 			self.news_summary.show()
 
+
+	def add_musikki_artist_images(self, images, widths, heights):
+		"""Attach a list of pixmaps to image labels.
+		
+		Args:
+			images (list) -- QPixmaps
+			widths (list) -- integers
+			heights (list) -- integers
+
+		"""
+		x, y = 10, 45
+		w, h = self.w - x*2, self.h - y - 40
+		self.current_image = 0
+
+		for i in range(len(images)):
+			if widths[i] > heights[i]:
+				if w > widths[i]:
+					# image is wider than it is tall and less wide than the frame
+					w = widths[i]
+				image = images[i].scaledToWidth(w)
+				self.images_list.append(image)
+			else:
+				if h > heights[i]:
+					# image is taller than it is wide and less tall than the frame
+					h = heights[i]
+				image = images[i].scaledToHeight(h)
+				self.images_list.append(image)
+
+		self.image_label.resize(w, h)
+		self.image_label.setPixmap(self.images_list[self.current_image])
+		self.image_label.move(x, y)
+		self.image_label.setAlignment(Qt.AlignCenter)
+		self.musikki_images_added = True
+
+
 	def add_flickr_artist_images(self, images):
+		"""Attach a list of pixmaps to image labels.
+		
+		Args:
+			images (list) -- QPixmaps
+
+		"""
 		x, y = 10, 45
 		w, h = self.w - x*2, self.h - y - 40
 		self.current_image = 0
@@ -179,37 +229,24 @@ class Frame(QLabel):
 			image = images[i]
 			self.images_list.append(image)
 
-		# self.image_label.setStyleSheet('border: 1px solid #0f0f0f;')
 		self.image_label.resize(w, h)
 		self.image_label.setPixmap(self.images_list[self.current_image])
 		self.image_label.move(x, y)
 		self.image_label.setAlignment(Qt.AlignCenter)
-		# self.create_image_buttons()
 		self.image_label.show()
 		self.flickr_images_added = True
 
-	def next_image(self):
-		if self.images_list is not None:
-			self.current_image = (self.current_image + 1) % len(self.images_list) 
-			self.image_label.setPixmap(self.images_list[self.current_image])
-
-	def prev_image(self):
-		if self.images_list is not None:
-			self.current_image = (self.current_image - 1) % len(self.images_list)
-			self.image_label.setPixmap(self.images_list[self.current_image])
-
-	def clear_images_list(self):
-		del self.images_list[:]
-
-	def get_display_text_label(self):
-		return self.display_text_label
-	def get_display_title_label(self):
-		return self.display_title_label
-
-	def get_display_image_labels(self):
-		return self.display_images_label
 
 	def create_expando_button(self):
+		"""Places an Expand button at the bottom center of the frame.
+		
+		Ideal for frames with the default display_text scrollable area, 
+		since there is room for the button.
+
+		Returns:
+			Object QPushButton. The Expand button itself.
+
+		"""
 		self.expando_btn = QPushButton('Expand', self)
 		self.expando_btn.setObjectName('expando_btn')
 		self.expando_btn.setGeometry(
@@ -222,8 +259,14 @@ class Frame(QLabel):
 		self.frame_components.append(self.expando_btn)
 		return self.expando_btn
 
-	def add_metacritic_content(self, review):
 
+	def add_metacritic_content(self, review):
+		"""Format Metacritic frame content from review data
+		
+		Args:
+			review (object) -- metacritic.Review object
+
+		"""
 		if type(review.pixmap) == QPixmap:
 			pixmap = review.pixmap
 		else:
@@ -288,12 +331,17 @@ class Frame(QLabel):
 			self.mc_user.setText(
 				'User Score:    '+ str(review.user_rating)+ '  ('+str(review.user_count)+' reviews)'
 			)
-		# self.mc_album_thumb.setStyleSheet('border: 8px solid #1d1d1d; background-color: #333333;')
 
 		self.show_frame_components()
 
-	# Clears Metacritic frame and creates default image & text
+
 	def default_metacritic_content(self, default_image):
+		"""Clears Metacritic frame and creates default image & text
+		
+		Args:
+			default_image (QPixmap)
+
+		"""
 		padding = 20
 		if default_image.height() > default_image.width():
 			default_image = default_image.scaledToHeight(self.h - padding)
@@ -315,12 +363,15 @@ class Frame(QLabel):
 		self.mc_album_thumb.setPixmap(default_image)
 		self.mc_title.setText('No results on Metacritic')
 		self.mc_title.setStyleSheet('')
-		self.mc_critic.hide()
+		self.mc_critic.hide() 
 		self.mc_user.hide()
 
 
-
 	def create_playback_buttons(self):
+		"""
+		Buttons created are: Previous, Play/Pause, Next
+
+		"""
 		self.playpause_button = QPushButton('Play/Pause', self.view)
 		self.prev_button = QPushButton('Prev', self.view)
 		self.next_button = QPushButton('Next', self.view)
@@ -349,10 +400,6 @@ class Frame(QLabel):
 		play_x = prev_x + spacer + prevw
 		next_x = play_x + spacer + playw
 
-		# print how much space is to the left of Prev btn and to the right of Next btn
-		# print('Left: ', prev_x, '\nRight: ', self.w - (next_x + self.next_button.width()))
-		# print('spacer: ', spacer)
-
 		self.prev_button.move(prev_x, self.display_title_label.height()+
 			self.display_title_label.height()/3)
 		self.playpause_button.move(play_x, self.display_title_label.height()+
@@ -360,15 +407,12 @@ class Frame(QLabel):
 		self.next_button.move(next_x, self.display_title_label.height()+
 			self.display_title_label.height()/3)
 
-	def hide_frame_components(self):
-		for f in self.frame_components:
-			f.hide()
-
-	def show_frame_components(self):
-		for f in self.frame_components:
-			f.show()
 
 	def create_image_buttons(self):
+		"""
+		Buttons created are: < (Left) & > (Right)
+
+		"""
 		self.next_image_button = QPushButton('>', self.view)
 		self.prev_image_button = QPushButton('<', self.view)
 		self.frame_components.extend([
@@ -385,6 +429,41 @@ class Frame(QLabel):
 		y = self.h - 35
 		self.next_image_button.move(next_x, y)
 		self.prev_image_button.move(prev_x, y)
+
+
+	def next_image(self):
+		if self.images_list is not None:
+			# Circular indexing--go to beginning of list if moving right at max index
+			self.current_image = (self.current_image + 1) % len(self.images_list) 
+			self.image_label.setPixmap(self.images_list[self.current_image])
+
+
+	def prev_image(self):
+		if self.images_list is not None:
+			# Circular indexing--go to end of list if moving left on index 0
+			self.current_image = (self.current_image - 1) % len(self.images_list)
+			self.image_label.setPixmap(self.images_list[self.current_image])
+
+
+	def clear_images_list(self):
+		del self.images_list[:]
+
+	def get_display_image_labels(self):
+		return self.display_images_label
+
+	def get_display_text_label(self):
+		return self.display_text_label
+
+	def get_display_title_label(self):
+		return self.display_title_label
+
+	def hide_frame_components(self):
+		for f in self.frame_components:
+			f.hide()
+
+	def show_frame_components(self):
+		for f in self.frame_components:
+			f.show()
 
 	def get_playback_prev_button(self):
 		return self.prev_button
@@ -415,5 +494,6 @@ class Frame(QLabel):
 
 	def set_results(self, found):
 		self.results_found = found
+
 	def has_results(self):
 		return self.results_found

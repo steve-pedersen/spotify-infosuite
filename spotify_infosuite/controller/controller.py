@@ -427,6 +427,7 @@ class Controller(QWidget):
 
 	def news_handler(self, reply):
 		default_img = os.path.dirname(__file__) + '/info-icon.png'
+		results = {}
 
 		er = reply.error()
 
@@ -440,8 +441,7 @@ class Controller(QWidget):
 			if len(json_resp['summary'].toObject()['errors'].toArray()) == 0 \
 				and json_resp['summary'].toObject()['result_count'].toInt() > 0:
 
-				counter = 0
-				results = {}
+				counter = 0				
 				resultlist = []
 				for r in json_resp['results'].toArray():
 
@@ -515,14 +515,19 @@ class Controller(QWidget):
 						resultlist.append(results)
 					counter += 1
 				# end for
+				results['found'] = True
 				self.news_frame.add_news(results)
 			#end if
 			else:
 				print('No news found')
-				self.news_frame.add_news('No news for this artist.', QPixmap(default_img))
+				results['found'] = False
+				results['message'] = 'No news for this artist.'
+				self.news_frame.add_news(results, QPixmap(default_img))
 		else:
 			print('No news found')
-			self.news_frame.add_news('No news for this artist.', QPixmap(default_img))
+			results['found'] = False
+			results['message'] = 'No news for this artist.'
+			self.news_frame.add_news(results, QPixmap(default_img))
 
 	# bio handler
 	def search_bio_handler(self, reply):
@@ -696,7 +701,7 @@ class Controller(QWidget):
 		if self.review_frame.has_results():
 			self.build_popup(self.review_frame)
 		else:
-			print('No lyrics results, so no lyrics popup')
+			print('No review results, so no review popup')
 
 	def build_popup(self, source_frame):
 		offset = 50
