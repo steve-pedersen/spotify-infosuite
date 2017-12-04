@@ -129,7 +129,7 @@ class Frame(QLabel):
 		x, y = 10, 45
 		w, h = self.w - x*2, self.h - y - 40
 		self.current_image = 0
-		self.photo_list = []
+
 
 		# print('current image: ', self.current_image)
 		#
@@ -155,13 +155,13 @@ class Frame(QLabel):
 			print("image ", images[i])
 			image = images[i]
 
-			self.photo_list.append(image)
+			self.images_list.append(image)
 
-		print('IMAGES LIST: ', self.photo_list)
+		print('IMAGES LIST: ', self.images_list)
 
 		# self.image_label.setStyleSheet('border: 1px solid #0f0f0f;')
 		self.image_label.resize(w, h)
-		self.image_label.setPixmap(self.photo_list[self.current_image])
+		self.image_label.setPixmap(self.images_list[self.current_image])
 		self.image_label.move(x, y)
 		self.image_label.setAlignment(Qt.AlignCenter)
 		self.create_image_buttons()

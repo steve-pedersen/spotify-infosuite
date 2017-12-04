@@ -173,13 +173,15 @@ class Controller(QWidget):
 
 		self.multi_frame_window.add_frame(self.images_frame)
 
-		self.get_images()
+
 
 		# self.flickr_images_nam = QtNetwork.QNetworkAccessManager()
 		# self.flickr_images_nam.finished.connect(self.flickr_images_handler)
 		#
-		# self.images_nam = QtNetwork.QNetworkAccessManager()
-		# self.images_nam.finished.connect(self.musikki_images_handler)
+		self.images_nam = QtNetwork.QNetworkAccessManager()
+		self.images_nam.finished.connect(self.musikki_images_handler)
+
+		self.get_images()
 		#
 		#
 		# self.flickr_artist = flickr.flickr.Flickr(self.get_current_artist())
@@ -203,6 +205,10 @@ class Controller(QWidget):
 		# 	self.images_frame.set_display_text('No results for current artist.', 10, 45)
 
 	def get_images(self):
+
+		if self.musikki_artist.is_found:
+			self.musikki_artist.get_full_images(self.images_nam)
+
 		requester = flickr_thread.Requester()
 		requester.flickr_reciever.connect(self.update_images_frame)
 		requester.get_images(self.current_artist)
@@ -236,7 +242,7 @@ class Controller(QWidget):
 		self.musikki_artist.get_full_bio(self.bio_nam)
 		self.musikki_artist.get_full_images(self.images_nam)
 		self.images_frame.clear_images_list()
-		self.flickr_artist.get_full_images(self.flickr_images_nam, self.get_current_artist())
+		self.get_images()
 
 	def update_song_info(self, update_playback=True):
 		if update_playback:
@@ -304,7 +310,6 @@ class Controller(QWidget):
 				print('-------------------------------------------\n')
 
 	def update_images_frame(self, images):
-		print("I M A G E S: ", images)
 		if len(images) > 0:
 			self.images_frame.add_flickr_artist_images(images)
 
@@ -394,61 +399,61 @@ class Controller(QWidget):
 		else:
 			self.bio_frame.set_display_text('No artist bio found.', 10, 45)
 
-	def flickr_images_handler(self, reply):
-		urls, pixmaps, widths, heights = [], [], [], []
-
-		er = reply.error()
-
-		if er == QtNetwork.QNetworkReply.NoError:
-			response = reply.readAll()
-			document = QJsonDocument()
-			error = QJsonParseError()
-			document = document.fromJson(response, error)
-			json_resp = document.object()
-			notfound_count = 0
-
-			if (json_resp['stat'] == 'ok'):
-				for p in json_resp['photos'].toObject()['photo'].toArray():
-					photo_url = 'https://farm' + str(p.toObject()['farm'].toInt()) + '.staticflickr.com/' + str(p.toObject()['server'].toString())
-					photo_url = photo_url + '/' + str(p.toObject()['id'].toString()) + '_' + str(p.toObject()['secret'].toString()) + '.jpg'
-
-					try:
-						context = ssl._create_unverified_context()
-						data = urlopen(photo_url, context=context).read()
-						pixmap = QPixmap()
-						pixmap.loadFromData(data)
-						pixmaps.append(pixmap)
-					except:
-						notfound_count += 1
-
-					urls.append(photo_url)
-					# widths.append(thumb_width)
-					# heights.append(thumb_height)
-
-			print('URLS: ', urls)
-
-		if notfound_count > 0:
-			print(notfound_count, " 404 responses in image handler")
-
-		print('Images handler found ', len(pixmaps), ' images.')
-
-		if len(pixmaps) > 0:
-			# # load the biggest image as the first and only pixmap
-			# biggest = 0
-			# for i, p in enumerate(pixmaps):
-			# 	if p.width() > biggest:
-			# 		biggest = i
-			# pixmaps[0] = pixmaps[biggest]
-			# widths[0] = widths[biggest]
-			# heights[0] = heights[biggest]
-			self.images_frame.add_flickr_artist_images(pixmaps)
-		else:
-			# use default image of dirty-piano.jpg
-			pixmaps = [QPixmap('./controller/dirty-piano.jpg')]
-			# widths = [pixmaps[0].width()]
-			# heights = [pixmaps[0].height()]
-			# maybe below should be add_no_artist_image
-			self.images_frame.add_flickr_artist_images(pixmaps)
+	# def flickr_images_handler(self, reply):
+	# 	urls, pixmaps, widths, heights = [], [], [], []
+	#
+	# 	er = reply.error()
+	#
+	# 	if er == QtNetwork.QNetworkReply.NoError:
+	# 		response = reply.readAll()
+	# 		document = QJsonDocument()
+	# 		error = QJsonParseError()
+	# 		document = document.fromJson(response, error)
+	# 		json_resp = document.object()
+	# 		notfound_count = 0
+	#
+	# 		if (json_resp['stat'] == 'ok'):
+	# 			for p in json_resp['photos'].toObject()['photo'].toArray():
+	# 				photo_url = 'https://farm' + str(p.toObject()['farm'].toInt()) + '.staticflickr.com/' + str(p.toObject()['server'].toString())
+	# 				photo_url = photo_url + '/' + str(p.toObject()['id'].toString()) + '_' + str(p.toObject()['secret'].toString()) + '.jpg'
+	#
+	# 				try:
+	# 					context = ssl._create_unverified_context()
+	# 					data = urlopen(photo_url, context=context).read()
+	# 					pixmap = QPixmap()
+	# 					pixmap.loadFromData(data)
+	# 					pixmaps.append(pixmap)
+	# 				except:
+	# 					notfound_count += 1
+	#
+	# 				urls.append(photo_url)
+	# 				# widths.append(thumb_width)
+	# 				# heights.append(thumb_height)
+	#
+	# 		print('URLS: ', urls)
+	#
+	# 	if notfound_count > 0:
+	# 		print(notfound_count, " 404 responses in image handler")
+	#
+	# 	print('Images handler found ', len(pixmaps), ' images.')
+	#
+	# 	if len(pixmaps) > 0:
+	# 		# # load the biggest image as the first and only pixmap
+	# 		# biggest = 0
+	# 		# for i, p in enumerate(pixmaps):
+	# 		# 	if p.width() > biggest:
+	# 		# 		biggest = i
+	# 		# pixmaps[0] = pixmaps[biggest]
+	# 		# widths[0] = widths[biggest]
+	# 		# heights[0] = heights[biggest]
+	# 		self.images_frame.add_flickr_artist_images(pixmaps)
+	# 	else:
+	# 		# use default image of dirty-piano.jpg
+	# 		pixmaps = [QPixmap('./controller/dirty-piano.jpg')]
+	# 		# widths = [pixmaps[0].width()]
+	# 		# heights = [pixmaps[0].height()]
+	# 		# maybe below should be add_no_artist_image
+	# 		self.images_frame.add_flickr_artist_images(pixmaps)
 
 	# images handler
 	def musikki_images_handler(self, reply):
