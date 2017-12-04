@@ -190,15 +190,13 @@ class Frame(QLabel):
 
 	def next_image(self):
 		if self.images_list is not None:
-			if self.current_image < len(self.images_list) - 1:
-				self.current_image = self.current_image + 1
-				self.image_label.setPixmap(self.images_list[self.current_image])
+			self.current_image = (self.current_image + 1) % len(self.images_list) 
+			self.image_label.setPixmap(self.images_list[self.current_image])
 
 	def prev_image(self):
 		if self.images_list is not None:
-			if self.current_image > 0:
-				self.current_image = self.current_image - 1
-				self.image_label.setPixmap(self.images_list[self.current_image])
+			self.current_image = (self.current_image - 1) % len(self.images_list)
+			self.image_label.setPixmap(self.images_list[self.current_image])
 
 	def clear_images_list(self):
 		del self.images_list[:]
