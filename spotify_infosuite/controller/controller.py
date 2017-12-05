@@ -3,10 +3,9 @@ import view
 import playback
 import musikki
 import flickr
-# import reviews #pitchfork
-# from reviews.pitchfork import pitchfork
 from flickr import flickr_thread
 from reviews import reviews
+
 import json
 import sys
 import threading
@@ -20,7 +19,6 @@ import shutil
 from threading import Thread
 from time import sleep
 from urllib.request import urlopen
-
 from bs4 import BeautifulSoup
 
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QAction, QLineEdit
@@ -403,7 +401,7 @@ class Controller(QWidget):
 
 	def update_current_playing(self):
 		"""
-		Update current_playing, artist, song and album strings from Spotify.	
+		Update formatted playback, artist, song and album strings from Spotify.	
 
 		"""
 		self.current_playing = self.get_current_playing()
@@ -417,6 +415,12 @@ class Controller(QWidget):
 
 
 	def get_lyrics(self, url=''):
+		"""Make an async request to Genius.com for lyrics.	
+		
+		Args:
+			url (str) -- Either the url we know or the one returned in a 301 response.
+
+		"""
 		artist, song = self.current_artist, self.current_song
 		if url == '':
 			url = "http://genius.com/%s-%s-lyrics" % (artist.replace(' ', '-'), song.replace(' ', '-'))
@@ -424,12 +428,15 @@ class Controller(QWidget):
 		self.lyrics_nam.get(req)
 
 
-	# Reviews Handler
-	#
-	# Reviews object consists of the following:
-	# artist,album,date,critic_rating,critic_count,user_rating,user_count,img_url
 	def update_review_frame(self, review):
+		"""Reviews Handler.	
+		
+		Args:
+			review (str:object) -- Either Pitchfork formatted string or a metacritic.Review object
+				Review object consists of the following:
+				artist album date critic_rating critic_count user_rating user_count img_url
 
+		"""
 		# Pitchfork frame
 		if isinstance(review, str):
 			self.review_frame.set_results(True)
@@ -453,10 +460,16 @@ class Controller(QWidget):
 				print('\n-----Metacritic Results-----')
 				print(review.artist, ' - ', review.album)
 				print('Critic Score:\t', review.critic_rating, '\t(',review.critic_count,' reviews)')
-				print('User Score:\t', review.user_rating, '\t(',review.user_count,' reviews)')
-				print('-------------------------------------------\n')
+				print('User Score:\t', review.user_rating, '\t(',review.user_count,' reviews)\n')
+
 
 	def update_images_frame(self, images):
+		"""Images handler.	
+		
+		Args:
+			images (list) -- List of QPixmaps
+
+		"""
 		if len(images) > 0:
 			# add image scrolling buttons
 			self.images_frame.create_image_buttons()
@@ -467,9 +480,14 @@ class Controller(QWidget):
 			# add the flickr images
 			self.images_frame.add_flickr_artist_images(images)
 
-	# lyrics handler
-	def lyrics_handler(self, reply):
 
+	def lyrics_handler(self, reply):
+		"""Lyrics handler.	
+		
+		Args:
+			reply (object) -- QNetworkReply
+
+		"""
 		er = reply.error()
 
 		if er == QtNetwork.QNetworkReply.NoError:
@@ -491,6 +509,13 @@ class Controller(QWidget):
 
 
 	def set_lyrics(self, url='', lyrics_exist=True):
+		"""Synchronous lyrics requester.	
+		
+		Args:
+			url (str) -- URL to request lyrics if not using default URL
+			lyrics_exist (bool) -- Don't make request for lyrics if you know they don't exist.
+
+		"""
 		error = "Error: Could not find lyrics."
 		proxy = urllib.request.getproxies()
 
@@ -500,7 +525,7 @@ class Controller(QWidget):
 		if lyrics_exist:
 			try:
 				if url == '':
-					url = "http://genius.com/%s-%s-lyrics" % (artist.replace(' ', '-'), song.replace(' ', '-'))
+					url = "http://genius.com/%s-%s-lyrics"%(artist.replace(' ', '-'),song.replace(' ', '-'))
 				lyricspage = requests.get(url, proxies=proxy)
 
 				soup = BeautifulSoup(lyricspage.text, 'html.parser')
@@ -517,7 +542,14 @@ class Controller(QWidget):
 		# set those lyrics on the frame
 		self.lyrics_frame.set_display_text(lyrics, 10, 45, 'lyrics_text')
 
+
 	def news_handler(self, reply):
+		"""News handler.	
+		
+		Args:
+			reply (object) -- QNetworkReply
+
+		"""
 		default_img = os.path.dirname(__file__) + '/info-icon.png'
 		results = {}
 
@@ -600,7 +632,6 @@ class Controller(QWidget):
 							except BaseException as e:
 								print(e)
 								results['newsicon'] = QPixmap(default_img)
-
 					else:
 						break
 
@@ -621,9 +652,14 @@ class Controller(QWidget):
 			results['message'] = 'No news for this artist.'
 			self.news_frame.add_news(results, QPixmap(default_img))
 
-	# bio handler
-	def search_bio_handler(self, reply):
 
+	def search_bio_handler(self, reply):
+		"""Biography handler.	
+		
+		Args:
+			reply (object) -- QNetworkReply
+
+		"""
 		er = reply.error()
 
 		if er == QtNetwork.QNetworkReply.NoError:
@@ -639,7 +675,7 @@ class Controller(QWidget):
 				paragraph = ''
 				for i, t in enumerate(f['text'].toArray()):
 					t = t.toString()
-					paragraph += f['title'].toString() + '\n\n' + t.rstrip() if i == 0 else (' ' + t.rstrip())
+					paragraph += f['title'].toString()+'\n\n'+t.rstrip() if i==0 else (' '+t.rstrip())
 				bio += paragraph + '\n\n'
 
 			self.bio_frame.set_results(True)
@@ -648,7 +684,14 @@ class Controller(QWidget):
 		else:
 			self.bio_frame.set_display_text('No artist bio found.', 10, 45)
 
+
 	def musikki_images_handler(self, reply):
+		"""Musikki images handler.	
+		
+		Args:
+			reply (object) -- QNetworkReply
+
+		"""
 		urls, pixmaps, widths, heights = [], [], [], []
 
 		er = reply.error()
@@ -695,16 +738,15 @@ class Controller(QWidget):
 			widths[0] = widths[biggest]
 			heights[0] = heights[biggest]
 			self.images_frame.add_musikki_artist_images(pixmaps, widths, heights)
-		else:
-			# use default image of dirty-piano.jpg
-			print('will search flickr as a backup')
-			# pixmaps = [QPixmap(os.path.dirname(__file__)+'/dirty-piano.jpg')]
-			# widths = [pixmaps[0].width()]
-			# heights = [pixmaps[0].height()]
-			# self.images_frame.add_artist_images(pixmaps, widths, heights)
-			# self.images_frame.set_display_text('No Images Found.')
+
 
 	def social_handler(self, reply):
+		"""Social handler.	
+		
+		Args:
+			reply (object) -- QNetworkReply
+
+		"""
 		er = reply.error()
 
 		if er == QtNetwork.QNetworkReply.NoError:
@@ -750,14 +792,20 @@ class Controller(QWidget):
 			self.social_frame.set_display_text('No social media found.', 10, 45)
 			self.musikki_artist.facebook_search = False
 
+
 	def next_image_handler(self):
 		self.images_frame.next_image()
+
 
 	def prev_image_handler(self):
 		self.images_frame.prev_image()
 
-	# playback handler
+
 	def update_playback_display(self):
+		"""
+		Playback handler.
+		
+		"""
 		if self.current_playing != self.get_current_playing():
 			if (self.current_artist == self.get_current_artist() and
 				self.current_song != self.get_current_song()):
@@ -777,11 +825,13 @@ class Controller(QWidget):
 			self.update_album_info(update_playback=True)
 			self.update_song_info(update_playback=False)
 
+
 	def expand_bio(self):
 		if self.bio_frame.has_results():
 			self.build_popup(self.bio_frame)
 		else:
 			print('No bio results, so no bio popup')
+
 
 	def expand_lyrics(self):
 		if self.lyrics_frame.has_results():
@@ -789,13 +839,21 @@ class Controller(QWidget):
 		else:
 			print('No lyrics results, so no lyrics popup')
 
+
 	def expand_review(self):
 		if self.review_frame.has_results():
 			self.build_popup(self.review_frame)
 		else:
 			print('No review results, so no review popup')
 
+
 	def build_popup(self, source_frame):
+		"""Build a SingleFrameWindow popup window.	
+		
+		Args:
+			source_frame (object) -- model.Frame is the content for the popup
+
+		"""
 		offset = 50
 		self.popup_window = view.SingleFrameWindow(self.screen_width, self.screen_height)
 		self.popup_window.init_popup(
@@ -836,9 +894,16 @@ class Controller(QWidget):
 
 
 class Listener(QThread):
-
+	
 	song_change = pyqtSignal()
+	
+	"""Listener object that can run playback synchronization threads.	
+	
+	Args:
+		stored_song (str) -- formatted string (Artist - Song Title)
+		spotify (object) -- playback.Playback object which connects and talks to Spotify
 
+	"""
 	def __init__(self, stored_song, spotify):
 		super().__init__()
 		self.stored_song = stored_song.rstrip()
@@ -852,7 +917,10 @@ class Listener(QThread):
 		self.playback_sync_thread.start() 	
 
 	def sync_playback(self):
+		"""
+		Every 1 second, check the stored_song against what Spotify is currently playing.
 
+		"""
 		while True:
 			if self.stored_song != self.spotify.get_current_playing().rstrip():
 				self.song_change.emit()
