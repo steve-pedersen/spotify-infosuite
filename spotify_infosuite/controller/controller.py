@@ -32,7 +32,13 @@ from PyQt5 import QtGui
 
 
 class Controller(QWidget):
+	"""Handles all logic to build frames and dispatch content to window.
 
+	Args:
+		app (object) -- QApplication
+		use_default (bool) -- Use default window size or not
+
+	"""
 	def __init__(self, app, use_default=True):
 		super().__init__()
 		self.app = app
@@ -58,16 +64,23 @@ class Controller(QWidget):
 		self.init_lyrics_frame()
 		self.init_social_frame()
 
-	# Window scales to a 1080 screen resolution by default, but will revert to your
-	# own screen resolution if the app window ends up being bigger than your screen
-	# or if use_default_size is set to False
-	def determine_window_size(self, use_default_size):
 
+	def determine_window_size(self, use_default_size):
+		"""Window scales to a 1080 screen resolution by default, but will revert to your
+		own screen resolution if the app window ends up being bigger than your screen
+		or if use_default_size is set to False
+
+		Args:
+			use_default_size (bool) -- Use default window size or not
+
+		"""
 		screen_resolution = self.app.desktop().screenGeometry()
 		self.screen_width = screen_resolution.width()
 		self.screen_height = screen_resolution.height()
+		
 		# minimum window dimensions
 		min_w, min_h = 1440, 900
+		
 		# default window dimensions
 		def_w, def_h = 1920, 1080
 		window_fits = False
@@ -85,8 +98,8 @@ class Controller(QWidget):
 			space_h = h / 4
 			self.window_w = w - space_w
 			self.window_h = h - space_h
-			self.window_x = space_w / 4 # if not use_default_size else space_w * 1.17
-			self.window_y = space_h / 2 # if not use_default_size else space_h * 1.2
+			self.window_x = space_w / 4
+			self.window_y = space_h / 2
 
 			if not use_default_size:
 				window_fits = True
@@ -96,7 +109,12 @@ class Controller(QWidget):
 				def_w = min_w
 				def_h = min_h
 
+
 	def init_bio_frame(self):
+		"""
+		Initialize Bio frame and make the initial async request to Musikki for the Bio.
+
+		"""
 		x = 0
 		y = self.window_h * 0.1
 		w = self.window_w / 3
@@ -119,7 +137,12 @@ class Controller(QWidget):
 		else:
 			self.bio_frame.set_display_text('No results for current artist.', 10, 45)
 
+
 	def init_news_frame(self):
+		"""
+		Initialize News frame and make the initial async request to Musikki.
+
+		"""
 		x = 0
 		y = self.window_h*3 / 4
 		w = self.window_w / 3
@@ -136,7 +159,12 @@ class Controller(QWidget):
 		if self.musikki_artist.is_found:
 			self.musikki_artist.get_news(self.news_nam)
 
+
 	def init_playback_frame(self):
+		"""
+		Initialize Playback Frame, make the connection to Spotify and create playback listener thread.
+
+		"""
 		self.spotify = self.open_spotify()
 		self.update_current_playing()
 
@@ -164,7 +192,12 @@ class Controller(QWidget):
 		self.listener.song_change.connect(self.update_playback_display)
 		self.listener.run()	
 
+
 	def init_lyrics_frame(self):
+		"""
+		Initialize Lyrics frame and make the initial async request to Genius.
+
+		"""
 		x = self.window_w / 3
 		y = 0
 		w = self.window_w / 3
@@ -184,7 +217,12 @@ class Controller(QWidget):
 
 		self.get_lyrics()
 
+
 	def init_review_frame(self):
+		"""
+		Initialize Review (Pitchfork) frame and make the initial async request to Pitchfork & Metacritic.
+
+		"""
 		x = self.window_w * 2 / 3
 		y = self.window_h / 2
 		w = self.window_w / 3
@@ -204,7 +242,12 @@ class Controller(QWidget):
 		self.get_pitchfork_review()
 		self.get_metacritic_review()
 
+
 	def init_metacritic_frame(self):
+		"""
+		Initialize Metacritic frame.
+
+		"""
 		x = self.window_w * 2/3
 		y = self.window_h/2 + self.window_h*0.37
 		w = self.window_w / 3		
@@ -213,11 +256,14 @@ class Controller(QWidget):
 		self.metacritic_frame = model.Frame(
 			self, self.multi_frame_window, x,y, w,h, 'metacritic_frame'
 		)	
-		# self.metacritic_frame.set_display_title('Metacritic Reviews', 10, 5)
-
 		self.multi_frame_window.add_frame(self.metacritic_frame)	
 
+
 	def init_images_frame(self):
+		"""
+		Initialize Images frame and make the initial async requests to Musikki and Flickr.
+
+		"""
 		x = self.window_w * 2 / 3
 		y = 0
 		w = self.window_w / 3
@@ -236,7 +282,12 @@ class Controller(QWidget):
 
 		self.get_images()
 
+
 	def init_social_frame(self):
+		"""
+		Initialize Social frame and make the initial async requests to Musikki.
+
+		"""
 		x = self.window_w / 3
 		y = self.window_h * 0.75
 		w = self.window_w / 3
@@ -256,8 +307,12 @@ class Controller(QWidget):
 		else:
 			self.social_frame.set_display_text('No results for current artist.', 10, 45)
 
-	def get_images(self):
 
+	def get_images(self):
+		"""Spawn a thread to request images from Flickr. 
+		Thread will signal to update_images_frame() handler with the downloaded images.
+
+		"""
 		if self.musikki_artist.is_found:
 			self.musikki_artist.get_full_images(self.images_nam)
 
@@ -265,18 +320,32 @@ class Controller(QWidget):
 		requester.flickr_reciever.connect(self.update_images_frame)
 		requester.get_images(self.current_artist)
 
+
 	def get_pitchfork_review(self):
+		"""Spawn a thread to fetch a review for current album from Pitchfork.com. 
+		Thread will signal to update_review_frame() handler with the downloaded review.
+
+		"""
 		requester = reviews.Requester()
 		requester.pitchfork_receiver.connect(self.update_review_frame)
 		requester.get_pitchfork_review(self.current_artist, self.current_album)
 
+
 	def get_metacritic_review(self):
+		"""Spawn a thread to fetch a review for current album from a Metacritic API. 
+		Thread will signal to update_review_frame() handler with the downloaded review.
+
+		"""
 		requester = reviews.Requester()
 		requester.metacritic_receiver.connect(self.update_review_frame)
 		requester.get_metacritic_review(self.current_artist, self.current_album)
 
+
 	def update_everything(self):
-		# playback info
+		"""
+		Fetch new info for all frames.
+
+		"""
 		self.update_current_playing()
 		self.playback_frame.set_display_title(
 			self.current_playing, self.playback_title_x, self.playback_title_y
@@ -286,13 +355,17 @@ class Controller(QWidget):
 		self.update_album_info(update_playback=False)
 		self.update_song_info(update_playback=False)
 
+
 	def update_artist_info(self, update_playback=True):
+		"""
+		Fetch new info for the following frames, which are dependent on artist:	
+			Bio, News, Social Media, Images
+
+		"""
 		if update_playback:
 			self.update_current_playing()
 			self.playback_frame.set_display_title(self.current_playing, 10, 10)		
-		
-		# Update the collowing frames, which are dependent on artist:
-		#	Bio, News, Social Media, Images
+
 		self.musikki_artist = musikki.search(self.get_current_artist())
 		self.musikki_artist.get_full_bio(self.bio_nam)
 		self.musikki_artist.get_news(self.news_nam)
@@ -300,26 +373,39 @@ class Controller(QWidget):
 		self.images_frame.clear_images_list()
 		self.get_images()
 
+
 	def update_song_info(self, update_playback=True):
+		"""
+		Fetch new info for the following frames, which are dependent on song:	
+			Lyrics
+
+		"""
 		if update_playback:
 			self.update_current_playing()
 			self.playback_frame.set_display_title(self.current_playing, 10, 10)	
 
-		# Update the collowing frames, which are dependent on song:
-		#	Lyrics
 		self.get_lyrics()	
 
+
 	def update_album_info(self, update_playback=True):
+		"""
+		Fetch new info for the following frames, which are dependent on album:	
+			Reviews: Pitchfork, Metacritic
+
+		"""
 		if update_playback:
 			self.update_current_playing()
 			self.playback_frame.set_display_title(self.current_playing, 10, 10)	
-		
-		# Update the collowing frames, which are dependent on album:
-		#	Reviews: Pitchfork, Metacritic
+
 		self.get_pitchfork_review()
 		self.get_metacritic_review()
 
+
 	def update_current_playing(self):
+		"""
+		Update current_playing, artist, song and album strings from Spotify.	
+
+		"""
 		self.current_playing = self.get_current_playing()
 		self.current_artist = self.get_current_artist()
 		self.current_song = self.get_current_song()
@@ -329,12 +415,14 @@ class Controller(QWidget):
 		print('Song:\t', self.current_song)
 		print('Album:\t', self.current_album, '\n')
 
+
 	def get_lyrics(self, url=''):
 		artist, song = self.current_artist, self.current_song
 		if url == '':
 			url = "http://genius.com/%s-%s-lyrics" % (artist.replace(' ', '-'), song.replace(' ', '-'))
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		self.lyrics_nam.get(req)
+
 
 	# Reviews Handler
 	#
