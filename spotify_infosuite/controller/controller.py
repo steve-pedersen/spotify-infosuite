@@ -408,7 +408,7 @@ class Controller(QWidget):
 		self.current_artist = self.get_current_artist()
 		self.current_song = self.get_current_song()
 		self.current_album = self.get_current_album()	
-		print('\n\n-----Now Playing-----')
+		print('='*60, '\n\n-----Now Playing-----')
 		print('Artist:\t', self.current_artist)
 		print('Song:\t', self.current_song)
 		print('Album:\t', self.current_album, '\n')
@@ -426,6 +426,41 @@ class Controller(QWidget):
 			url = "http://genius.com/%s-%s-lyrics" % (artist.replace(' ', '-'), song.replace(' ', '-'))
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		self.lyrics_nam.get(req)
+
+
+	def set_lyrics(self, url='', lyrics_exist=True):
+		"""Make synchronous lyrics request, then set text in the lyrics frame.	
+		
+		Args:
+			url (str) -- URL to request lyrics if not using default URL
+			lyrics_exist (bool) -- Don't make request for lyrics if you know they don't exist.
+
+		"""
+		error = "Error: Could not find lyrics."
+		proxy = urllib.request.getproxies()
+
+		artist = self.get_current_artist()
+		song = self.get_current_song()
+		
+		if lyrics_exist:
+			try:
+				if url == '':
+					url = "http://genius.com/%s-%s-lyrics"%(artist.replace(' ', '-'),song.replace(' ', '-'))
+				lyricspage = requests.get(url, proxies=proxy)
+
+				soup = BeautifulSoup(lyricspage.text, 'html.parser')
+				lyrics = soup.text.split('Lyrics')[3].split('More on Genius')[0]
+				if artist.lower().replace(" ", "") not in soup.text.lower().replace(" ", ""):
+					lyrics = error
+
+				self.lyrics_frame.set_results(True)
+			except Exception:
+				lyrics = error
+		else:
+			lyrics = error
+		
+		# set those lyrics on the frame
+		self.lyrics_frame.set_display_text(lyrics, 10, 45, 'lyrics_text')
 
 
 	def update_review_frame(self, review):
@@ -506,41 +541,6 @@ class Controller(QWidget):
 
 		else:
 			self.set_lyrics(url='', lyrics_exist=False)
-
-
-	def set_lyrics(self, url='', lyrics_exist=True):
-		"""Synchronous lyrics requester.	
-		
-		Args:
-			url (str) -- URL to request lyrics if not using default URL
-			lyrics_exist (bool) -- Don't make request for lyrics if you know they don't exist.
-
-		"""
-		error = "Error: Could not find lyrics."
-		proxy = urllib.request.getproxies()
-
-		artist = self.get_current_artist()
-		song = self.get_current_song()
-		
-		if lyrics_exist:
-			try:
-				if url == '':
-					url = "http://genius.com/%s-%s-lyrics"%(artist.replace(' ', '-'),song.replace(' ', '-'))
-				lyricspage = requests.get(url, proxies=proxy)
-
-				soup = BeautifulSoup(lyricspage.text, 'html.parser')
-				lyrics = soup.text.split('Lyrics')[3].split('More on Genius')[0]
-				if artist.lower().replace(" ", "") not in soup.text.lower().replace(" ", ""):
-					lyrics = error
-
-				self.lyrics_frame.set_results(True)
-			except Exception:
-				lyrics = error
-		else:
-			lyrics = error
-		
-		# set those lyrics on the frame
-		self.lyrics_frame.set_display_text(lyrics, 10, 45, 'lyrics_text')
 
 
 	def news_handler(self, reply):
@@ -863,7 +863,7 @@ class Controller(QWidget):
 		self.popup_window.add_frame(source_frame)
 		self.popup_window.show()
 
-	# Spotify Controls
+
 	def open_spotify(self):
 		spotify = playback.Playback() 
 		return spotify
@@ -894,7 +894,7 @@ class Controller(QWidget):
 
 
 class Listener(QThread):
-	
+
 	song_change = pyqtSignal()
 	
 	"""Listener object that can run playback synchronization threads.	
