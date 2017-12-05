@@ -10,10 +10,7 @@ if __name__ == '__main__':
 	if len(sys.argv) == 2 and str(sys.argv[1]) == '1':
 		use_default = False
 
-	screen_resolution = app.desktop().screenGeometry()
-	width, height = screen_resolution.width(), screen_resolution.height()
-
 	# run app with selected window dimensions
-	controller = Controller(app, width, height, use_default)
+	controller = Controller(app, use_default)
 	
 	sys.exit(app.exec_())

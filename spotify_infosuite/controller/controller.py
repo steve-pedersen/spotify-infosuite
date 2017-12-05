@@ -33,11 +33,11 @@ from PyQt5 import QtGui
 
 class Controller(QWidget):
 
-	def __init__(self, app, screen_width, screen_height, use_default=True):
+	def __init__(self, app, use_default=True):
 		super().__init__()
+		self.app = app
 
-		self.screen_width, self.screen_height = screen_width, screen_height
-		self.determine_window_size(screen_width, screen_height, use_default)
+		self.determine_window_size(use_default)
 
 		# Build the main view: Multi-Frame Window
 		self.multi_frame_window = view.MultiFrameWindow(
@@ -61,7 +61,11 @@ class Controller(QWidget):
 	# Window scales to a 1080 screen resolution by default, but will revert to your
 	# own screen resolution if the app window ends up being bigger than your screen
 	# or if use_default_size is set to False
-	def determine_window_size(self, screen_width, screen_height, use_default_size):
+	def determine_window_size(self, use_default_size):
+
+		screen_resolution = self.app.desktop().screenGeometry()
+		self.screen_width = screen_resolution.width()
+		self.screen_height = screen_resolution.height()
 		# minimum window dimensions
 		min_w, min_h = 1440, 900
 		# default window dimensions
@@ -71,8 +75,8 @@ class Controller(QWidget):
 		while not window_fits:
 
 			if not use_default_size:
-				w = screen_width
-				h = screen_height
+				w = self.screen_width
+				h = self.screen_height
 			else:
 				w = def_w
 				h = def_h
