@@ -45,7 +45,7 @@ class Requester(QThread):
 			artist, album = arg1, arg2
 			album = self.get_formatted_album_string(album)
 			
-			print('Searching Pitchfork for album: ', album)
+			print('Searching Pitchfork for artist/album: ', artist,' - ',album)
 			p = pitchfork.search(artist, album)
 
 			if p.has_review:

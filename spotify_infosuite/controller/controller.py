@@ -15,6 +15,8 @@ import ssl
 import os
 import sys
 import shutil
+import unidecode
+import string
 
 from threading import Thread
 from time import sleep
@@ -129,7 +131,9 @@ class Controller(QWidget):
 		self.bio_nam = QtNetwork.QNetworkAccessManager()
 		self.bio_nam.finished.connect(self.search_bio_handler)
 
-		self.musikki_artist = musikki.search(self.get_current_artist())
+		artist = self.format_unicode_alpha(self.current_artist)
+		self.musikki_artist = musikki.search(artist)
+		
 		if self.musikki_artist.is_found:
 			self.musikki_artist.get_full_bio(self.bio_nam)
 		else:
@@ -326,7 +330,9 @@ class Controller(QWidget):
 		"""
 		requester = reviews.Requester()
 		requester.pitchfork_receiver.connect(self.update_review_frame)
-		requester.get_pitchfork_review(self.current_artist, self.current_album)
+		artist, album = self.format_unicode_alpha([self.current_artist, self.current_album])
+		print('before asking pitchfork...', artist)
+		requester.get_pitchfork_review(artist, album)
 
 
 	def get_metacritic_review(self):
@@ -421,9 +427,11 @@ class Controller(QWidget):
 			url (str) -- Either the url we know or the one returned in a 301 response.
 
 		"""
-		artist, song = self.current_artist, self.current_song
+		artist, song = self.format_unicode_alpha([self.current_artist, self.current_song])
+		print('Searching lyrics for: ', artist, ' - ', song)
+
 		if url == '':
-			url = "http://genius.com/%s-%s-lyrics" % (artist.replace(' ', '-'), song.replace(' ', '-'))
+			url = "https://genius.com/%s-%s-lyrics" % (artist.replace(' ', '-'), song.replace(' ', '-'))
 		req = QtNetwork.QNetworkRequest(QtCore.QUrl(url))
 		self.lyrics_nam.get(req)
 
@@ -439,13 +447,13 @@ class Controller(QWidget):
 		error = "Error: Could not find lyrics."
 		proxy = urllib.request.getproxies()
 
-		artist = self.get_current_artist()
-		song = self.get_current_song()
+		# remove punctuation and convert to English alphabet
+		artist, song = self.format_unicode_alpha([self.current_artist, self.current_song])
 		
 		if lyrics_exist:
 			try:
 				if url == '':
-					url = "http://genius.com/%s-%s-lyrics"%(artist.replace(' ', '-'),song.replace(' ', '-'))
+					url = "https://genius.com/%s-%s-lyrics"%(artist.replace(' ', '-'),song.replace(' ', '-'))
 				lyricspage = requests.get(url, proxies=proxy)
 
 				soup = BeautifulSoup(lyricspage.text, 'html.parser')
@@ -461,6 +469,28 @@ class Controller(QWidget):
 		
 		# set those lyrics on the frame
 		self.lyrics_frame.set_display_text(lyrics, 10, 45, 'lyrics_text')
+
+
+	def format_unicode_alpha(self, strings):
+		"""Removes punctuation and replaces non-English alphabet chars with closest equivalent.	
+		
+		Args:
+			strings (list:str) -- A list of strings or single string to be formatted
+
+		"""
+		formatted_strings = []
+		is_list = True
+		
+		if isinstance(strings, str):
+			is_list = False
+			strings = [strings]
+				
+		for s in strings:
+			s = unidecode.unidecode(s)		
+			s = s.translate(str.maketrans('','',string.punctuation))
+			formatted_strings.append(s)
+
+		return (formatted_strings if is_list else formatted_strings[0])
 
 
 	def update_review_frame(self, review):
