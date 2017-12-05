@@ -434,14 +434,20 @@ class Frame(QLabel):
 	def next_image(self):
 		if self.images_list is not None:
 			# Circular indexing--go to beginning of list if moving right at max index
-			self.current_image = (self.current_image + 1) % len(self.images_list) 
+			if len(self.images_list) > 0:
+				self.current_image = (self.current_image + 1) % len(self.images_list) 
+			else:
+				self.current_image = 0
 			self.image_label.setPixmap(self.images_list[self.current_image])
 
 
 	def prev_image(self):
 		if self.images_list is not None:
 			# Circular indexing--go to end of list if moving left on index 0
-			self.current_image = (self.current_image - 1) % len(self.images_list)
+			if len(self.images_list) > 0:
+				self.current_image = (self.current_image - 1) % len(self.images_list) 
+			else:
+				self.current_image = 0
 			self.image_label.setPixmap(self.images_list[self.current_image])
 
 
