@@ -131,8 +131,12 @@ class Controller(QWidget):
 		self.bio_nam = QtNetwork.QNetworkAccessManager()
 		self.bio_nam.finished.connect(self.search_bio_handler)
 
-		artist = self.format_unicode_alpha(self.current_artist)
-		self.musikki_artist = musikki.search(artist)
+		self.musikki_artist = musikki.search(self.current_artist)
+		
+		if not self.musikki_artist.is_found:
+			# try again with formatted string
+			formatted_artist = self.format_unicode_alpha(self.current_artist)
+			self.musikki_artist = musikki.search(formatted_artist)
 		
 		if self.musikki_artist.is_found:
 			self.musikki_artist.get_full_bio(self.bio_nam)
