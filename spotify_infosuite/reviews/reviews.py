@@ -6,20 +6,27 @@ import os
 from threading import Thread
 from PyQt5.QtCore import *
 
-# print('in reviews.py')
 
 class Requester(QThread):
 
-	# print('in reviews.py Requester class')
 	pitchfork_receiver = pyqtSignal(str)
 	metacritic_receiver = pyqtSignal(object)
 
+	"""
+	This class makes threaded requests for reviews from various sources.
+	It emits pyqtSignals with response objects or strings.
+
+	"""
 	def __init__(self):
 		super().__init__()
 
 
 	def get_metacritic_review(self, artist, album):
+		"""
+		Spawns a thread to search for a review for an album, then emits a pyqtsignal 
+		with the review object from metacritic.Review
 
+		"""
 		def __get_data(arg1, arg2):
 			artist, album = arg1, arg2
 			album = self.get_formatted_album_string(album, 'metacritic')
@@ -40,7 +47,11 @@ class Requester(QThread):
 		worker.start()		
 
 	def get_pitchfork_review(self, artist, album):
+		"""
+		Spawns a thread to search for a review for an album, then emits a pyqtsignal 
+		with the formatted review string.
 
+		"""
 		def __get_data(arg1, arg2):
 			artist, album = arg1, arg2
 			album = self.get_formatted_album_string(album)
@@ -61,6 +72,11 @@ class Requester(QThread):
 		worker.start()
 
 	def get_formatted_album_string(self, album, source=''):
+		"""
+		This is bad... meant only to be a temporary workaround to get some of my
+		favorite albums to work with InfoSuite.
+
+		"""
 		album = album.replace('(Deluxe Version)','').rstrip() \
 			.replace('[Remastered]','') \
 			.replace('(Deluxe Edition)','') \
