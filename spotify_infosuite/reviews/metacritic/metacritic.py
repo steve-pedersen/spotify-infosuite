@@ -4,13 +4,20 @@ import ssl
 import json
 
 class MetaReview:
-
+	"""
+	Class representing the fetched review.
+	
+	"""
 	def __init__(self, has_review):
 		self.has_review = has_review
 		self.not_found_message = 'No results found with Metacritic'
 	
 	def load(self, artist, album, date, critic_rating, critic_count,
 			 user_rating, user_count, img_url):
+		""" 
+		Set the property values for the object review.
+			
+		"""
 		self.artist = artist
 		self.album = album
 		self.date = date
@@ -22,7 +29,14 @@ class MetaReview:
 
 
 def search(artist, album, apikey):
+	"""Makes the request to Metacritic API and returns a MetaReview object singleton.
+	
+	Args:
+		artist (string)
+		album (string)
+		apikey (string)
 
+	"""
 	request = Request(
 		url='https://api-marcalencc-metacritic-v1.p.mashape.com/album/' + album,
 	  	data=None,
