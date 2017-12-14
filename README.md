@@ -27,7 +27,6 @@ $ pip3 install requests
 $ pip3 install urllib
 $ pip3 install unidecode
 $ pip3 install beautifulsoup4
-$ pip3 install beautifulsoup4
 $ pip3 install lxml
 
 ```
