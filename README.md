@@ -15,13 +15,15 @@ Window sizes based on screen local size.
 ---
 ### Installation / Dependenices
 
-ImprovedImageBrowser requires [PyQt5](https://www.riverbankcomputing.com/software/pyqt/download5) and [Requests](https://github.com/requests/requests) to run.
+Spotify InfoSuite requires [PyQt5](https://www.riverbankcomputing.com/software/pyqt/download5) and [Requests](https://github.com/requests/requests) to run.
 
 Install the dependencies then run the program
 
 ```sh
 $ pip3 install PyQt5
 $ pip3 install requests
+$ pip3 install urllib
+
 ```
 
 ### Todos
