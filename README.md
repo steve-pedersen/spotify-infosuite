@@ -12,7 +12,6 @@ Run:
 ```sh
 $ python3 Spotify_Infosuite.py
 ```
-Window adjusts size automatically based on local screen size.
 
 ---
 ### Installation / Dependenices
