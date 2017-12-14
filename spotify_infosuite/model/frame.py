@@ -1,3 +1,14 @@
+"""
+Fall 2017 CSc 690
+File: frame.py
+Author: Steve Pedersen & Andrew Lesondak
+System: OS X
+Date: 12/13/2017
+Usage: python3 spotify_infosuite.py
+Dependencies: Python3, PyQt5, beautifulsoup4, lxml, unidecode
+Description: Frame class.  Used to divide main window into individual components.
+
+"""
 
 from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QScrollArea, QGroupBox
 from PyQt5.QtCore import *
@@ -432,6 +443,10 @@ class Frame(QLabel):
 
 
 	def next_image(self):
+		"""
+		Gets next image in list of images.
+
+		"""
 		if self.images_list is not None:
 			# Circular indexing--go to beginning of list if moving right at max index
 			if len(self.images_list) > 0:
@@ -442,6 +457,10 @@ class Frame(QLabel):
 
 
 	def prev_image(self):
+		"""
+		Gets previous image in list of images.
+
+		"""
 		if self.images_list is not None:
 			# Circular indexing--go to end of list if moving left on index 0
 			if len(self.images_list) > 0:

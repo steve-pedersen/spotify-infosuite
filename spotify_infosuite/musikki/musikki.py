@@ -1,3 +1,14 @@
+"""
+Fall 2017 CSc 690
+File: musikki.py
+Author: Steve Pedersen & Andrew Lesondak
+System: OS X
+Date: 12/13/2017
+Usage: python3 spotify_infosuite.py
+Dependencies: Python3, PyQt5, beautifulsoup4, lxml, unidecode
+Description: Artist class.  Used to access the Musikki API and retrieve desired information from it.
+
+"""
 import requests
 import re
 import json
@@ -6,6 +17,16 @@ from PyQt5 import QtNetwork, QtCore
 
 
 class Artist:
+	"""Handles all calls to the Musikki API.
+
+	Args:
+		mkid (int) -- Musikki's artist id.
+		artist (string) - Name of artist to use in Musikki API search.
+		appid (int) - Used for Musikki API credentials.
+		appkey (int) - Used for Musikki API credentials.
+		is_found (boolean) - Signals if name of artist is found in Musikki search.
+
+	"""
 	def __init__(self, mkid, artist, appid, appkey, is_found=True):
 		# print(mkid)
 		if mkid == 0:
@@ -24,6 +45,12 @@ class Artist:
 
 	# https://music-api.musikki.com/reference/artists#bio
 	def get_full_bio(self, nam):
+		"""Gets biography text from Musikki API
+
+		Args:
+			nam (signal) - Used to signal when a pending network reply is finished
+
+		"""
 		url = self.artisturl + '/' + str(self.mkid) + '/bio'
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
@@ -33,6 +60,12 @@ class Artist:
 
 	# https://music-api.musikki.com/reference/artists#images
 	def get_full_images(self, nam):
+		"""Gets images from Musikki API
+
+		Args:
+			nam (signal) - Used to signal when a pending network reply is finished
+
+		"""
 		url = self.artisturl + '/' + str(self.mkid) + '/images'
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
@@ -42,6 +75,12 @@ class Artist:
 
 	# https://music-api.musikki.com/reference/artists#collaborations
 	def get_collaborations(self, nam):
+		"""Gets artist collaboration information from Musikki API
+
+		Args:
+			nam (signal) - Used to signal when a pending network reply is finished
+
+		"""
 		url = self.artisturl + '/' + str(self.mkid) + '/collaborations'
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
@@ -51,6 +90,12 @@ class Artist:
 
 	# https://music-api.musikki.com/reference/artists#labels
 	def get_labels(self, nam, q=''):
+		"""Gets artist label information from Musikki API
+
+		Args:
+			nam (signal) - Used to signal when a pending network reply is finished
+
+		"""
 		url = self.artisturl + '/' + str(self.mkid) + '/labels'
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
@@ -60,6 +105,12 @@ class Artist:
 
 	# https://music-api.musikki.com/reference/artists#news
 	def get_news(self, nam):
+		"""Gets news from Musikki API
+
+		Args:
+			nam (signal) - Used to signal when a pending network reply is finished
+
+		"""
 		url = self.artisturl + '/' + str(self.mkid) + '/news'
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
@@ -69,6 +120,12 @@ class Artist:
 
 	# https://music-api.musikki.com/reference/artists#related
 	def get_related_artists(self, nam):
+		"""Gets related artists from Musikki API
+
+		Args:
+			nam (signal) - Used to signal when a pending network reply is finished
+
+		"""
 		url = self.artisturl + '/' + str(self.mkid) + '/related'
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
@@ -78,6 +135,12 @@ class Artist:
 
 	# https://music-api.musikki.com/reference/artists#releases
 	def get_releases(self, nam, q=''):
+		"""Gets artist release information from Musikki API
+
+		Args:
+			nam (signal) - Used to signal when a pending network reply is finished
+
+		"""
 		url = self.artisturl + '/' + str(self.mkid) + '/releases'
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
@@ -87,6 +150,12 @@ class Artist:
 
 	# https://music-api.musikki.com/reference/artists#summary
 	def get_release_summary(self, nam):
+		"""Gets artist release text from Musikki API
+
+		Args:
+			nam (signal) - Used to signal when a pending network reply is finished
+
+		"""
 		url = self.artisturl + '/' + str(self.mkid) + '/releases/summary'
 		url = url + '?appkey=' + self.appkey
 		url = url + '&appid=' + self.appid
@@ -96,6 +165,12 @@ class Artist:
 
 	# https://music-api.musikki.com/reference/artists#social
 	def get_social_media_twitter(self, nam):
+		"""Gets Twitter text from Musikki API
+
+		Args:
+			nam (signal) - Used to signal when a pending network reply is finished
+
+		"""
 		self.twitter_search = True
 		url = self.artisturl + '/' + str(self.mkid) + '/social?q=[service-name:twitter]'
 		url = url + '&appkey=' + self.appkey
@@ -104,6 +179,12 @@ class Artist:
 		nam.get(req)
 
 	def get_social_media_facebook(self, nam):
+		"""Gets Facebook text from Musikki API
+
+		Args:
+			nam (signal) - Used to signal when a pending network reply is finished
+
+		"""
 		self.facebook_search = True
 		url = self.artisturl + '/' + str(self.mkid) + '/social?q=[service-name:facebook]'
 		url = url + '&appkey=' + self.appkey
@@ -113,6 +194,14 @@ class Artist:
 
 # method needs to make a search req and then create Artist obj with mkid
 def search(artist, song='', album=''):
+	"""Searches Musikki API for artist information
+
+	Args:
+		artist (string) - Name of artist to use in Musikki API search.
+		song (string) - Name of song to use in Musikki API search.
+		album (string) - Name of album to use in Musikki API search.
+
+	"""
 	# replace spaces in the url with the '%20'
 	query = re.sub('\s+', '%20', artist)
 

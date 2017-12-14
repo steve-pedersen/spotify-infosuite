@@ -1,3 +1,15 @@
+"""
+Fall 2017 CSc 690
+File: single_frame.py
+Author: Steve Pedersen & Andrew Lesondak
+System: OS X
+Date: 12/13/2017
+Usage: python3 spotify_infosuite.py
+Dependencies: Python3, PyQt5, beautifulsoup4, lxml, unidecode
+Description: SingleFrameWindow class.  The expanded window for bio, lyrics, and reviews.
+
+"""
+
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QAction, QLineEdit, QVBoxLayout, QHBoxLayout, QScrollArea
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtMultimedia import QSoundEffect
@@ -5,13 +17,29 @@ from PyQt5.QtCore import *
 import os
 
 class SingleFrameWindow(QWidget):
+    """SingleFrameWindow is the expanded window for bio, lyrics, and reviews.  Users click a button
+    to bring this window into view.
 
+    Args:
+        screen_w (int) -- width of screen where window displays
+        screen_h (int) -- height of screen where window displays
+
+    """
     def __init__(self, screen_w, screen_h):
         super().__init__()
         self.screen_w = screen_w
         self.screen_h = screen_h
 
     def init_popup(self, x, y, window_title, object_title):
+        """Generates expanded view window
+
+        Args:
+            x (int) -- position of MultiFrameWindow
+            y (int) -- position of MultiFrameWindow
+            window_title (str) -- title text displayed at top of window
+            object_title (string) - used to organize visual styling of elements
+
+        """
         self.x = x
         self.y = y
         self.window_title = window_title
@@ -25,6 +53,12 @@ class SingleFrameWindow(QWidget):
 
 
     def add_frame(self, frame):
+        """Sets frame to expanded window
+
+        Args:
+            frame (object) -- frame to be added to expanded window
+
+        """
         for component in frame.get_popup_components():
             component.show()        
 
@@ -59,6 +93,9 @@ class SingleFrameWindow(QWidget):
 
     # Opens css stylesheet and apply it to Spotify Infosuite elements
     def load_styles(self):
+        """Sets syling of elements in the window
+
+        """
         self.setStyleSheet('')
         style = ''
         # with open('./view/style.css') as f:

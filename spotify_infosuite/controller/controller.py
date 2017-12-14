@@ -1,3 +1,15 @@
+"""
+Fall 2017 CSc 690
+File: controller.py
+Author: Steve Pedersen & Andrew Lesondak
+System: OS X
+Date: 12/13/2017
+Usage: python3 spotify_infosuite.py
+Dependencies: Python3, PyQt5, beautifulsoup4, lxml, unidecode
+Description: Controller class.  Used to generate window frames and handle events, such as key presses, mouse clicks.
+                                It also handles calculations needed to display elements to the window correctly.
+"""
+
 import model
 import view
 import playback

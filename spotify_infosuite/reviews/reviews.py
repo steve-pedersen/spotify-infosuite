@@ -1,3 +1,15 @@
+"""
+Fall 2017 CSc 690
+File: flickr_thread.py
+Author: Steve Pedersen & Andrew Lesondak
+System: OS X
+Date: 12/13/2017
+Usage: python3 spotify_infosuite.py
+Dependencies: Python3, PyQt5, beautifulsoup4, lxml, unidecode
+Description: Requester class.  A thread used to search Metacritic and Pitchfork asynchronously.
+
+"""
+
 from reviews.pitchfork import pitchfork
 from reviews.metacritic import metacritic
 import threading

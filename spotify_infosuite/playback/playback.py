@@ -1,3 +1,15 @@
+"""
+Fall 2017 CSc 690
+File: playback.py
+Author: Steve Pedersen & Andrew Lesondak
+System: OS X
+Date: 12/13/2017
+Usage: python3 spotify_infosuite.py
+Dependencies: Python3, PyQt5, beautifulsoup4, lxml, unidecode
+Description: Playback class.  Used to control the Spotify application's play, pause, previous, and next controls.
+
+"""
+
 from __future__ import absolute_import, unicode_literals
 import sys
 import subprocess
@@ -5,6 +17,10 @@ from time import sleep
 
 
 class Playback():
+	"""Playback is a single frame of the application, providing users the name of the artist and song.
+	It also has buttons for Play/Pause, Next track, and Previous track.
+
+	"""
 	def __init__(self):
 		"""
 			Check if there is a Spotify process running and if not,
@@ -29,6 +45,12 @@ class Playback():
 			sys.exit('You don\'t have Spotify installed. Please install it.')
 
 	def _make_osascript_call(self, command):
+		"""Used to interact with the Spotify Application
+
+		Args:
+			command (string) - Apple script
+
+		"""
 		subprocess.call([
 			'osascript',
 			'-e',
@@ -36,6 +58,12 @@ class Playback():
 		])
 
 	def listen(self, index):
+		"""Used to check for song changes in the Spotify application
+
+		Args:
+			index (int) - location of song URI
+
+		"""
 		uri = self._get_song_uri_at_index(index)
 		self._make_osascript_call(
 			'tell app "Spotify" to play track "%s"' % uri
@@ -58,6 +86,9 @@ class Playback():
 		# set info to info & "\n URI:      " & spotify url of current track
 
 	def get_current_artist(self):
+		"""Used to get currently playing artist
+
+		"""
 		instruction = ('on getCurrentTrack()\n'
 			' tell application "Spotify"\n'
 			'  set currentArtist to artist of current track as string\n'
@@ -72,6 +103,9 @@ class Playback():
 		return out.decode(sys.getfilesystemencoding()).rstrip()
 
 	def get_current_song(self):
+		"""Used to get currently playing song
+
+		"""
 		instruction = ('on getCurrentTrack()\n'
 			' tell application "Spotify"\n'
 			'  set currentTitle to name of current track as string\n'
@@ -86,6 +120,9 @@ class Playback():
 		return out.decode(sys.getfilesystemencoding()).rstrip()
 
 	def get_current_album(self):
+		"""Used to get currently playing album
+
+		"""
 		instruction = ('on getCurrentTrack()\n'
 			' tell application "Spotify"\n'
 			'  set currentAlbum to album of current track as string\n'
@@ -100,6 +137,9 @@ class Playback():
 		return out.decode(sys.getfilesystemencoding()).rstrip()		
 
 	def get_current_playing(self):
+		"""Used to get currently playing song
+
+		"""
 		instruction = ('on getCurrentTrack()\n'
 			' tell application "Spotify"\n'
 			'  set currentArtist to artist of current track as string\n'
