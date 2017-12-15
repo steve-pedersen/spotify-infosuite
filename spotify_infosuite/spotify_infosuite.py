@@ -5,7 +5,7 @@ Author: Steve Pedersen & Andrew Lesondak
 System: OS X
 Date: 12/13/2017
 Usage: python3 spotify_infosuite.py
-Dependencies: Python3, PyQt5, beautifulsoup4, lxml, unidecode
+Dependencies: controller, pyqt5
 Description: Main class.  Used to start the application.
 
 """

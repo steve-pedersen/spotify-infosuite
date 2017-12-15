@@ -5,7 +5,7 @@ Author: Steve Pedersen & Andrew Lesondak
 System: OS X
 Date: 12/13/2017
 Usage: python3 spotify_infosuite.py
-Dependencies: Python3, PyQt5, beautifulsoup4, lxml, unidecode
+Dependencies: pyqt5, requests
 Description: Artist class.  Used to access the Musikki API and retrieve desired information from it.
 
 """
@@ -21,7 +21,7 @@ class Artist:
 
 	Args:
 		mkid (int) -- Musikki's artist id.
-		artist (string) - Name of artist to use in Musikki API search.
+		artist (str) - Name of artist to use in Musikki API search.
 		appid (int) - Used for Musikki API credentials.
 		appkey (int) - Used for Musikki API credentials.
 		is_found (boolean) - Signals if name of artist is found in Musikki search.
@@ -197,9 +197,9 @@ def search(artist, song='', album=''):
 	"""Searches Musikki API for artist information
 
 	Args:
-		artist (string) - Name of artist to use in Musikki API search.
-		song (string) - Name of song to use in Musikki API search.
-		album (string) - Name of album to use in Musikki API search.
+		artist (str) - Name of artist to use in Musikki API search.
+		song (str) - Name of song to use in Musikki API search.
+		album (str) - Name of album to use in Musikki API search.
 
 	"""
 	# replace spaces in the url with the '%20'

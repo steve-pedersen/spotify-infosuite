@@ -5,7 +5,7 @@ Author: Steve Pedersen & Andrew Lesondak
 System: OS X
 Date: 12/13/2017
 Usage: python3 spotify_infosuite.py
-Dependencies: Python3, PyQt5, beautifulsoup4, lxml, unidecode
+Dependencies: urllib
 Description: MetaReview class.  Used to get search Metacritic API for album review score.
 
 """
@@ -44,9 +44,9 @@ def search(artist, album, apikey):
 	"""Makes the request to Metacritic API and returns a MetaReview object singleton.
 	
 	Args:
-		artist (string)
-		album (string)
-		apikey (string)
+		artist (str)
+		album (str)
+		apikey (str)
 
 	"""
 	request = Request(

@@ -5,7 +5,7 @@ Author: Steve Pedersen & Andrew Lesondak
 System: OS X
 Date: 12/13/2017
 Usage: python3 spotify_infosuite.py
-Dependencies: Python3, PyQt5, beautifulsoup4, lxml, unidecode
+Dependencies: beautifulsoup
 Description: Review class.  Used to scrape the Pitchfork website for album review information.
 
 """
@@ -17,7 +17,7 @@ An unofficial API for pitchfork.com reviews.
 author: Michal Czaplinski
 email: mmczaplinski@gmail.com
 """
-# print('in reviews/pitchfork/pitchfork.py')
+
 import json
 import re
 import difflib

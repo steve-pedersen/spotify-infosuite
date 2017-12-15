@@ -5,7 +5,7 @@ Author: Steve Pedersen & Andrew Lesondak
 System: OS X
 Date: 12/13/2017
 Usage: python3 spotify_infosuite.py
-Dependencies: Python3, PyQt5, beautifulsoup4, lxml, unidecode
+Dependencies: pyqt5
 Description: MultiFrameWindow class.  The main window of the application, made up of frames.
 
 """
@@ -26,7 +26,7 @@ class MultiFrameWindow(QWidget):
         w (int) -- width of MultiFrameWindow
         h (int) -- height of MultiFrameWindow
         window_title (str) -- title text displayed at top of window
-        object_title (string) - used to organize visual styling of elements
+        object_title (str) - used to organize visual styling of elements
 
     """
     def __init__(self, x, y, w, h, window_title, object_title):
@@ -48,7 +48,7 @@ class MultiFrameWindow(QWidget):
         """Used to add artist bio to bio frame
 
         Args:
-            frame (str) -- name of frame to add bio to
+            frame (object) -- name of frame to add bio to
 
         """
         # frame.move(frame.x, frame.y)
@@ -59,7 +59,7 @@ class MultiFrameWindow(QWidget):
         """Used to add frame to main window
 
         Args:
-            frame (str) -- name of frame to add to window
+            frame (object) -- name of frame to add to window
 
         """
         self.frames.append(frame)

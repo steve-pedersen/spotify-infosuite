@@ -5,7 +5,7 @@ Author: Steve Pedersen & Andrew Lesondak
 System: OS X
 Date: 12/13/2017
 Usage: python3 spotify_infosuite.py
-Dependencies: Python3, PyQt5, beautifulsoup4, lxml, unidecode
+Dependencies: Spotify applicaiton
 Description: Playback class.  Used to control the Spotify application's play, pause, previous, and next controls.
 
 """
@@ -48,7 +48,7 @@ class Playback():
 		"""Used to interact with the Spotify Application
 
 		Args:
-			command (string) - Apple script
+			command (str) - Apple script
 
 		"""
 		subprocess.call([

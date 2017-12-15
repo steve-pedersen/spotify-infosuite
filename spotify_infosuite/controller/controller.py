@@ -5,7 +5,7 @@ Author: Steve Pedersen & Andrew Lesondak
 System: OS X
 Date: 12/13/2017
 Usage: python3 spotify_infosuite.py
-Dependencies: Python3, PyQt5, beautifulsoup4, lxml, unidecode
+Dependencies: model, musikki, playback, reviews, view, requests, urllib, unidecode, pyqt5
 Description: Controller class.  Used to generate window frames and handle events, such as key presses, mouse clicks.
                                 It also handles calculations needed to display elements to the window correctly.
 """

@@ -5,7 +5,7 @@ Author: Steve Pedersen & Andrew Lesondak
 System: OS X
 Date: 12/13/2017
 Usage: python3 spotify_infosuite.py
-Dependencies: Python3, PyQt5, beautifulsoup4, lxml, unidecode
+Dependencies: pyqt5
 Description: SingleFrameWindow class.  The expanded window for bio, lyrics, and reviews.
 
 """
@@ -37,7 +37,7 @@ class SingleFrameWindow(QWidget):
             x (int) -- position of MultiFrameWindow
             y (int) -- position of MultiFrameWindow
             window_title (str) -- title text displayed at top of window
-            object_title (string) - used to organize visual styling of elements
+            object_title (str) - used to organize visual styling of elements
 
         """
         self.x = x
