@@ -685,6 +685,10 @@ class Controller(QWidget):
 					counter += 1
 				# end for
 				results['found'] = True
+				try:
+					results['newsicon'] = results['newsicon'] if results['newsicon'] else QPixmap(default_img)	
+				except:
+					results['newsicon'] = QPixmap(default_img)
 				self.news_frame.add_news(results)
 			#end if
 			else:

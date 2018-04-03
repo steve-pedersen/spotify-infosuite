@@ -168,9 +168,13 @@ class Frame(QLabel):
 			self.news_summary.setText('')
 		else:
 			# news found, use results data
-			src = results['src_title']
-			date = results['date']
-			title = results['title']
+			try:			
+				src = results['src_title']
+				date = results['date']
+				title = results['title']
+			except:
+				src, date, title, results['summary'] = '', '', '', ''
+				
 			self.news_title.setText(
 				date +'  -  '+ src +'\n'+ title
 			)
