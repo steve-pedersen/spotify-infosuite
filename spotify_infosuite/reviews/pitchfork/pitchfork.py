@@ -74,7 +74,7 @@ class Review:
 
 	def editorial(self):
 		""" Returns the text of the review. """
-		return self.soup.find(class_='review-text').get_text()
+		return self.soup.find(class_='review-detail__article-content').get_text()
 
 	def cover(self):
 		""" Returns the link to the album cover. """
@@ -104,7 +104,11 @@ class Review:
 		In case of a reissue album, the year of original release as well as
 		the year of the reissue is given separated by '/'.
 		"""
-		year = str(self.soup.find(class_='year').contents[-1])
+		try:
+			year = str(self.soup.find(class_='pub-date').contents[-1])
+		except Exception:
+			year = ''
+		
 		return year
 
 	def _json_safe_dict(self):

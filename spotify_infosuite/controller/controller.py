@@ -473,7 +473,7 @@ class Controller(QWidget):
 				lyricspage = requests.get(url, proxies=proxy)
 
 				soup = BeautifulSoup(lyricspage.text, 'html.parser')
-				lyrics = soup.text.split('Lyrics')[3].split('More on Genius')[0]
+				lyrics = soup.text.split(' Lyrics')[3].split('More on Genius')[0]
 				if artist.lower().replace(" ", "") not in soup.text.lower().replace(" ", ""):
 					lyrics = error
 
