@@ -638,12 +638,16 @@ class Controller(QWidget):
 
 						results['date'], year, month, day = '','','',''
 						if r['publish_date'] != '':
-							if str(r['publish_date'].toObject()['year'].toInt()) != '':
-								year = str(r['publish_date'].toObject()['year'].toInt())
-							if str(r['publish_date'].toObject()['month'].toInt()) != '':
-								month = str(r['publish_date'].toObject()['month'].toInt())
-							if str(r['publish_date'].toObject()['day'].toInt()) != '':
-								day = str(r['publish_date'].toObject()['day'].toInt())
+							try:
+								if str(r['publish_date'].toObject()['year'].toInt()) != '':
+									year = str(r['publish_date'].toObject()['year'].toInt())
+								year = '2999'
+								if str(r['publish_date'].toObject()['month'].toInt()) != '':
+									month = str(r['publish_date'].toObject()['month'].toInt())
+								if str(r['publish_date'].toObject()['day'].toInt()) != '':
+									day = str(r['publish_date'].toObject()['day'].toInt())
+							except:
+								print('')
 						results['date'] = year +'-'+ month +'-'+ day
 
 						results['mkid'] = ''
@@ -745,14 +749,14 @@ class Controller(QWidget):
 		urls, pixmaps, widths, heights = [], [], [], []
 
 		er = reply.error()
-		
+		notfound_count = 0
 		if er == QtNetwork.QNetworkReply.NoError:
 			response = reply.readAll()
 			document = QJsonDocument()
 			error = QJsonParseError()
 			document = document.fromJson(response, error)
 			json_resp = document.object()
-			notfound_count = 0
+			
 
 			if len(json_resp['results'].toArray()) > 0:
 				f = json_resp['results'].toArray()

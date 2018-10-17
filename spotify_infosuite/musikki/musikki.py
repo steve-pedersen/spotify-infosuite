@@ -13,6 +13,7 @@ import requests
 import re
 import json
 import os
+import ssl
 from PyQt5 import QtNetwork, QtCore
 
 
@@ -221,7 +222,11 @@ def search(artist, song='', album=''):
 	url = url + '&appid=' + appid
 
 	# fetch the first page
-	response = requests.get(url + '&page=1')
+	# context = ssl._create_unverified_context()
+	# ssl._create_default_https_context = ssl._create_unverified_context
+	# response = urlopen(request, context=context)
+	requests.packages.urllib3.disable_warnings()
+	response = requests.get(url + '&page=1', verify=False)
 	json_resp = response.json()
 	# print(json.dumps(json_resp))
 
