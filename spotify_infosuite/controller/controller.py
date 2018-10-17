@@ -347,7 +347,6 @@ class Controller(QWidget):
 		requester = reviews.Requester()
 		requester.pitchfork_receiver.connect(self.update_review_frame)
 		artist, album = self.format_unicode_alpha([self.current_artist, self.current_album])
-		print('before asking pitchfork...', artist)
 		requester.get_pitchfork_review(artist, album)
 
 
@@ -647,7 +646,7 @@ class Controller(QWidget):
 								if str(r['publish_date'].toObject()['day'].toInt()) != '':
 									day = str(r['publish_date'].toObject()['day'].toInt())
 							except:
-								print('')
+								year, month, day = '0000', '00', '00'
 						results['date'] = year +'-'+ month +'-'+ day
 
 						results['mkid'] = ''
