@@ -640,7 +640,6 @@ class Controller(QWidget):
 							try:
 								if str(r['publish_date'].toObject()['year'].toInt()) != '':
 									year = str(r['publish_date'].toObject()['year'].toInt())
-								year = '2999'
 								if str(r['publish_date'].toObject()['month'].toInt()) != '':
 									month = str(r['publish_date'].toObject()['month'].toInt())
 								if str(r['publish_date'].toObject()['day'].toInt()) != '':
