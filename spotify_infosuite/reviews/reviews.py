@@ -90,6 +90,8 @@ class Requester(QThread):
 
 		"""
 		album = album.replace('(Deluxe Version)','').rstrip() \
+			.replace('(Remastered)','') \
+			.replace('Remastered','') \
 			.replace('[Remastered]','') \
 			.replace('(Deluxe Edition)','') \
 			.replace('(Remastered Deluxe Edition)','') \

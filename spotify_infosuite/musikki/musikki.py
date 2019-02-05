@@ -225,9 +225,14 @@ def search(artist, song='', album=''):
 	# context = ssl._create_unverified_context()
 	# ssl._create_default_https_context = ssl._create_unverified_context
 	# response = urlopen(request, context=context)
-	requests.packages.urllib3.disable_warnings()
-	response = requests.get(url + '&page=1', verify=False)
-	json_resp = response.json()
+	musikki_api_down = False
+	try:
+		requests.packages.urllib3.disable_warnings()
+		response = requests.get(url + '&page=1', verify=False)
+		json_resp = response.json()
+	except:
+		json_resp = {'summary': {'result_count': 0, 'total_pages': 0 }}
+		musikki_api_down = True
 	# print(json.dumps(json_resp))
 
 	mkid = 0
@@ -258,6 +263,9 @@ def search(artist, song='', album=''):
 	if match_found:
 		musikki_artist = Artist(mkid, artist, appid, appkey)
 		return musikki_artist
+	elif musikki_api_down:
+		print('Musikki API is down. Probably for good :(')
+		return Artist(mkid, artist, appid, appkey, False)
 	else:
 		print('No results found in Musikki database... use a diff API?')
 		return Artist(mkid, artist, appid, appkey, False)
